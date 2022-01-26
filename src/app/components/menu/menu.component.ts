@@ -173,7 +173,7 @@ export class MenuComponent implements OnInit {
     const inputJson: string = this.save.getInputText();
     const blob = new window.Blob([inputJson], { type: "text/plain" });
     if (this.fileName.length === 0) {
-      this.fileName = "WebDan.wdj";
+      this.fileName = "WebSteel.wdj";
     }
 
     let ext = "";
