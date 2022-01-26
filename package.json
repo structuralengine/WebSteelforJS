@@ -1,17 +1,17 @@
 {
-  "name": "web-dan-for-js",
+  "name": "web-steel-for-js",
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "build": "ng build --configuration production --base-href \"https://structuralengine.github.io/WebDanforJS/\" && angular-cli-ghpages",
+    "build": "ng build --configuration production --base-href \"https://structuralengine.github.io/WebSteelforJS/\" && angular-cli-ghpages",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:electron": "ng build --base-href ./ && tsc -p tsconfig.electron.json && electron ."
   },
   "main": "main.js",
-  "description": "断面照査プログラム",
+  "description": "鉄骨照査プログラム",
   "author": {
     "name": "sasaco",
     "email": "sasaicco@gmail.com"
@@ -50,10 +50,9 @@
     "firebase": "^8.3.1",
     "jquery": "^3.6.0",
     "jquery-ui-pack": "^1.12.3",
-    "jszip": "^3.7.1",
+    "jszip": "^2.5.0",
     "ngx-print": "^1.2.1",
-    "pqgrid": "^8.1.0",
-    "rxfire": "^6.0.0",
+    "pqgrid": "^8.2.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
