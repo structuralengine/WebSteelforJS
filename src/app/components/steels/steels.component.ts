@@ -9,6 +9,7 @@ import { InputSteelsService } from "./steels.service";
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
+import { ThreePanelService } from "src/app/three/geometry/three-face.service";
 
 @Component({
   selector: "app-steels",
@@ -29,7 +30,8 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private steel: InputSteelsService,
-    private save: SaveDataService
+    private save: SaveDataService,
+    private panel: ThreePanelService
   ) {}
 
   ngOnInit() {
@@ -50,6 +52,9 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: this.save.isManual() ? 4 : 5,
+        change: (evt, ui) => {
+          this.panel.changeData(0)
+        }
       };
       this.option_list.push(op);
     }
