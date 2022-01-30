@@ -25,6 +25,9 @@
               </span>
             </label>
             <button ngbDropdownItem (click)="fileSave()">ファイルを保存</button>
+            <button *ngIf="electronService.isElectronApp" ngbDropdownItem (click)="overWrite()">
+              上書き保存
+          </button>
             <label style="width: 100%; margin: 0px">
               <span ngbDropdownItem>
                 ピックアップファイルを開く
