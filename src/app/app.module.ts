@@ -87,6 +87,7 @@ import { environment } from "src/environments/environment";
 import { ResultServiceabilityTorsionalMomentComponent } from "./calculation/result-serviceability-torsional-moment/result-serviceability-torsional-moment.component";
 import { ResultRestorabilityTorsionalMomentComponent } from "./calculation/result-restorability-torsional-moment/result-restorability-torsional-moment.component";
 import { ResultEarthquakesTorsionalMomentComponent } from "./calculation/result-earthquakes-torsional-moment/result-earthquakes-torsional-moment.component";
+import { ElectronService, NgxElectronModule } from "ngx-electron";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 
@@ -115,6 +116,7 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
       },
       defaultLanguage: "ja",
     }),
+    NgxElectronModule
   ],
   declarations: [
     AppComponent,
@@ -202,6 +204,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     ResultServiceabilityMomentComponent,
     ResultRestorabilityTorsionalMomentComponent,
     ResultEarthquakesTorsionalMomentComponent,
+
+    ElectronService
   ],
   bootstrap: [AppComponent],
 })
