@@ -946,6 +946,9 @@ copy of the Program in return for a fee.
                      END OF TERMS AND CONDITIONS
 
 
+ngx-electron
+MIT
+
 ngx-print
 MIT
 MIT License
