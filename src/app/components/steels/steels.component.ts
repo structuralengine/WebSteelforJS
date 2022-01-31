@@ -193,7 +193,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 230;
+    containerHeight -= 700;
     return containerHeight;
   }
 
