@@ -221,7 +221,7 @@ export class InputSteelsService {
   public setTableColumns(table_datas: any[]) {
     this.steel_list = new Array();
 
-    for (let i = 0; i < table_datas.length; i += 2) {
+    for (let i = 0; i < table_datas.length; i += 5) {
       const column1 = table_datas[i];
       const column2 = table_datas[i + 1];
       const column3 = table_datas[i + 2];
