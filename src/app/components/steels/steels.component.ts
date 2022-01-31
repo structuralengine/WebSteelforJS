@@ -53,8 +53,8 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataModel: { data: this.table_datas[i] },
         freezeCols: this.save.isManual() ? 4 : 5,
         change: (evt, ui) => {
-          this.panel.changeData(0)
-        }
+          this.panel.changeData(this.table_datas);
+        },
       };
       this.option_list.push(op);
     }
