@@ -88,6 +88,8 @@ import { ResultServiceabilityTorsionalMomentComponent } from "./calculation/resu
 import { ResultRestorabilityTorsionalMomentComponent } from "./calculation/result-restorability-torsional-moment/result-restorability-torsional-moment.component";
 import { ResultEarthquakesTorsionalMomentComponent } from "./calculation/result-earthquakes-torsional-moment/result-earthquakes-torsional-moment.component";
 import { ElectronService, NgxElectronModule } from "ngx-electron";
+import { ThreeComponent } from './three/three.component';
+
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 
@@ -156,6 +158,8 @@ const httpLoaderFactory = (http: HttpClient): TranslateHttpLoader =>
     ResultServiceabilityTorsionalMomentComponent,
     ResultRestorabilityTorsionalMomentComponent,
     ResultEarthquakesTorsionalMomentComponent,
+
+    ThreeComponent
   ],
   entryComponents: [
     LoginDialogComponent,

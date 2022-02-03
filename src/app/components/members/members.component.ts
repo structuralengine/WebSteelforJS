@@ -128,13 +128,13 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.table_datas[row].shape = "H形";
                   break;
                 case "3":
-                case "箱形":
-                  this.table_datas[row].shape = "箱形";
+                case "箱形/π形":
+                  this.table_datas[row].shape = "箱形/π形";
                   break;
-                case "4":
-                case "π形":
-                  this.table_datas[row].shape = "π形";
-                  break;
+                // case "4":
+                // case "π形":
+                //   this.table_datas[row].shape = "π形";
+                //   break;
                 case "5":
                 case "鋼管":
                   this.table_datas[row].shape = "鋼管";
