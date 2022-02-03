@@ -9,6 +9,7 @@ import { InputSteelsService } from "./steels.service";
 import { SaveDataService } from "src/app/providers/save-data.service";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
+import { ThreePanelService } from "src/app/three/geometry/three-face.service";
 
 @Component({
   selector: "app-steels",
@@ -29,7 +30,8 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private steel: InputSteelsService,
-    private save: SaveDataService
+    private save: SaveDataService,
+    private panel: ThreePanelService
   ) {}
 
   ngOnInit() {
@@ -50,6 +52,9 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: this.save.isManual() ? 4 : 5,
+        change: (evt, ui) => {
+          this.panel.changeData(this.table_datas);
+        },
       };
       this.option_list.push(op);
     }
@@ -188,7 +193,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 230;
+    containerHeight -= 700;
     return containerHeight;
   }
 

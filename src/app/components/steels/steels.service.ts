@@ -89,6 +89,7 @@ export class InputSteelsService {
           const data: any = this.getTableColumn(pos.index);
           // const bar: any = this.bars.getTableColumn(pos.index);
           data.m_no = member.m_no;
+          data.shape = member.shape;
           data.position = pos.position;
 
           // データを2行に分ける
@@ -98,7 +99,7 @@ export class InputSteelsService {
           const column4 = {};
           const column5 = {};
           column1["m_no"] = count === 0 ? member.m_no : ""; // 最初の行には 部材番号を表示する
-
+          column1["shape"] = member.shape = "" ? "I型" : member.shape;
           // 1行目
           column1["index"] = data["index"];
           const a: number = this.helper.toNumber(data.position);
@@ -221,7 +222,7 @@ export class InputSteelsService {
   public setTableColumns(table_datas: any[]) {
     this.steel_list = new Array();
 
-    for (let i = 0; i < table_datas.length; i += 2) {
+    for (let i = 0; i < table_datas.length; i += 5) {
       const column1 = table_datas[i];
       const column2 = table_datas[i + 1];
       const column3 = table_datas[i + 2];
