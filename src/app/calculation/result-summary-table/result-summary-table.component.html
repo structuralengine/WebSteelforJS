@@ -200,7 +200,7 @@
           </tr>
         </thead>
         <tbody>          
-          <tr>
+          <!--<tr>
             <td class="bottom" rowspan="15"><span>破壊</span></td>
             <td class="left bottom"> </td>
             <td class="bottom text-left">構造物係数</td>
@@ -241,8 +241,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.safetyMoment.ratio}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left bottom text-center" rowspan="5"><span>せん断</span></td>
             <td class="left bottom text-left">設計せん断力</td>
             <td class="bottom text-right">V<sub>d</sub></td>
@@ -280,8 +280,9 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.safetyShearForce.Vwcd_Ratio}}</td>
             </ng-container>
-          </tr>
+          </tr>-->
           <tr>
+            <td class="bottom" rowspan="5"><span>破壊</span></td>
             <td class="left bottom text-center" rowspan="5"><span>ねじり</span></td>
             <td class="left bottom text-left">設計曲げモーメント</td>
             <td class="bottom text-right">M<sub>d</sub></td>
@@ -320,7 +321,7 @@
               <td class="left bottom text-center">{{item.safetyTorsionalMoment.Mtud4_Ratio}}</td>
             </ng-container>
           </tr>
-          <tr>
+          <!--<tr>
             <td class="bottom text-center" rowspan="18"><span>使用性・耐久性</span></td>
             <td class="left bottom text-center" rowspan="10"><span>曲げ</span></td>
             <td class="left text-left" colspan="2">コンクリートの縁引張応力度</td>
@@ -415,8 +416,8 @@
                 <td class="left bottom"> </td>
               </ng-container>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left text-left" colspan="2">外観ひび割れ幅</td>
             <td class="left text-center">mm</td>
             <ng-container *ngFor="let item of summary_table; index as i">
@@ -440,8 +441,8 @@
                 <td class="left bottom"> </td>
               </ng-container>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left bottom text-center" rowspan="4"><span>せん断</span></td>
             <td class="left text-left">補強鋼材を用いないせん断耐力</td>
             <td class="text-right">V<sub>cd</sub></td>
@@ -477,7 +478,7 @@
                 <td class="left bottom text-center"> </td>
               </ng-container>
             </ng-container>
-          </tr>
+          </tr>-->
           <!--<tr>
             <td> </td>
             <td class="left"> </td>
@@ -494,7 +495,7 @@
             <td class="left"> </td>
             <td class="left"> </td>
           </tr>-->
-          <tr>
+          <!--<tr>
             <td class="left bottom text-center" rowspan="4"><span>ねじり</span></td>
             <td class="left text-left">補強鋼材を用いないねじり耐力</td>
             <td class="text-right">M<sub>td</sub></td>
@@ -532,11 +533,9 @@
                 </ng-container>
               </ng-container>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="bottom" rowspan="10"><span>疲労破壊</span></td>
-            <!--<td> </td>
-            <td class="left bottom" colspan="3">構造物係数 γi</td>-->
             <td class="left bottom"> </td>
             <td class="bottom text-left">構造物係数</td>
             <td class="bottom text-right">γ<sub>i</sub></td>
@@ -585,8 +584,9 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.SafetyFatigueMoment.ratio200}}</td>
             </ng-container>
-          </tr>
+          </tr>-->
           <tr>
+            <td class="bottom" rowspan="4"><span>疲労破壊</span></td>
             <td class="left bottom text-center" rowspan="4"><span>せん断</span></td>
             <td class="left bottom text-left">鉄筋設計最小応力度</td>
             <td class="bottom text-right">σ<sub>swpd</sub></td>
@@ -650,7 +650,7 @@
             <td class="left">-</td>
             <td class="left">-</td>
           </tr>-->
-          <tr>
+          <!--<tr>
             <td class="text-center" rowspan="13"><span>復旧性（常時）</span></td>
             <td class="left bottom"> </td>
             <td class="bottom text-left">構造物係数</td>
@@ -691,8 +691,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.restorabilityMoment.ratio}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left text-center" rowspan="3"><span>せん断</span></td>
             <td class="left bottom text-left">設計せん断力</td>
             <td class="bottom text-right">V<sub>d</sub></td>
@@ -715,8 +715,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.restorabilityShearForce.Vyd_Ratio}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left bottom text-center" rowspan="5"><span>ねじり</span></td>
             <td class="left bottom text-left">設計曲げモーメント</td>
             <td class="bottom text-right">M<sub>d</sub></td>
@@ -754,8 +754,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.restorabilityTorsionalMoment.Mtud4_Ratio}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="text-center" rowspan="13"><span>復旧性（地震時）</span></td>
             <td class="left bottom"> </td>
             <td class="bottom text-left">構造物係数</td>
@@ -796,8 +796,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.earthquakesMoment.ratio}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td class="left text-center" rowspan="3"><span>せん断</span></td>
             <td class="left bottom text-left">設計せん断力</td>
             <td class="bottom text-right">V<sub>d</sub></td>
@@ -820,8 +820,9 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.earthquakesShearForce.Vyd_Ratio}}</td>
             </ng-container>
-          </tr>
+          </tr>-->
           <tr>
+            <td class="text-center" rowspan="5"><span>復旧性（地震時）</span></td>
             <td class="left bottom text-center" rowspan="5"><span>ねじり</span></td>
             <td class="left bottom text-left">設計曲げモーメント</td>
             <td class="bottom text-right">M<sub>d</sub></td>
@@ -860,7 +861,7 @@
               <td class="left bottom text-center">{{item.earthquakesTorsionalMoment.Mtud4_Ratio}}</td>
             </ng-container>
           </tr>
-          <tr>
+          <!--<tr>
             <td class="text-center bottom" rowspan="9"><span>鉄筋量の照査</span></td>
             <td class="left bottom text-center" rowspan="5"><span>最小</span></td>
             <td class="left bottom text-left">粗骨材の最大寸法</td>
@@ -932,8 +933,8 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.minimumReinforcement.result_pc}}</td>
             </ng-container>
-          </tr>
-          <tr>
+          </tr>-->
+          <!--<tr>
             <td colspan="3" rowspan="2" class="bottom text-center">決定ケース</td>
             <td class="left bottom text-center">曲げ</td>
             <td class="left bottom text-center">-</td>
@@ -947,7 +948,7 @@
             <ng-container *ngFor="let item of summary_table; index as i">
               <td class="left bottom text-center">{{item.restorabilityShearForce.Ratio}}</td>
             </ng-container>
-          </tr>
+          </tr>-->
         </tbody>
       </table>
     </div>

@@ -1,7 +1,7 @@
 import { SaveDataService } from '../../providers/save-data.service';
 import { SetDesignForceService } from '../set-design-force.service';
 import { SetPostDataService } from '../set-post-data.service';
-import { CalcSafetyShearForceService } from '../result-safety-shear-force/calc-safety-shear-force.service';
+// import { CalcSafetyShearForceService } from '../result-safety-shear-force/calc-safety-shear-force.service';
 
 import { Injectable, ViewChild } from '@angular/core';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
@@ -9,8 +9,9 @@ import { InputFatiguesService } from 'src/app/components/fatigues/fatigues.servi
 import { InputBasicInformationService } from 'src/app/components/basic-information/basic-information.service';
 import { InputCalclationPrintService } from 'src/app/components/calculation-print/calculation-print.service';
 import { InputSafetyFactorsMaterialStrengthsService } from 'src/app/components/safety-factors-material-strengths/safety-factors-material-strengths.service';
-import { CalcSafetyFatigueMomentService } from '../result-safety-fatigue-moment/calc-safety-fatigue-moment.service';
+// import { CalcSafetyFatigueMomentService } from '../result-safety-fatigue-moment/calc-safety-fatigue-moment.service';
 import { InputCrackSettingsService } from 'src/app/components/crack/crack-settings.service';
+import { CalcVmuService } from '../result-calc-page/calc-vmu.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,9 @@ export class CalcSafetyFatigueShearForceService {
     private helper: DataHelperModule,
     private force: SetDesignForceService,
     private crack: InputCrackSettingsService,
-    private moment: CalcSafetyFatigueMomentService,
-    private base: CalcSafetyShearForceService,
+    // private moment: CalcSafetyFatigueMomentService,
+    // private base: CalcSafetyShearForceService,
+    private vmu: CalcVmuService,
     private fatigue: InputFatiguesService,
     private basic: InputBasicInformationService,
     private calc: InputCalclationPrintService) {
@@ -168,7 +170,7 @@ export class CalcSafetyFatigueShearForceService {
 
     // 疲労の Vcd を計算する時は βn=1
     const DesignForceList = { Md: resMin.Md, Vd: resMin.Vd, Nd: 0};
-    const result: any = this.base.calcVmu(res[0], section, fc, safety, null, DesignForceList);
+    const result: any = this.vmu.calcVmu(res[0], section, fc, safety, null, DesignForceList);
 
     // 最小応力
     let Vpd: number = this.helper.toNumber(resMin.Vd);
@@ -482,7 +484,20 @@ export class CalcSafetyFatigueShearForceService {
 
   // 列車本数を返す関数
   public getTrainCount(): number[] {
-    return this.moment.getTrainCount();
+    const result = new Array(2);
+    let jA = 0;
+    if ('train_A_count' in this.fatigue) {
+      jA = this.helper.toNumber(this.fatigue.train_A_count);
+      if (jA === null) { jA = 0; }
+    }
+    let jB = 0;
+    if ('train_B_count' in this.fatigue) {
+      jB = this.helper.toNumber(this.fatigue.train_B_count);
+      if (jB === null) { jB = 0; }
+    }
+    result[0] = jA;
+    result[1] = jB;
+    return result;
   }
 
 }

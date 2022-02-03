@@ -1,19 +1,19 @@
 import { Component, OnInit } from "@angular/core";
-import { CalcSafetyMomentService } from "../result-safety-moment/calc-safety-moment.service";
-import { CalcSafetyShearForceService } from "../result-safety-shear-force/calc-safety-shear-force.service";
-import { CalcSafetyFatigueMomentService } from "../result-safety-fatigue-moment/calc-safety-fatigue-moment.service";
+// import { CalcSafetyMomentService } from "../result-safety-moment/calc-safety-moment.service";
+// import { CalcSafetyShearForceService } from "../result-safety-shear-force/calc-safety-shear-force.service";
+// import { CalcSafetyFatigueMomentService } from "../result-safety-fatigue-moment/calc-safety-fatigue-moment.service";
 import { CalcSafetyFatigueShearForceService } from "../result-safety-fatigue-shear-force/calc-safety-fatigue-shear-force.service";
-import { CalcServiceabilityMomentService } from "../result-serviceability-moment/calc-serviceability-moment.service";
-import { CalcServiceabilityShearForceService } from "../result-serviceability-shear-force/calc-serviceability-shear-force.service";
-import { CalcDurabilityMomentService } from "../result-durability-moment/calc-durability-moment.service";
-import { CalcRestorabilityMomentService } from "../result-restorability-moment/calc-restorability-moment.service";
-import { CalcRestorabilityShearForceService } from "../result-restorability-shear-force/calc-restorability-shear-force.service";
-import { CalcEarthquakesMomentService } from "../result-earthquakes-moment/calc-earthquakes-moment.service";
-import { CalcEarthquakesShearForceService } from "../result-earthquakes-shear-force/calc-earthquakes-shear-force.service";
+// import { CalcServiceabilityMomentService } from "../result-serviceability-moment/calc-serviceability-moment.service";
+// import { CalcServiceabilityShearForceService } from "../result-serviceability-shear-force/calc-serviceability-shear-force.service";
+// import { CalcDurabilityMomentService } from "../result-durability-moment/calc-durability-moment.service";
+// import { CalcRestorabilityMomentService } from "../result-restorability-moment/calc-restorability-moment.service";
+// import { CalcRestorabilityShearForceService } from "../result-restorability-shear-force/calc-restorability-shear-force.service";
+// import { CalcEarthquakesMomentService } from "../result-earthquakes-moment/calc-earthquakes-moment.service";
+// import { CalcEarthquakesShearForceService } from "../result-earthquakes-shear-force/calc-earthquakes-shear-force.service";
 import { InputMembersService } from "src/app/components/members/members.service";
 import { CalcSafetyTorsionalMomentService } from "../result-safety-torsional-moment/calc-safety-torsional-moment.service";
-import { CalcServiceabilityTorsionalMomentService } from "../result-serviceability-torsional-moment/calc-serviceability-torsional-moment.service";
-import { CalcRestorabilityTorsionalMomentService } from "../result-restorability-torsional-moment/calc-restorability-torsional-moment.service";
+// import { CalcServiceabilityTorsionalMomentService } from "../result-serviceability-torsional-moment/calc-serviceability-torsional-moment.service";
+// import { CalcRestorabilityTorsionalMomentService } from "../result-restorability-torsional-moment/calc-restorability-torsional-moment.service";
 import { CalcEarthquakesTosionalMomentService } from "../result-earthquakes-torsional-moment/calc-earthquakes-tosional-moment.service";
 
 @Component({
@@ -33,20 +33,20 @@ export class SectionForceListComponent implements OnInit {
 
   constructor(
     private members: InputMembersService,
-    private durabilityMoment: CalcDurabilityMomentService,
-    private earthquakesMoment: CalcEarthquakesMomentService,
-    private earthquakesShearForce: CalcEarthquakesShearForceService,
-    private restorabilityMoment: CalcRestorabilityMomentService,
-    private restorabilityShearForce: CalcRestorabilityShearForceService,
-    private SafetyFatigueMoment: CalcSafetyFatigueMomentService,
+    // private durabilityMoment: CalcDurabilityMomentService,
+    // private earthquakesMoment: CalcEarthquakesMomentService,
+    // private earthquakesShearForce: CalcEarthquakesShearForceService,
+    // private restorabilityMoment: CalcRestorabilityMomentService,
+    // private restorabilityShearForce: CalcRestorabilityShearForceService,
+    // private SafetyFatigueMoment: CalcSafetyFatigueMomentService,
     private safetyFatigueShearForce: CalcSafetyFatigueShearForceService,
-    private safetyMoment: CalcSafetyMomentService,
-    private safetyShearForce: CalcSafetyShearForceService,
-    private serviceabilityMoment: CalcServiceabilityMomentService,
-    private serviceabilityShearForce: CalcServiceabilityShearForceService,
+    // private safetyMoment: CalcSafetyMomentService,
+    // private safetyShearForce: CalcSafetyShearForceService,
+    // private serviceabilityMoment: CalcServiceabilityMomentService,
+    // private serviceabilityShearForce: CalcServiceabilityShearForceService,
     private safetyTorsionalMoment: CalcSafetyTorsionalMomentService,
-    private serviceabilityTorsionalMoment: CalcServiceabilityTorsionalMomentService,
-    private restorabilityTorsionalMoment: CalcRestorabilityTorsionalMomentService,
+    // private serviceabilityTorsionalMoment: CalcServiceabilityTorsionalMomentService,
+    // private restorabilityTorsionalMoment: CalcRestorabilityTorsionalMomentService,
     private earthquakesTorsionalMoment: CalcEarthquakesTosionalMomentService
   ) {}
 
@@ -73,261 +73,10 @@ export class SectionForceListComponent implements OnInit {
       let tableType: number = 1;
       let currentRow: number = 0;
 
-      // 使用性,耐久性曲げモーメントの照査
-      if (
-        this.serviceabilityMoment.DesignForceList.length +
-          this.durabilityMoment.DesignForceList.length >
-        0
-      ) {
-        const data = [];
-        const title = [];
-        if (
-          this.serviceabilityMoment.DesignForceList.length > 0 &&
-          this.durabilityMoment.DesignForceList.length > 0
-        ) {
-          // 耐久性と使用性両方照査する場合
-          data.push(this.serviceabilityMoment.DesignForceList1);
-          title.push("耐久性、使用性　縁引張応力度検討用");
-          data.push(this.serviceabilityMoment.DesignForceList);
-          title.push("耐久性、使用性　永久作用");
-        } else if (
-          this.serviceabilityMoment.DesignForceList.length > 0 &&
-          this.durabilityMoment.DesignForceList.length == 0
-        ) {
-          // 耐久性のみ照査する場合
-          data.push(this.serviceabilityMoment.DesignForceList1);
-          title.push("耐久性　縁引張応力度検討用");
-          data.push(this.serviceabilityMoment.DesignForceList);
-          title.push("耐久性　永久作用");
-        } else {
-          // 使用性のみ照査する場合
-          data.push(this.durabilityMoment.DesignForceList1);
-          title.push("使用性　縁引張応力度検討用");
-          data.push(this.durabilityMoment.DesignForceList);
-          title.push("使用性　永久作用");
-        }
-        for (let i = 0; i < data.length; i++) {
-          const table = this.setPage(
-            memberList,
-            upperName,
-            bottomName,
-            data[i]
-          );
-          if (table.length === 0) {
-            continue;
-          }
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_moment,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            title[i]
-          );
-        }
-      }
-
-      // 安全性（破壊）曲げモーメントの照査
-      if (this.safetyMoment.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.safetyMoment.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_moment,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "安全性（破壊）"
-          );
-        }
-      }
-
-      // 安全性（疲労破壊）曲げモーメントの照査
-      if (this.SafetyFatigueMoment.DesignForceList.length > 0) {
-        const data = [];
-        const title = [];
-        data.push(this.SafetyFatigueMoment.DesignForceList);
-        title.push("安全性（疲労破壊）最大応力");
-        data.push(this.SafetyFatigueMoment.DesignForceList3);
-        title.push("安全性（疲労破壊）最小応力");
-        data.push(this.SafetyFatigueMoment.DesignForceList2);
-        title.push("安全性（疲労破壊）変動応力");
-        for (let i = 0; i < data.length; i++) {
-          const table = this.setPage(
-            memberList,
-            upperName,
-            bottomName,
-            data[i]
-          );
-          if (table.length === 0) {
-            continue;
-          }
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_moment,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            title[i]
-          );
-        }
-      }
-
-      // 復旧性（地震時以外）曲げモーメントの照査
-      if (this.restorabilityMoment.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.restorabilityMoment.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_moment,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "復旧性（地震時以外）"
-          );
-        }
-      }
-
-      // 復旧性（地震時）曲げモーメントの照査
-      if (this.earthquakesMoment.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.earthquakesMoment.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_moment,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "復旧性（地震時）"
-          );
-        }
-      }
-      if (page !== null) {
-        this.pages.push(page);
-        page = null;
-      }
-
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       const g_name_shear: string = g_name + " せん断力に対する照査";
       tableType = 2;
       currentRow = 0;
-
-      // 耐久性せん断力に対する照査
-      if (this.serviceabilityShearForce.DesignForceList.length > 0) {
-        const data = [];
-        const title = [];
-        // 耐久性のみ照査する場合
-        data.push(this.serviceabilityShearForce.DesignForceList);
-        title.push("耐久性　ひび割れ照査必要性の検討用");
-        data.push(this.serviceabilityShearForce.DesignForceList1);
-        title.push("耐久性　永久作用");
-        data.push(this.serviceabilityShearForce.DesignForceList2);
-        title.push("耐久性　変動作用");
-
-        for (let i = 0; i < data.length; i++) {
-          const table = this.setPage(
-            memberList,
-            upperName,
-            bottomName,
-            data[i]
-          );
-          if (table.length === 0) {
-            continue;
-          }
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_shear,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            title[i]
-          );
-        }
-      }
-
-      // 安全性（破壊）せん断力に対する照査
-      if (this.safetyShearForce.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.safetyShearForce.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_shear,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "安全性（破壊）"
-          );
-        }
-      }
 
       // 安全性（疲労破壊）せん断力に対する照査
       if (this.safetyFatigueShearForce.DesignForceList.length > 0) {
@@ -369,60 +118,6 @@ export class SectionForceListComponent implements OnInit {
         }
       }
 
-      // 復旧性（地震時以外）せん断力に対する照査
-      if (this.restorabilityShearForce.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.restorabilityShearForce.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_shear,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "復旧性（地震時以外）"
-          );
-        }
-      }
-
-      // 復旧性（地震時）せん断力に対する照査
-      if (this.earthquakesShearForce.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.earthquakesShearForce.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_shear,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "復旧性（地震時）"
-          );
-        }
-      }
-
       if (page !== null) {
         this.pages.push(page);
         page = null;
@@ -432,44 +127,6 @@ export class SectionForceListComponent implements OnInit {
       const g_name_tosion: string = g_name + " ねじりモーメントに対する照査";
       tableType = 3;
       currentRow = 0;
-
-      // ねじりひび割れに対する照査
-      if (this.serviceabilityTorsionalMoment.DesignForceList.length > 0) {
-        const data = [];
-        const title = [];
-        // 耐久性のみ照査する場合
-        data.push(this.serviceabilityTorsionalMoment.DesignForceList);
-        title.push("耐久性　ねじりひび割れ照査必要性の検討用");
-        data.push(this.serviceabilityTorsionalMoment.DesignForceList1);
-        title.push("耐久性　永久作用");
-
-        for (let i = 0; i < data.length; i++) {
-          const table = this.setPage(
-            memberList,
-            upperName,
-            bottomName,
-            data[i]
-          );
-          if (table.length === 0) {
-            continue;
-          }
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_tosion,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            title[i]
-          );
-        }
-      }
 
       // 安全性（破壊）ねじりモーメントに対する照査
       if (this.safetyTorsionalMoment.DesignForceList.length > 0) {
@@ -494,33 +151,6 @@ export class SectionForceListComponent implements OnInit {
             bottomSideName,
             tableType,
             "安全性（破壊）"
-          );
-        }
-      }
-
-      // 復旧性（地震時以外）ねじりモーメントに対する照査
-      if (this.restorabilityTorsionalMoment.DesignForceList.length > 0) {
-        const table = this.setPage(
-          memberList,
-          upperName,
-          bottomName,
-          this.restorabilityTorsionalMoment.DesignForceList
-        );
-        if (table.length > 0) {
-          const info: any = this.getTableRowsOfPage(
-            table,
-            currentRow,
-            tableType
-          );
-          currentRow = info.currentRow;
-          page = this.setTables(
-            info.tableRowsOfPage,
-            page,
-            g_name_tosion,
-            upperSideName,
-            bottomSideName,
-            tableType,
-            "復旧性（地震時以外）"
           );
         }
       }

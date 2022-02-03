@@ -7,8 +7,9 @@ import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { InputCalclationPrintService } from "src/app/components/calculation-print/calculation-print.service";
 import { InputBasicInformationService } from "src/app/components/basic-information/basic-information.service";
 import { InputSafetyFactorsMaterialStrengthsService } from "src/app/components/safety-factors-material-strengths/safety-factors-material-strengths.service";
-import { CalcSafetyShearForceService } from "../result-safety-shear-force/calc-safety-shear-force.service";
+// import { CalcSafetyShearForceService } from "../result-safety-shear-force/calc-safety-shear-force.service";
 import { absoluteFrom } from "@angular/compiler-cli/src/ngtsc/file_system";
+import { CalcVmuService } from "../result-calc-page/calc-vmu.service";
 
 @Injectable({
   providedIn: "root",
@@ -26,7 +27,7 @@ export class CalcSafetyTorsionalMomentService {
     private force: SetDesignForceService,
     private post: SetPostDataService,
     private calc: InputCalclationPrintService,
-    private vmu: CalcSafetyShearForceService,
+    private vmu: CalcVmuService,
     private basic: InputBasicInformationService
   ) {
     this.DesignForceList = null;
@@ -512,4 +513,5 @@ export class CalcSafetyTorsionalMomentService {
 
     return result;
   }
+
 }

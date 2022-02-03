@@ -17,22 +17,22 @@ export class CalcSummaryTableService {
     this.summary_table = {};
     // 計算終了フラグ
     this.summaryDone = {
-      durabilityMoment: false,
-      earthquakesMoment: false,
-      earthquakesShearForce: false,
+      // durabilityMoment: false,
+      // earthquakesMoment: false,
+      // earthquakesShearForce: false,
       earthquakesTorsionalMoment:false,
-      restorabilityMoment: false,
-      restorabilityShearForce: false,
-      restorabilityTorsionalMoment: false,
-      SafetyFatigueMoment: false,
+      // restorabilityMoment: false,
+      // restorabilityShearForce: false,
+      // restorabilityTorsionalMoment: false,
+      // SafetyFatigueMoment: false,
       safetyFatigueShearForce: false,
-      safetyMoment: false,
-      safetyShearForce: false,
+      // safetyMoment: false,
+      // safetyShearForce: false,
       safetyTorsionalMoment: false,
-      serviceabilityMoment: false,
-      serviceabilityShearForce: false,
-      serviceabilityTorsionalMoment: false,
-      minimumReinforcement: false,
+      // serviceabilityMoment: false,
+      // serviceabilityShearForce: false,
+      // serviceabilityTorsionalMoment: false,
+      // minimumReinforcement: false,
     };
   }
 
@@ -59,7 +59,7 @@ export class CalcSummaryTableService {
         let columns: any;
 
         switch (target) {
-          case "durabilityMoment":
+          /* case "durabilityMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -109,9 +109,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "earthquakesMoment":
+          /* case "earthquakesMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -158,9 +158,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "earthquakesShearForce":
+          /* case "earthquakesShearForce":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -205,7 +205,7 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
           case "earthquakesTorsionalMoment":
             index = col.index;
@@ -256,7 +256,7 @@ export class CalcSummaryTableService {
             this.summary_table[key] = columns;
             break;
 
-          case "restorabilityMoment":
+          /* case "restorabilityMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -303,9 +303,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "restorabilityShearForce":
+          /* case "restorabilityShearForce":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -350,9 +350,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "restorabilityTorsionalMoment":
+          /* case "restorabilityTorsionalMoment":
             index = col.index;
             if (index === null) {
               continue;
@@ -399,9 +399,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "SafetyFatigueMoment":
+          /* case "SafetyFatigueMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -447,7 +447,7 @@ export class CalcSummaryTableService {
             columns.SafetyFatigueMoment.ratio200 = col.ratio200.value;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
           case "safetyFatigueShearForce":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
@@ -495,7 +495,7 @@ export class CalcSummaryTableService {
             this.summary_table[key] = columns;
             break;
 
-          case "safetyMoment":
+          /* case "safetyMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -542,9 +542,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "safetyShearForce":
+          /* case "safetyShearForce":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -591,7 +591,7 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
           case "safetyTorsionalMoment":// index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
@@ -643,7 +643,7 @@ export class CalcSummaryTableService {
 
             break;
 
-          case "serviceabilityMoment":
+          /* case "serviceabilityMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -713,9 +713,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "serviceabilityShearForce":
+          /* case "serviceabilityShearForce":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -766,9 +766,9 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
-          case "serviceabilityTorsionalMoment":
+          /* case "serviceabilityTorsionalMoment":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -826,9 +826,9 @@ export class CalcSummaryTableService {
 
             this.summary_table[key] = columns;
             
-            break;
+            break; */
 
-          case "minimumReinforcement":
+          /* case "minimumReinforcement":
             // index と side が同じデータだ既に登録されていればそのデータに追加する
             index = col.index;
             if (index === null) {
@@ -879,7 +879,7 @@ export class CalcSummaryTableService {
             if (col.steelFlag) this.isSRC = true;
 
             this.summary_table[key] = columns;
-            break;
+            break; */
 
         }
       }
@@ -920,23 +920,23 @@ export class CalcSummaryTableService {
         AwString: "-",
         Ss: "-",
       },
-      durabilityMoment: {
+      /* durabilityMoment: {
         Wd: "-",
         Wlim: "-",
         WdWlim: "-",
-      },
-      earthquakesMoment: {
+      }, */
+      /* earthquakesMoment: {
         ri: "-",
         Md: "-",
         Nd: "-",
         Myd: "-",
         ratio: "-",
-      },
-      earthquakesShearForce: {
+      }, */
+      /* earthquakesShearForce: {
         Vd: "-",
         Vyd: "-",
         Ratio: "-",
-      },
+      }, */
       earthquakesTorsionalMoment: {
         Md: "-",
         Vd: "-",
@@ -944,53 +944,53 @@ export class CalcSummaryTableService {
         Mtud3_Ratio: "-",
         Mtud4_Ratio: "-",
       },
-      restorabilityMoment: {
+      /* restorabilityMoment: {
         ri: "-",
         Md: "-",
         Nd: "-",
         Myd: "-",
         ratio: "-",
-      },
-      restorabilityShearForce: {
+      }, */
+      /* restorabilityShearForce: {
         Vd: "-",
         Vyd: "-",
         Vyd_Ratio: "-",
-      },
-      restorabilityTorsionalMoment: {
+      }, */
+      /* restorabilityTorsionalMoment: {
         Md: "-",
         Vd: "-",
         Mtd: "-",
         Mtud3_Ratio: "-",
         Mtud4_Ratio: "-",
-      },
-      SafetyFatigueMoment: {
+      }, */
+      /* SafetyFatigueMoment: {
         ri: "-",
         rb: "-",
         sigma_min: "-",
         sigma_rd: "-",
         fsr200: "-",
         ratio200: "-",
-      },
+      }, */
       safetyFatigueShearForce: {
         sigma_min: "-",
         sigma_rd: "-",
         frd: "-",
         ratio: "-",
       },
-      safetyMoment: {
+      /* safetyMoment: {
         ri: "-",
         Md: "-",
         Nd: "-",
         Mud: "-",
         ratio: "-",
-      },
-      safetyShearForce: {
+      }, */
+      /* safetyShearForce: {
         Vd: "-",
         Vyd: "-",
         Vwcd: "-",
         Vyd_Ratio: "-",
         Vwcd_Ratio: "-",
-      },
+      }, */
       safetyTorsionalMoment: {
         Md: "-",
         Vd: "-",
@@ -998,7 +998,7 @@ export class CalcSummaryTableService {
         Mtud3_Ratio: "-",
         Mtud4_Ratio: "-",
       },
-      serviceabilityMoment: {
+      /* serviceabilityMoment: {
         sigma_b: "-",
         sigma_c: "-",
         sigma_s: "-",
@@ -1010,20 +1010,20 @@ export class CalcSummaryTableService {
         sigma_c_div2: "-",
         sigma_s_ratio: "-",
         WdWlim: "-",
-      },
-      serviceabilityShearForce: {
+      }, */
+      /* serviceabilityShearForce: {
         Vcd: "-",
         Vcd07: "-",
         sigma: "-",
         sigma_calc: "-",
-      },
-      serviceabilityTorsionalMoment: {
+      }, */
+      /* serviceabilityTorsionalMoment: {
         Mtud: "-",
         comMtud07_Ratio: "-",
         sigma_Ratio: "-",
         sigma_calc: "-",
-      },
-      minimumReinforcement: {
+      }, */
+      /* minimumReinforcement: {
         dmax: "-",
         Nd: "-",
         Mcrd: "-",
@@ -1031,7 +1031,7 @@ export class CalcSummaryTableService {
         pb: "-",
         pb075: "-",
         pc: "-",
-      },
+      }, */
       steelFlag: false
     };
   }

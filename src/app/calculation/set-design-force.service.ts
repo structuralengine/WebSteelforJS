@@ -151,7 +151,7 @@ export class SetDesignForceService {
       }
       for (let i = 0; i < k1.length; i++) {
         for (const k3 of ["max", "min"]) {
-          const t = force[k1[i]];
+          const t = force[k1[i]]; // t === undefined, force["mt"] == undefined
           const m1 = t[k3];
           const k4 = k2[i] + k3;
           const tmp = {
