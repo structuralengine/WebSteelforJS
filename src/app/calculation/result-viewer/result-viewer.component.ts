@@ -93,7 +93,7 @@ export class ResultViewerComponent implements OnInit {
 
   // 総括表の準備ができたか判定する関数
   public printSummaryTable(): boolean {
-    if(!this._printSummaryTable){
+    if(this._printSummaryTable == false){
       if( this.summary.checkDone() === true){
         alert(this.user.deduct_points + 'ポイント消費しました。本日の使用量は、'+  this.user.daily_points + 'です.');
         this._printSummaryTable = true;

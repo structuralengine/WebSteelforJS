@@ -51,32 +51,23 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
 
     // postする
-    console.log(this.title, postData);
-    const inputJson: string = this.post.getInputJsonString(postData);
-    this.post.http_post(inputJson).then(
-      (response) => {
-        this.isFulfilled = this.setPages(response["OutputData"]);
-        this.calc.isEnable = true;
-        this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
-      })
-      .catch((error) => {
-        this.err = 'error!!\n' + error;
-        this.summary.setSummaryTable("safetyTorsionalMoment");
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
-  }
+    // this.isFulfilled = this.setPages(postData);//response["OutputData"]);
+    // this.calc.isEnable = true;
+    // this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
 
-  // 計算結果を集計する
-  public setPages(OutputData: any): boolean {
+    
+    // 計算結果を集計する
     try {
-      this.safetyTorsionalMomentPages = this.getSafetyPages(OutputData);
-      return true;
+      this.safetyTorsionalMomentPages = this.getSafetyPages(postData);
+      this.isFulfilled = true;
+      this.calc.isEnable = true;
+      this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
     } catch (e) {
       this.err = e.toString();
-      return false;
+      this.isFulfilled = false;
+      this.summary.setSummaryTable("safetyTorsionalMoment");
     }
+    this.isLoading = false;
   }
 
   // 出力テーブル用の配列にセット
@@ -137,7 +128,7 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
               };
               SRCFlag = false;
             }
-
+            continue;
             /////////////// まず計算 ///////////////
             const sectionM = this.result.getSection("Md", res, safetyM);
             const sectionV = this.result.getSection("Vd", res, safetyV);

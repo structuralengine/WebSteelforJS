@@ -46,43 +46,25 @@ export class ResultEarthquakesTorsionalMomentComponent implements OnInit {
       return;
     }
 
-    // postする
+    // 計算結果を集計する
     console.log(this.title, postData);
-    const inputJson: string = this.post.getInputJsonString(postData);
-    // this.cd.detectChanges();
-    // setTimeout(() => {
-      this.post.http_post(inputJson).then(
-        (response) => {
-          this.isFulfilled = this.setPages(response["OutputData"]);
-          this.calc.isEnable = true;
-          this.summary.setSummaryTable("earthquakesTorsionalMoment", this.safetyTorsionalMomentPages);
-        })
-      .catch((error) => {
-        this.err = 'error!!\n' + error;;
-        this.summary.setSummaryTable("earthquakesTorsionalMoment");
-      })
-      .finally(() => {
-        this.isLoading = false;
-      });
-    // });
-
-  }
-
-  // 計算結果を集計する
-  private setPages(OutputData: any): boolean {
     try {
       // 安全性破壊のページと同じ
       this.safetyTorsionalMomentPages = this.base.getSafetyPages(
-        OutputData,
+        postData,
         "復旧性（地震時）ねじりモーメントの照査結果",
         this.calc.DesignForceList,
         this.calc.safetyID
       );
-      return true;
+      this.isFulfilled = true;
+      this.calc.isEnable = true;
+      this.summary.setSummaryTable("earthquakesTorsionalMoment", this.safetyTorsionalMomentPages);
     } catch (e) {
       this.err = e.toString();
-      return false;
+      this.isFulfilled = false;
+      this.summary.setSummaryTable("earthquakesTorsionalMoment");
     }
+    this.isLoading = false;
   }
 
 }

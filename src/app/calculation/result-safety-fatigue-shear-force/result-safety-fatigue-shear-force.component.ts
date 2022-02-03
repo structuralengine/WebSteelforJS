@@ -107,7 +107,7 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
               };
               SRCFlag = false;
             }
-
+            continue;
             /////////////// まず計算 ///////////////
             let section: any = null;
             try {
