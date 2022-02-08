@@ -4,6 +4,8 @@ import { Injectable } from "@angular/core";
 import * as THREE from "three";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { randFloat } from "three/src/math/MathUtils";
+import { InputSteelsService } from "src/app/components/steels/steels.service";
+import { DataHelperModule } from "src/app/providers/data-helper.module";
 
 @Injectable({
   providedIn: "root",
@@ -22,7 +24,10 @@ export class ThreePanelService {
   public y: number = 0;
   public z: number = 0;
 
-  constructor(private scene: SceneService, private http: HttpClient) {
+  constructor(private scene: SceneService, 
+              private http: HttpClient,
+              private steel: InputSteelsService, 
+              private helper: DataHelperModule) {
     this.panel_List = new Array();
 
     // gui
@@ -33,7 +38,9 @@ export class ThreePanelService {
     this.gui = null;
   }
 
-  public changeData(data: any): void {
+  public changeData(index: number): void {
+
+    const data = this.steel.getSteelJson(index);
     //対象のnodeDataを入手
     let vertexlist = [];
     this.ClearData();
@@ -41,28 +48,37 @@ export class ThreePanelService {
     this.x = 0;
     this.y = 0;
     this.z = 0;
-    for (let i = 0; i < data.length; i++) {
-      for (let j = 0; j < data[i].length; j++) {
-        vertexlist.push(data[i][j]);
-        if ((j + 1) % 5 === 0) {
-          this.shape(vertexlist);
+    let i: number = 0;
+    // for (let i = 0; i < data.length; i++) {
+    for (const i of Object.keys(data)) {
+      const row = data[i];
+      const j = this.helper.toNumber(row['design_point_id']);
+      if (j === null) continue;
+      //for (let j = 0; j < data[i].length; j++) {
+        // vertexlist.push(data[i][j]);
+        vertexlist.push(row);
+        if (j % 5 === 0) {
+          this.shape(vertexlist/* , data['shape'] */);
           vertexlist = new Array();
         }
-      }
     }
   }
 
-  public shape(vertexlist): void {
-    let shape = vertexlist[0]["shape"];
-    switch (shape) {
-      case "I形":
-        this.createPanel_I(vertexlist);
-        break;
-      case "H形":
-        this.createPanel_H(vertexlist);
-        break;
-      case "箱形/π形":
-        this.createPanel_box(vertexlist);
+  public shape(vertexlist/* , shape: string */): void {
+    const shape = vertexlist[0]["shape"];
+    // データが有効か確認する
+    const flag = this.getEnableSteel(vertexlist, shape);
+    if (flag) {
+      switch (shape) {
+        case "I形":
+          this.createPanel_I(vertexlist);
+          break;
+        case "H形":
+          this.createPanel_H(vertexlist);
+          break;
+        case "箱形/π形":
+          this.createPanel_box(vertexlist);
+      }
     }
   }
 
@@ -74,7 +90,7 @@ export class ThreePanelService {
     for (let i = 1; i <= 3; i++) {
       newList["b" + i] = vertexlist[i - 1]["steel_b"] * 0.1;
       newList["h" + i] = vertexlist[i - 1]["steel_h"] * 0.1;
-      newList["w" + i] = vertexlist[i - 1]["steel_w1"] * 0.1;
+      newList["w" + i] = vertexlist[i - 1]["steel_w"] * 0.1;
     }
 
     // ②を基準として，矩形の重心間距離を求める→各矩形のx,y座標
@@ -127,7 +143,7 @@ export class ThreePanelService {
     for (let i = 1; i <= 3; i++) {
       newList["b" + i] = vertexlist[i - 1]["steel_b"] * 0.1;
       newList["h" + i] = vertexlist[i - 1]["steel_h"] * 0.1;
-      newList["w" + i] = vertexlist[i - 1]["steel_w1"] * 0.1;
+      newList["w" + i] = vertexlist[i - 1]["steel_w"] * 0.1;
     }
 
     // ②を基準として，矩形の重心間距離を求める→各矩形のx,y座標
@@ -190,7 +206,7 @@ export class ThreePanelService {
       newList["w" + i] =
         vertexlist[i - 1]["steel_w1"] == void 0
           ? newList["w" + secret]
-          : vertexlist[i - 1]["steel_w1"] * 0.1;
+          : vertexlist[i - 1]["steel_w"] * 0.1;
     }
 
     let w2 = newList["w2"];
@@ -414,5 +430,35 @@ export class ThreePanelService {
       this.scene.remove(mesh);
     }
     this.panel_List = new Array();
+  }
+
+  // 有効な行かどうか確認する
+  private getEnableSteel(vertexlist, shape) :boolean{
+
+    // shapeに合わせて、vertexlistの必要行数を変更する
+    let until: number;
+    if (shape === 'I形' || shape === 'H形') {
+      until = 3;
+    } else if (shape === '箱形/π形') {
+      until = 4;
+    } else {
+      return false;
+    }
+    // bとhの情報がなければ、falseでリターンし、描画を中止する
+    let count: number = 1;
+    for (const key of Object.keys(vertexlist)) {
+      const row = vertexlist[key];
+      if (row['steel_b'] == null || row['steel_h'] == null) {
+        return false;
+      }
+      if (count >= until) {
+        break;
+      } else {
+        count += 1;
+      }
+    }
+
+    // 最後まで通った場合、有効なデータであるため、trueを返す
+    return true 
   }
 }

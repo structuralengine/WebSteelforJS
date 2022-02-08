@@ -10,6 +10,8 @@ import { SaveDataService } from "src/app/providers/save-data.service";
 import { SheetComponent } from "../sheet/sheet.component";
 import pq from "pqgrid";
 import { ThreePanelService } from "src/app/three/geometry/three-face.service";
+import { ThreeService } from "src/app/three/three.service";
+import { SceneService } from "src/app/three/scene.service";
 
 @Component({
   selector: "app-steels",
@@ -31,7 +33,9 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private steel: InputSteelsService,
     private save: SaveDataService,
-    private panel: ThreePanelService
+    private panel: ThreePanelService,
+    private three: ThreeService,
+    private scene: SceneService,
   ) {}
 
   ngOnInit() {
@@ -53,7 +57,9 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataModel: { data: this.table_datas[i] },
         freezeCols: this.save.isManual() ? 4 : 5,
         change: (evt, ui) => {
-          this.panel.changeData(this.table_datas);
+          //this.saveData();
+          this.three.changeData('steels', i);
+          this.scene.render();
         },
       };
       this.option_list.push(op);
@@ -65,10 +71,13 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     for (let i = 0; i < this.table_datas.length; i++) {
       this.groupe_name.push(this.steel.getGroupeName(i));
     }
+
+    // 初期表示の描画をする
   }
 
   ngAfterViewInit() {
     this.activeButtons(0);
+    this.scene.render();
   }
 
   private setTitle(isManual: boolean): void {
@@ -157,19 +166,19 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         width: 70,
       },
       {
-        title: "w1",
+        title: "w",
         dataType: "float",
-        dataIndx: "steel_w1",
+        dataIndx: "steel_w",
         sortable: false,
         width: 70,
       },
-      {
+      /* {
         title: "w2",
         dataType: "float",
         dataIndx: "steel_w2",
         sortable: false,
         width: 70,
-      }
+      } */
     );
   }
 
@@ -193,7 +202,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 700;
+    containerHeight -= 625;
     return containerHeight;
   }
 

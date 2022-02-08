@@ -9,6 +9,7 @@ import { InputDesignPointsService } from "../design-points/design-points.service
 export class InputSteelsService {
   // 鉄筋情報
   private steel_list: any[];
+  private table_datas: any[];
 
   constructor(
     private points: InputDesignPointsService,
@@ -72,7 +73,9 @@ export class InputSteelsService {
   // }
 
   public getTableColumns(): any[] {
-    const table_datas: any[] = new Array();
+    // 一旦teble_datasをprivateでおいてみる
+    //const table_datas: any[] = new Array();
+    this.table_datas = new Array();
 
     const groupe_list = this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
@@ -108,8 +111,8 @@ export class InputSteelsService {
           column1["design_point_id"] = data["1"].title;
           column1["steel_b"] = data["1"].steel_b;
           column1["steel_h"] = data["1"].steel_h;
-          column1["steel_w1"] = data["1"].steel_w1;
-          column1["steel_w2"] = data["1"].steel_w2;
+          column1["steel_w"] = data["1"].steel_w;
+          // column1["steel_w2"] = data["1"].steel_w2;
 
           table_groupe.push(column1);
 
@@ -117,39 +120,39 @@ export class InputSteelsService {
           column2["design_point_id"] = data["2"].title;
           column2["steel_b"] = data["2"].steel_b;
           column2["steel_h"] = data["2"].steel_h;
-          column2["steel_w1"] = data["2"].steel_w1;
-          column2["steel_w2"] = data["2"].steel_w2;
+          column2["steel_w"] = data["2"].steel_w;
+          // column2["steel_w2"] = data["2"].steel_w2;
           table_groupe.push(column2);
 
           // 3行目
           column3["design_point_id"] = data["3"].title;
           column3["steel_b"] = data["3"].steel_b;
           column3["steel_h"] = data["3"].steel_h;
-          column3["steel_w1"] = data["3"].steel_w1;
-          column3["steel_w2"] = data["3"].steel_w2;
+          column3["steel_w"] = data["3"].steel_w;
+          // column3["steel_w2"] = data["3"].steel_w2;
           table_groupe.push(column3);
 
           // 4行目
           column4["design_point_id"] = data["4"].title;
           column4["steel_b"] = data["4"].steel_b;
           column4["steel_h"] = data["4"].steel_h;
-          column4["steel_w1"] = data["4"].steel_w1;
-          column4["steel_w2"] = data["4"].steel_w2;
+          column4["steel_w"] = data["4"].steel_w;
+          // column4["steel_w2"] = data["4"].steel_w2;
           table_groupe.push(column4);
 
           // 5行目
           column5["design_point_id"] = data["5"].title;
           column5["steel_b"] = data["5"].steel_b;
           column5["steel_h"] = data["5"].steel_h;
-          column5["steel_w1"] = data["5"].steel_w1;
-          column5["steel_w2"] = data["5"].steel_w2;
+          column5["steel_w"] = data["5"].steel_w;
+          // column5["steel_w2"] = data["5"].steel_w2;
           table_groupe.push(column5);
           count++;
         }
       }
-      table_datas.push(table_groupe);
+      this.table_datas.push(table_groupe);
     }
-    return table_datas;
+    return this.table_datas;
   }
 
   public getTableColumn(index: any): any {
@@ -237,32 +240,32 @@ export class InputSteelsService {
       b["1"].title = column1.design_point_id;
       b["1"].steel_b = column1.steel_b;
       b["1"].steel_h = column1.steel_h;
-      b["1"].steel_w1 = column1.steel_w1;
-      b["1"].steel_w2 = column1.steel_w2;
+      b["1"].steel_w = column1.steel_w;
+      // b["1"].steel_w2 = column1.steel_w2;
 
       b["2"].title = column2.design_point_id;
       b["2"].steel_b = column2.steel_b;
       b["2"].steel_h = column2.steel_h;
-      b["2"].steel_w1 = column2.steel_w1;
-      b["2"].steel_w2 = column2.steel_w2;
+      b["2"].steel_w = column2.steel_w;
+      // b["2"].steel_w2 = column2.steel_w2;
 
       b["3"].title = column3.design_point_id;
       b["3"].steel_b = column3.steel_b;
       b["3"].steel_h = column3.steel_h;
-      b["3"].steel_w1 = column3.steel_w1;
-      b["3"].steel_w2 = column3.steel_w2;
+      b["3"].steel_w = column3.steel_w;
+      // b["3"].steel_w2 = column3.steel_w2;
 
       b["4"].title = column4.design_point_id;
       b["4"].steel_b = column4.steel_b;
       b["4"].steel_h = column4.steel_h;
-      b["4"].steel_w1 = column4.steel_w1;
-      b["4"].steel_w2 = column4.steel_w2;
+      b["4"].steel_w = column4.steel_w;
+      // b["4"].steel_w2 = column4.steel_w2;
 
       b["5"].title = column5.design_point_id;
       b["5"].steel_b = column5.steel_b;
       b["5"].steel_h = column5.steel_h;
-      b["5"].steel_w1 = column5.steel_w1;
-      b["5"].steel_w2 = column5.steel_w2;
+      b["5"].steel_w = column5.steel_w;
+      // b["5"].steel_w2 = column5.steel_w2;
 
       this.steel_list.push(b);
     }
@@ -280,5 +283,9 @@ export class InputSteelsService {
 
   public getGroupeName(i: number): string {
     return this.points.getGroupeName(i);
+  }
+
+  public getSteelJson(index) {
+    return this.table_datas[index];
   }
 }
