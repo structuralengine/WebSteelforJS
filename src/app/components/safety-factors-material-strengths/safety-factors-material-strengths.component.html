@@ -11,6 +11,8 @@
 </div>
 
 <div class="tabContent">
+
+<!--
   <div class="sectionTitle">
     <h4>鉄筋・コンクリート</h4>
   </div>
@@ -43,6 +45,7 @@
       </div>
     </div>
   </div>
+-->
 
   <div class="sectionTitle">
     <h4>鉄骨</h4>
@@ -61,7 +64,7 @@
     </div>
   </div>
 
-
+<!--
   <div class="sectionTitle">
     <h4>杭・施工条件</h4>
   </div>
@@ -84,12 +87,12 @@
         <ng-container *ngFor="let item of options6; index as i">
           <tr>
             <td width="20px">
-              <input type="radio" 
-                name="pile_factor" 
+              <input type="radio"
+                name="pile_factor"
                 id="pile_factor{{i}}"
-                [(ngModel)]="pile_factor_select_id" 
+                [(ngModel)]="pile_factor_select_id"
                 [value]="item.id"
-                [checked]="item.selected" 
+                [checked]="item.selected"
                 (change)="setPileFactor(i)" />
             </td>
             <td style="text-align: left" width="200px">{{item.title}}</td>
@@ -102,5 +105,6 @@
       </tbody>
     </table>
   </div>
+ -->
 
 </div>

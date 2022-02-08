@@ -21,98 +21,70 @@ export class InputSectionForcesService  {
   }
 
   public getColumnHeaders1(): any {
-    const result: object[] = [
-      { title: '算出点名', align: 'left', dataType: 'string', dataIndx: 'p_name', frozen: true, sortable: false, width: 250 }
-    ];
+    const key = '5';
 
-    let old: string = null;
-    let head: any = null;
-    for(const m of this.basic.pickup_moment){
-      const titles = m.title.split(' ');
-      if(old !== titles[0]){
-        if( head !== null){
-          result.push(head);
-        }
-        head = { title: titles[0], align: 'center', colModel:[] }
-        old = titles[0];
-      }
-      const key = 'Md' + m.id;
-      head.colModel.push(
-        { title: titles[1], align: 'center', colModel: [
-          { title: 'Md<br/>(kN・m)',  dataType: 'float', 'format': '#.00', dataIndx: key + '_Md', sortable: false, width: 100 },
-          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Nd', sortable: false, width: 100 }
-        ]
-      })
-    }
-    if( head !== null){
-      result.push(head);
-    }
+    const result: object[] = [
+      { title: '算出点名', align: 'left', dataType: 'string', dataIndx: 'p_name', frozen: true, sortable: false, width: 250 },
+      { title: '安全性', align: 'center', colModel:[
+        { title: '(破壊)', align: 'center', colModel: [
+          { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key + '_Md', sortable: false, width: 100 },
+          { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Vd', sortable: false, width: 100 },
+          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Nd', sortable: false, width: 100 },
+          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Mt', sortable: false, width: 100 }
+        ]}
+      ]}
+    ];
 
     return result;
   }
 
   public getColumnHeaders2(): any {
+
+    const key2 = '2';
+    const key3 = '3';
+    const key4 = '4';
+
     const result: object[] = [
       { title: '算出点名', align: 'left', dataType: 'string', dataIndx: 'p_name', frozen: true, sortable: false, width: 250 },
-      { title: "せん断スパン長(mm)", dataType: "float", dataIndx: "La", sortable: false, width: 140 },
-      ];
-
-    let old: string = null;
-    let head: any = null;
-    for(const s of this.basic.pickup_shear_force){
-      const titles = s.title.split(' ');
-      if(old !== titles[0]){
-        if( head !== null){
-          result.push(head);
-        }
-        head = { title: titles[0], align: 'center', colModel:[] }
-        old = titles[0];
-      }
-      const key = 'Vd' + s.id;
-      head.colModel.push(
-        { title: titles[1], align: 'center', colModel: [
-          { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Vd', sortable: false, width: 100 },
-          { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key + '_Md', sortable: false, width: 100 },
-          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Nd', sortable: false, width: 100 }
-        ]
-      })
-    }
-    if( head !== null){
-      result.push(head);
-    }
+      { title: '疲労破壊', align: 'center', colModel:[
+        { title: '疲労限', align: 'center', colModel: [
+          { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key2 + '_Md', sortable: false, width: 100 },
+          { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key2 + '_Vd', sortable: false, width: 100 },
+          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key2 + '_Nd', sortable: false, width: 100 },
+          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key2 + '_Mt', sortable: false, width: 100 }
+        ]},
+        { title: '永久作用', align: 'center', colModel: [
+          { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key3 + '_Md', sortable: false, width: 100 },
+          { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key3 + '_Vd', sortable: false, width: 100 },
+          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key3 + '_Nd', sortable: false, width: 100 },
+          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key3 + '_Mt', sortable: false, width: 100 }
+        ]},
+        { title: '永久＋変動', align: 'center', colModel: [
+          { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key4 + '_Md', sortable: false, width: 100 },
+          { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key4 + '_Vd', sortable: false, width: 100 },
+          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key4 + '_Nd', sortable: false, width: 100 },
+          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key4 + '_Mt', sortable: false, width: 100 }
+        ]}
+      ]}
+    ];
 
     return result;
   }
 
   public getColumnHeaders3(): any {
-    const result: object[] = [
-      { title: '算出点名', align: 'left', dataType: 'string', dataIndx: 'p_name', sortable: false, width: 250 },
-      ];
+    const key = '5';
 
-    let old: string = null;
-    let head: any = null;
-    for(const s of this.basic.pickup_torsional_moment){
-      const titles = s.title.split(' ');
-      if(old !== titles[0]){
-        if( head !== null){
-          result.push(head);
-        }
-        head = { title: titles[0], align: 'center', colModel:[] }
-        old = titles[0];
-      }
-      const key = 'Mt' + s.id;
-      head.colModel.push(
-        { title: titles[1], align: 'center', colModel: [
-          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Mt', sortable: false, width: 100 },
+    const result: object[] = [
+      { title: '算出点名', align: 'left', dataType: 'string', dataIndx: 'p_name', frozen: true, sortable: false, width: 250 },
+      { title: '復旧性', align: 'center', colModel:[
+        { title: '(損傷)', align: 'center', colModel: [
           { title: 'Md<br/>(kN・m)', dataType: 'float', 'format': '#.00', dataIndx: key + '_Md', sortable: false, width: 100 },
           { title: 'Vd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Vd', sortable: false, width: 100 },
-          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Nd', sortable: false, width: 100 }
-        ]
-      })
-    }
-    if( head !== null){
-      result.push(head);
-    }
+          { title: 'Nd<br/>(kN)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Nd', sortable: false, width: 100 },
+          { title: 'Mt<br/>(kN・m)',    dataType: 'float', 'format': '#.00', dataIndx: key + '_Mt', sortable: false, width: 100 }
+        ]}
+      ]}
+    ];
 
     return result;
   }
@@ -123,21 +95,24 @@ export class InputSectionForcesService  {
       index,
     };
 
-    for(const m of this.basic.pickup_moment){
-      const key = 'Md' + m.id;
-      rows[key + '_Md'] = null;
-      rows[key + '_Nd'] = null;
-    }
+    // for(const s of this.basic.pickup_moment){
+    //   const key = s.id;
+    //   rows[key + '_Mt'] = null;
+    //   rows[key + '_Md'] = null;
+    //   rows[key + '_Vd'] = null;
+    //   rows[key + '_Nd'] = null;
+    // }
 
-    for(const s of this.basic.pickup_shear_force){
-      const key = 'Vd' + s.id;
-      rows[key + '_Vd'] = null;
-      rows[key + '_Md'] = null;
-      rows[key + '_Nd'] = null;
-    }
+    // for(const s of this.basic.pickup_shear_force){
+    //   const key = s.id;
+    //   rows[key + '_Mt'] = null;
+    //   rows[key + '_Md'] = null;
+    //   rows[key + '_Vd'] = null;
+    //   rows[key + '_Nd'] = null;
+    // }
 
     for(const s of this.basic.pickup_torsional_moment){
-      const key = 'Mt' + s.id;
+      const key = s.id;
       rows[key + '_Mt'] = null;
       rows[key + '_Md'] = null;
       rows[key + '_Vd'] = null;

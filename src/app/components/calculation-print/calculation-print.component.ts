@@ -17,10 +17,10 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
   public print_calculate_checked: boolean;
   public print_section_force_checked: boolean;
   public print_summary_table_checked: boolean;
-  // 照査
-  public calculate_moment_checked: boolean;
-  public calculate_shear_force_checked: boolean;
-  public calculate_torsional_moment_checked: boolean;
+  // // 照査
+  // public calculate_moment_checked: boolean;
+  // public calculate_shear_force_checked: boolean;
+  // public calculate_torsional_moment_checked: boolean;
   // 部材
   public table_datas: any[];
 
@@ -37,9 +37,9 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.print_section_force_checked = this.calc.print_selected.print_section_force_checked;
     this.print_summary_table_checked = this.calc.print_selected.print_summary_table_checked;
 
-    this.calculate_moment_checked = this.calc.print_selected.calculate_moment_checked;
-    this.calculate_shear_force_checked = this.calc.print_selected.calculate_shear_force;
-    this.calculate_torsional_moment_checked = this.calc.print_selected.calculate_torsional_moment;
+    // this.calculate_moment_checked = this.calc.print_selected.calculate_moment_checked;
+    // this.calculate_shear_force_checked = this.calc.print_selected.calculate_shear_force;
+    // this.calculate_torsional_moment_checked = this.calc.print_selected.calculate_torsional_moment;
 
     this.table_datas = new Array();
     for ( const data of this.calc.getColumnData()) {
@@ -60,9 +60,9 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
     this.calc.print_selected.print_section_force_checked = this.print_section_force_checked;
     this.calc.print_selected.print_summary_table_checked = this.print_summary_table_checked;
 
-    this.calc.print_selected.calculate_moment_checked = this.calculate_moment_checked;
-    this.calc.print_selected.calculate_shear_force = this.calculate_shear_force_checked;
-    this.calc.print_selected.calculate_torsional_moment = this.calculate_torsional_moment_checked;
+    // this.calc.print_selected.calculate_moment_checked = this.calculate_moment_checked;
+    // this.calc.print_selected.calculate_shear_force = this.calculate_shear_force_checked;
+    // this.calc.print_selected.calculate_torsional_moment = this.calculate_torsional_moment_checked;
 
     this.calc.setColumnData(this.table_datas);
   }
@@ -76,7 +76,7 @@ export class CalculationPrintComponent implements OnInit, OnDestroy {
         return;
       }
       this.user.clear(user.uid);
-      
+
       this.router.navigate(['/result-viewer']);
     });
   }

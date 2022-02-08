@@ -15,7 +15,6 @@ import { WaitDialogComponent } from "../wait-dialog/wait-dialog.component";
 import * as FileSaver from "file-saver";
 import { SaveDataService } from "../../providers/save-data.service";
 import { ConfigService } from "../../providers/config.service";
-import { DsdDataService } from "src/app/providers/dsd-data.service";
 
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { InputMembersService } from "../members/members.service";
@@ -41,7 +40,6 @@ export class MenuComponent implements OnInit {
     private members: InputMembersService,
     private points: InputDesignPointsService,
     private helper: DataHelperModule,
-    private dsdData: DsdDataService,
     private router: Router,
     private config: ConfigService,
     public auth: AngularFireAuth,
@@ -82,19 +80,6 @@ export class MenuComponent implements OnInit {
     this.app.deactiveButtons();
 
     switch (this.helper.getExt(this.fileName)) {
-      case "dsd":
-        this.fileToBinary(file)
-          .then((buff) => {
-            const pik = this.dsdData.readDsdData(buff);
-            this.open_done(modalRef);
-            if (pik !== null) {
-              alert(pik + " を開いてください！");
-            }
-          })
-          .catch((err) => {
-            this.open_done(modalRef, err);
-          });
-        break;
       default:
         this.fileToText(file)
           .then((text) => {

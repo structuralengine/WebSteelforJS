@@ -35,10 +35,10 @@ export class CalcEarthquakesTosionalMomentService {
 
    this.DesignForceList = new Array();
 
-   // せん断力が計算対象でない場合は処理を抜ける
-   if (this.calc.print_selected.calculate_torsional_moment === false) {
-     return;
-   }
+  //  // せん断力が計算対象でない場合は処理を抜ける
+  //  if (this.calc.print_selected.calculate_torsional_moment === false) {
+  //    return;
+  //  }
 
    const No7 = (this.save.isManual()) ? 7 : this.basic.pickup_torsional_moment_no(7);
    this.DesignForceList = this.force.getDesignForceList(

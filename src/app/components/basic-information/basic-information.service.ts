@@ -7,8 +7,8 @@ import { DataHelperModule } from 'src/app/providers/data-helper.module';
 export class InputBasicInformationService  {
 
   // pick up table に関する変数
-  public pickup_moment: any[];
-  public pickup_shear_force: any[];
+  // public pickup_moment: any[];
+  // public pickup_shear_force: any[];
   public pickup_torsional_moment: any[];
 
   // 適用 に関する変数
@@ -24,8 +24,8 @@ export class InputBasicInformationService  {
     this.clear();
   }
   public clear(): void {
-    this.pickup_moment = new Array();
-    this.pickup_shear_force = new Array();
+    // this.pickup_moment = new Array();
+    // this.pickup_shear_force = new Array();
     this.pickup_torsional_moment = new Array();
 
     this.specification1_list = new Array();
@@ -47,31 +47,31 @@ export class InputBasicInformationService  {
 
     const sp1 = this.get_specification1();
 
-    // 曲げモーメントテーブル
-    const keys_moment = this.default_pickup_moment(sp1);
-    // 古い入力があれば no の入力を 保持
-    const tmp_moment: any[] = new Array();
-    for(const def of keys_moment){
-      const old = this.pickup_moment.find(v=>v.id===def.id);
-      if(old!==undefined){
-        def.no = old.no;
-      }
-      tmp_moment.push(def);
-    }
-    this.pickup_moment = tmp_moment;
+    // // 曲げモーメントテーブル
+    // const keys_moment = this.default_pickup_moment(sp1);
+    // // 古い入力があれば no の入力を 保持
+    // const tmp_moment: any[] = new Array();
+    // for(const def of keys_moment){
+    //   const old = this.pickup_moment.find(v=>v.id===def.id);
+    //   if(old!==undefined){
+    //     def.no = old.no;
+    //   }
+    //   tmp_moment.push(def);
+    // }
+    // this.pickup_moment = tmp_moment;
 
-    // せん断力テーブル
-    const keys_shear = this.default_pickup_shear(sp1);
-    // 古い入力があれば no の入力を 保持
-    const tmp_shear: any[] = new Array();
-    for(const def of keys_shear){
-      const old = this.pickup_shear_force.find(v=>v.id===def.id);
-      if(old!==undefined){
-        def.no = old.no;
-      }
-      tmp_shear.push(def);
-    }
-    this.pickup_shear_force = tmp_shear;
+    // // せん断力テーブル
+    // const keys_shear = this.default_pickup_shear(sp1);
+    // // 古い入力があれば no の入力を 保持
+    // const tmp_shear: any[] = new Array();
+    // for(const def of keys_shear){
+    //   const old = this.pickup_shear_force.find(v=>v.id===def.id);
+    //   if(old!==undefined){
+    //     def.no = old.no;
+    //   }
+    //   tmp_shear.push(def);
+    // }
+    // this.pickup_shear_force = tmp_shear;
 
     // ねじりモーメントテーブル
     const keys_torsional = this.default_pickup_torsional(sp1);
@@ -102,23 +102,23 @@ export class InputBasicInformationService  {
       case 1: // 土木学会
 
         result = [
-          { id: 0, title: '耐久性 縁応力度検討用', no: null},
-          { id: 1, title: '耐久性 （永久荷重）', no: null},
+          // { id: 0, title: '耐久性 縁応力度検討用', no: null},
+          // { id: 1, title: '耐久性 （永久荷重）', no: null},
           { id: 2, title: '安全性 （疲労破壊）疲労限', no: null},
           { id: 3, title: '安全性 （疲労破壊）永久作用', no: null},
           { id: 4, title: '安全性 （疲労破壊）永久＋変動', no: null},
           { id: 5, title: '安全性 （破壊）', no: null},
-          { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
+          // { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
           { id: 7, title: '復旧性 （損傷）地震時', no: null},
-          { id: 8, title: '最小鉄筋量', no: null},
+          // { id: 8, title: '最小鉄筋量', no: null},
         ];
         break;
 
       case 2: // 港湾
 
         result = [
-          { id: 0, title: '使用限界 縁応力度検討用', no: null},
-          { id: 1, title: '使用限界 （永久荷重）', no: null},
+          // { id: 0, title: '使用限界 縁応力度検討用', no: null},
+          // { id: 1, title: '使用限界 （永久荷重）', no: null},
           { id: 3, title: '疲労限界　永久荷重', no: null},
           { id: 4, title: '疲労限界　永久＋変動', no: null},
           { id: 5, title: '終局限界', no: null},
@@ -131,51 +131,51 @@ export class InputBasicInformationService  {
     }
     return result;
   }
-  public set_pickup_moment(id: number, no: number){
-    const target = this.pickup_moment.find(e => e.id === id);
-    if(target === undefined) return;
-    target.no = no;
-  }
-  // せん断テーブルの初期値
-  private default_pickup_shear(specification1: number): any{
-    let result: any[] = new Array();
-    switch (specification1) {
-      case 0: // 鉄道
-      case 1: // 土木学会
-        result = [
-          { id: 0, title: '耐久性 せん断ひび割れ検討判定用', no: null},
-          { id: 1, title: '耐久性 （永久荷重）', no: null},
-          { id: 2, title: '耐久性 （変動荷重）', no: null},
-          { id: 3, title: '安全性 （疲労破壊）永久作用', no: null},
-          { id: 4, title: '安全性 （疲労破壊）永久＋変動', no: null},
-          { id: 5, title: '安全性 （破壊）', no: null},
-          { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
-          { id: 7, title: '復旧性 （損傷）地震時', no: null}
-        ];
-        break;
+  // public set_pickup_moment(id: number, no: number){
+  //   const target = this.pickup_moment.find(e => e.id === id);
+  //   if(target === undefined) return;
+  //   target.no = no;
+  // }
+  // // せん断テーブルの初期値
+  // private default_pickup_shear(specification1: number): any{
+  //   let result: any[] = new Array();
+  //   switch (specification1) {
+  //     case 0: // 鉄道
+  //     case 1: // 土木学会
+  //       result = [
+  //         // { id: 0, title: '耐久性 せん断ひび割れ検討判定用', no: null},
+  //         // { id: 1, title: '耐久性 （永久荷重）', no: null},
+  //         // { id: 2, title: '耐久性 （変動荷重）', no: null},
+  //         { id: 3, title: '安全性 （疲労破壊）永久作用', no: null},
+  //         { id: 4, title: '安全性 （疲労破壊）永久＋変動', no: null},
+  //         { id: 5, title: '安全性 （破壊）', no: null},
+  //         // { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
+  //         { id: 7, title: '復旧性 （損傷）地震時', no: null}
+  //       ];
+  //       break;
 
-      case 2: // 港湾
-        result = [
-          { id: 0, title: '使用限界 せん断ひび割れ検討判定用', no: null},
-          { id: 1, title: '使用限界 （永久荷重）', no: null},
-          { id: 2, title: '使用限界 （変動荷重）', no: null},
-          { id: 3, title: '疲労限界　永久荷重', no: null},
-          { id: 4, title: '疲労限界　永久＋変動', no: null},
-          { id: 5, title: '終局限界', no: null},
-          { id: 6, title: '地震時 使用限界', no: null},
-          { id: 7, title: '地震時 終局限界', no: null}
-        ];
-        break;
-      default:
-        // まだ対応していない
-    }
-    return result;
-  }
-  public set_pickup_shear_force(id: number, no: number){
-    const target = this.pickup_shear_force.find(e => e.id === id);
-    if(target === undefined) return;
-    target.no = no;
-  }
+  //     case 2: // 港湾
+  //       result = [
+  //         // { id: 0, title: '使用限界 せん断ひび割れ検討判定用', no: null},
+  //         // { id: 1, title: '使用限界 （永久荷重）', no: null},
+  //         // { id: 2, title: '使用限界 （変動荷重）', no: null},
+  //         { id: 3, title: '疲労限界　永久荷重', no: null},
+  //         { id: 4, title: '疲労限界　永久＋変動', no: null},
+  //         { id: 5, title: '終局限界', no: null},
+  //         { id: 6, title: '地震時 使用限界', no: null},
+  //         { id: 7, title: '地震時 終局限界', no: null}
+  //       ];
+  //       break;
+  //     default:
+  //       // まだ対応していない
+  //   }
+  //   return result;
+  // }
+  // public set_pickup_shear_force(id: number, no: number){
+  //   const target = this.pickup_shear_force.find(e => e.id === id);
+  //   if(target === undefined) return;
+  //   target.no = no;
+  // }
 
   // ねじりモーメントテーブルの初期値
   private default_pickup_torsional(specification1: number): any{
@@ -183,19 +183,23 @@ export class InputBasicInformationService  {
     switch (specification1) {
       case 0: // 鉄道
       case 1: // 土木学会
-        result = [
-          { id: 0, title: '耐久性 ねじりひび割れ検討判定用', no: null},
-          { id: 1, title: '耐久性 （永久荷重）', no: null},
+      result = [
+          // { id: 0, title: '耐久性 縁応力度検討用', no: null},
+          // { id: 1, title: '耐久性 （永久荷重）', no: null},
+          { id: 2, title: '安全性 （疲労破壊）疲労限', no: null},
+          { id: 3, title: '安全性 （疲労破壊）永久作用', no: null},
+          { id: 4, title: '安全性 （疲労破壊）永久＋変動', no: null},
           { id: 5, title: '安全性 （破壊）', no: null},
-          { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
-          { id: 7, title: '復旧性 （損傷）地震時', no: null}
+          // { id: 6, title: '復旧性 （損傷）地震時以外', no: null},
+          { id: 7, title: '復旧性 （損傷）地震時', no: null},
+          // { id: 8, title: '最小鉄筋量', no: null},
         ];
         break;
 
       case 2: // 港湾
         result = [
-          { id: 0, title: '使用限界 せん断ひび割れ検討判定用', no: null},
-          { id: 1, title: '使用限界 （永久荷重）', no: null},
+          // { id: 0, title: '使用限界 せん断ひび割れ検討判定用', no: null},
+          // { id: 1, title: '使用限界 （永久荷重）', no: null},
           { id: 5, title: '終局限界', no: null},
           { id: 6, title: '地震時 使用限界', no: null},
           { id: 7, title: '地震時 終局限界', no: null}
@@ -279,20 +283,20 @@ export class InputBasicInformationService  {
   }
 
 
-  public pickup_moment_no(id: number){
-    const old = this.pickup_moment.find(v=>v.id===id);
-    if(old!==undefined){
-      return this.helper.toNumber(old.no);
-    }
-    return null;
-  }
-  public pickup_shear_force_no(id: number){
-    const old = this.pickup_shear_force.find(v=>v.id===id);
-    if(old!==undefined){
-      return this.helper.toNumber(old.no);
-    }
-    return null;
-  }
+  // public pickup_moment_no(id: number){
+  //   const old = this.pickup_moment.find(v=>v.id===id);
+  //   if(old!==undefined){
+  //     return this.helper.toNumber(old.no);
+  //   }
+  //   return null;
+  // }
+  // public pickup_shear_force_no(id: number){
+  //   const old = this.pickup_shear_force.find(v=>v.id===id);
+  //   if(old!==undefined){
+  //     return this.helper.toNumber(old.no);
+  //   }
+  //   return null;
+  // }
   public pickup_torsional_moment_no(id: number){
     const old = this.pickup_torsional_moment.find(v=>v.id===id);
     if(old!==undefined){
@@ -337,28 +341,28 @@ export class InputBasicInformationService  {
     }
     const sp1 = this.get_specification1();
 
-    this.pickup_moment = this.default_pickup_moment(sp1);
-    for(let i=0; i<basic.pickup_moment.length; i++){
-      const e = this.pickup_moment[i];
-      const t = basic.pickup_moment[i];
-      if (t === undefined) { continue; }
-      for(const k of Object.keys(e)){
-        if(k in t){
-          e[k] = t[k];
-        }
-      }
-    }
+    // this.pickup_moment = this.default_pickup_moment(sp1);
+    // for(let i=0; i<basic.pickup_moment.length; i++){
+    //   const e = this.pickup_moment[i];
+    //   const t = basic.pickup_moment[i];
+    //   if (t === undefined) { continue; }
+    //   for(const k of Object.keys(e)){
+    //     if(k in t){
+    //       e[k] = t[k];
+    //     }
+    //   }
+    // }
 
-    this.pickup_shear_force = this.default_pickup_shear(sp1);
-    for(let i=0; i<basic.pickup_shear_force.length; i++){
-      const e = this.pickup_shear_force[i];
-      const t = basic.pickup_shear_force[i];
-      for(const k of Object.keys(e)){
-        if(k in t){
-          e[k] = t[k];
-        }
-      }
-    }
+    // this.pickup_shear_force = this.default_pickup_shear(sp1);
+    // for(let i=0; i<basic.pickup_shear_force.length; i++){
+    //   const e = this.pickup_shear_force[i];
+    //   const t = basic.pickup_shear_force[i];
+    //   for(const k of Object.keys(e)){
+    //     if(k in t){
+    //       e[k] = t[k];
+    //     }
+    //   }
+    // }
 
     this.pickup_torsional_moment = this.default_pickup_torsional(sp1);
     if('pickup_torsional_moment' in basic){
@@ -382,8 +386,8 @@ export class InputBasicInformationService  {
 
   public getSaveData(): any{
     return {
-      pickup_moment: this.pickup_moment,
-      pickup_shear_force: this.pickup_shear_force,
+      // pickup_moment: this.pickup_moment,
+      // pickup_shear_force: this.pickup_shear_force,
       pickup_torsional_moment: this.pickup_torsional_moment,
 
       specification1_list: this.specification1_list, // 適用

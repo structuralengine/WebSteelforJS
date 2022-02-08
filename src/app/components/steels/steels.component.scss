@@ -1,0 +1,32 @@
+.steel-contents {
+    position: relative;
+    float: left;
+
+    .left-contents {
+        // width: 100px;
+        position: relative;
+        float: left;
+        margin-right: 15px;
+
+        .specification1-fieldset {
+            margin-bottom: 70px;
+            label {
+                padding-left: 0.8em;
+            }
+        }
+    }
+
+    .right-contents {
+        position: relative;
+        float: left;
+
+        .specification2-fieldset {
+            // width: 200px;
+            margin-bottom: 0.8em;
+            label {
+                padding-left: 0.8em;
+            }
+        }
+    }
+
+}

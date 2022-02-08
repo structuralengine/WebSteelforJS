@@ -34,7 +34,9 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.setTitle(this.save.isManual());
+    const isManual = this.save.isManual();
+
+    this.setTitle(isManual);
 
     // グリッドの基本的な オプションを登録する
     this.options = {
@@ -43,8 +45,8 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       sortable: false,
       locale: "jp",
       height: this.tableHeight().toString(),
-      width: "auto",
-      numberCell: { show: this.save.isManual() }, // 行番号
+      width: 410,
+      numberCell: { show: isManual }, // 行番号
       colModel: this.columnHeaders,
       change: (evt, ui) => {
         for (const property of ui.updateList) {

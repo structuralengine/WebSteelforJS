@@ -39,7 +39,8 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.setTitle(this.save.isManual());
+    const isManual = this.save.isManual();
+    this.setTitle(isManual);
 
     this.table_datas = this.steel.getTableColumns();
 
@@ -51,11 +52,12 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         reactive: true,
         sortable: false,
         locale: "jp",
+        width: isManual ? 580: 600,
         height: this.tableHeight().toString(),
-        numberCell: { show: this.save.isManual() }, // 行番号
+        numberCell: { show: false }, // 行番号
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
-        freezeCols: this.save.isManual() ? 4 : 5,
+        freezeCols: isManual ? 3 : 4,
         change: (evt, ui) => {
           //this.saveData();
           this.three.changeData('steels', i);
@@ -202,7 +204,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   // 表の高さを計算する
   private tableHeight(): number {
     let containerHeight = window.innerHeight;
-    containerHeight -= 625;
+    containerHeight -= 100;
     return containerHeight;
   }
 

@@ -42,10 +42,10 @@ export class CalcSafetyTorsionalMomentService {
 
     this.DesignForceList = new Array();
 
-    // ねじりモーメントが計算対象でない場合は処理を抜ける
-    if (this.calc.print_selected.calculate_torsional_moment === false) {
-      return;
-    }
+    // // ねじりモーメントが計算対象でない場合は処理を抜ける
+    // if (this.calc.print_selected.calculate_torsional_moment === false) {
+    //   return;
+    // }
 
     const No5 = this.save.isManual()
       ? 5

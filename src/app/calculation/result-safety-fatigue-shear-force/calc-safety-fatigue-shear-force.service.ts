@@ -53,10 +53,10 @@ export class CalcSafetyFatigueShearForceService {
 
     this.DesignForceList = new Array();
 
-    // せん断力が計算対象でない場合は処理を抜ける
-    if (this.calc.print_selected.calculate_shear_force === false) {
-      return;
-    }
+    // // せん断力が計算対象でない場合は処理を抜ける
+    // if (this.calc.print_selected.calculate_shear_force === false) {
+    //   return;
+    // }
 
     // 列車本数の入力がない場合は処理を抜ける
     if (this.helper.toNumber(this.fatigue.train_A_count) === null &&
@@ -65,11 +65,11 @@ export class CalcSafetyFatigueShearForceService {
     }
 
     // 最小応力
-    const No3 = (this.save.isManual()) ? 3 : this.basic.pickup_shear_force_no(3);
+    const No3 = (this.save.isManual()) ? 3 : this.basic.pickup_torsional_moment_no(3);
     this.DesignForceList3 = this.force.getDesignForceList(
       'Vd', No3, false);
     // 最大応力
-    const No4 = (this.save.isManual()) ? 4 : this.basic.pickup_shear_force_no(4);
+    const No4 = (this.save.isManual()) ? 4 : this.basic.pickup_torsional_moment_no(4);
     this.DesignForceList = this.force.getDesignForceList(
       'Vd', No4);
 
