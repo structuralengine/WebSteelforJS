@@ -197,7 +197,6 @@ export class ThreePanelService {
     const child = new THREE.Group();
     for (const list of vertices) {
       const points = [];
-      // for (let num = 0; num < list.length - 1; num++) {
       for (const num of [0, 1, 2, 0, 2, 3]) {
         points.push(list.vertice[num])
       };
@@ -213,8 +212,9 @@ export class ThreePanelService {
       mesh['pos'] = list.position;
       child.add(mesh);
     }
+    // 重心位置を算出し、重心位置を原点に移動する
     const centroid: THREE.Vector3 = this.getCentroid(child);
-    child.position.set(centroid.x, centroid.y, centroid.z);// ここに重心位置を採用。(centroid.x, centroid.y, centroid.z)と置く
+    child.position.set(-centroid.x, -centroid.y, -centroid.z);
     this.panel_List.push(child);
     this.scene.add(child);
 
@@ -481,11 +481,49 @@ export class ThreePanelService {
 
   private getCentroid(child): THREE.Vector3 {
 
-    let centroid = new THREE.Vector3(3, 5, 0);
+    let Ax: number = 0;
+    let Ay: number = 0;
+    let Az: number = 0;
+    let A: number = 0;
     for (const mesh of child.children) {
       const vertice = mesh.vertice;
       const position = mesh.pos;
+      // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
+      const ab = new THREE.Vector3( vertice[1].x - vertice[0].x, 
+                                    vertice[1].y - vertice[0].y, 
+                                    vertice[1].z - vertice[0].z );
+      const ac = new THREE.Vector3( vertice[2].x - vertice[0].x, 
+                                    vertice[2].y - vertice[0].y, 
+                                    vertice[2].z - vertice[0].z );
+      const ad = new THREE.Vector3( vertice[3].x - vertice[0].x, 
+                                    vertice[3].y - vertice[0].y, 
+                                    vertice[3].z - vertice[0].z );
+      // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
+      const centroid1 = new THREE.Vector3(
+        (0 + ab.x + ac.x) / 3 + vertice[0].x, 
+        (0 + ab.y + ac.y) / 3 + vertice[0].y, 
+        (0 + ab.z + ac.z) / 3 + vertice[0].z, 
+      )
+      const area1: number = ( (ab.y * ac.z - ab.z * ac.y) ** 2
+                            + (ab.z * ac.x - ab.x * ac.z) ** 2
+                            + (ab.x * ac.y - ab.y * ac.x) ** 2) ** 0.5 / 2
+      // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
+      const centroid2 = new THREE.Vector3(
+        (0 + ac.x + ad.x) / 3 + vertice[0].x, 
+        (0 + ac.y + ad.y) / 3 + vertice[0].y, 
+        (0 + ac.z + ad.z) / 3 + vertice[0].z, 
+      )
+      const area2: number = ( (ac.y * ad.z - ac.z * ad.y) ** 2
+                            + (ac.z * ad.x - ac.x * ad.z) ** 2
+                            + (ac.x * ad.y - ac.y * ad.x) ** 2) ** 0.5 / 2
+      // 2つの三角形から, 四角形の重心（centroid0）と面積（area0）を算出し加算する
+      const area0 = area1 + area2;
+      Ax += ((centroid1.x*area1 + centroid2.x*area2 ) / area0 + position.x) * area0;
+      Ay += ((centroid1.y*area1 + centroid2.y*area2 ) / area0 + position.y) * area0;
+      Az += ((centroid1.z*area1 + centroid2.z*area2 ) / area0 + position.z) * area0;
+      A  += area0;
     }
+    const centroid = new THREE.Vector3(Ax / A, Ay / A, Az / A);
 
     return centroid
     
