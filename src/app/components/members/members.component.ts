@@ -45,7 +45,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       sortable: false,
       locale: "jp",
       height: this.tableHeight().toString(),
-      width: 410,
+      width: 400,
       numberCell: { show: isManual }, // 行番号
       colModel: this.columnHeaders,
       change: (evt, ui) => {
@@ -217,7 +217,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         dataType: "float",
         dataIndx: "g_no",
         sortable: false,
-        width: 85,
+        width: 80,
       },
       {
         title: "部材名",

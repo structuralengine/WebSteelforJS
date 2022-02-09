@@ -79,12 +79,14 @@ export class SceneService {
       this.scene.remove(this.camera);
     }
     this.camera = new THREE.OrthographicCamera(
-      -Width/100, Width/100,
-      Height/100, -Height/100,
+      -Width / 100,
+      Width / 100,
+      Height / 100,
+      -Height / 100,
       -10,
       10
     );
-    this.camera.position.set(0,0,1);
+    this.camera.position.set(0, 0, 1);
     this.camera.name = "camera";
     this.scene.add(this.camera);
   }

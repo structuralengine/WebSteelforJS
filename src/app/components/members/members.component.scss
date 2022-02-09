@@ -1,14 +1,14 @@
-.ht-container {
-    width: 810px;
-    float: left;
+.member {
+    display: flex;
 }
 
 .datasheet {
     width: fit-content;
 }
 
-.footer {
+.guide {
     margin-top: 10px;
+    margin-left: 15px;
     p {
         margin-top: 10px;
         margin-bottom: 0;
@@ -21,18 +21,18 @@
         font-size: 14px;
         text-align: center;
         padding: 0;
-    }
-    .left-table {
-        float: left;
-        margin-left: 15px;
-        td {
-            &:last-child {
-                img {
-                    width: 100px;
-                    height: 100px;
-                    border: 0;
-                }
+        &:last-child {
+            img {
+                width: 100px;
+                height: 100px;
+                border: 0;
             }
         }
+    }
+}
+
+@media screen and (max-width: 890px) {
+    .member {
+        display: block;
     }
 }
