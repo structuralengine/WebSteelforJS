@@ -1,13 +1,9 @@
 .steel-contents {
-    position: relative;
-    float: left;
-
+    display: flex;
     .left-contents {
         // width: 100px;
-        position: relative;
-        float: left;
         margin-right: 15px;
-
+        order: 1;
         .specification1-fieldset {
             margin-bottom: 70px;
             label {
@@ -15,11 +11,8 @@
             }
         }
     }
-
     .right-contents {
-        position: relative;
-        float: left;
-
+        order: 2;
         .specification2-fieldset {
             // width: 200px;
             margin-bottom: 0.8em;
@@ -28,5 +21,10 @@
             }
         }
     }
+}
 
+@media screen and (max-width: 1250px) {
+    .steel-contents {
+        display: block;
+    }
 }

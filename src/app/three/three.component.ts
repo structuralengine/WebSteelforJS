@@ -1,22 +1,26 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, HostListener, NgZone, OnDestroy } from '@angular/core';
-import * as THREE from 'three';
-import { ThreePanelService } from './geometry/three-face.service';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  HostListener,
+  NgZone,
+  OnDestroy,
+} from "@angular/core";
+import * as THREE from "three";
+import { ThreePanelService } from "./geometry/three-face.service";
 
-import { SceneService } from './scene.service';
+import { SceneService } from "./scene.service";
 
 @Component({
-  selector: 'app-three',
-  templateUrl: './three.component.html',
-  styleUrls: ['./three.component.scss'],
+  selector: "app-three",
+  templateUrl: "./three.component.html",
+  styleUrls: ["./three.component.scss"],
 })
 export class ThreeComponent implements AfterViewInit, OnDestroy {
+  @ViewChild("myCanvas", { static: true }) private canvasRef!: ElementRef;
 
-  @ViewChild('myCanvas', { static: true }) private canvasRef!: ElementRef;
-
-
-  constructor(private ngZone: NgZone,
-              private scene: SceneService) {
-
+  constructor(private ngZone: NgZone, private scene: SceneService) {
     THREE.Object3D.DefaultUp.set(0, 0, 1);
   }
 
@@ -25,50 +29,55 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.scene.OnInit(this.getAspectRatio(),
-                      this.canvas,
-                      devicePixelRatio,
-                      window.innerWidth,
-                      window.innerHeight);
+    let w = window.innerWidth - 850;
+    if (window.innerWidth < 1250) {
+      w = window.innerWidth - 220;
+    }
+    let h = (w * 9) / 16;
+    this.scene.OnInit(
+      this.getAspectRatio(),
+      this.canvas,
+      devicePixelRatio,
+      w,
+      h
+    );
     // レンダリングする
     this.animate();
-
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   animate(): void {
     // We have to run this outside angular zones,
     // because it could trigger heavy changeDetection cycles.
     this.ngZone.runOutsideAngular(() => {
-      window.addEventListener('DOMContentLoaded', () => {
-      this.scene.render();
+      window.addEventListener("DOMContentLoaded", () => {
+        this.scene.render();
       });
     });
   }
 
   // マウスクリック時のイベント
-  @HostListener('mousedown', ['$event'])
-  public onMouseDown(event: MouseEvent) {
-  }
+  @HostListener("mousedown", ["$event"])
+  public onMouseDown(event: MouseEvent) {}
 
   // マウスクリック時のイベント
-  @HostListener('mouseup', ['$event'])
-  public onMouseUp(event: MouseEvent) {
-  }
+  @HostListener("mouseup", ["$event"])
+  public onMouseUp(event: MouseEvent) {}
 
   // マウス移動時のイベント
-  @HostListener('mousemove', ['$event'])
-  public onMouseMove(event: MouseEvent) {
-  }
+  @HostListener("mousemove", ["$event"])
+  public onMouseMove(event: MouseEvent) {}
 
   // ウインドウがリサイズした時のイベント処理
-  @HostListener('window:resize', ['$event'])
+  @HostListener("window:resize", ["$event"])
   public onResize(event: Event) {
-    this.scene.onResize(this.getAspectRatio(),
-                        window.innerWidth,
-                        window.innerHeight - 120);
+    let w = window.innerWidth - 850;
+    if (window.innerWidth < 1250) {
+      w = window.innerWidth - 220;
+    }
+    let h = (w * 9) / 16;
+    this.scene.onResize(this.getAspectRatio(), w, h);
   }
 
   private getAspectRatio(): number {
@@ -77,5 +86,4 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
     }
     return this.canvas.clientWidth / this.canvas.clientHeight;
   }
-
 }

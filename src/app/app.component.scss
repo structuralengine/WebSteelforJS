@@ -77,3 +77,9 @@ a.disabled {
     margin-left: 220px;
     padding: 70px 10px 10px 10px;
 }
+
+@media screen and (max-width: 767px) {
+    .c-contentsArea {
+        padding: 124px 10px 10px 10px;
+    }
+}
