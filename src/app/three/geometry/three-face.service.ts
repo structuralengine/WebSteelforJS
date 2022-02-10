@@ -68,7 +68,8 @@ export class ThreePanelService {
   public shape(vertexlist /* , shape: string */): void {
     const shape = vertexlist[0]["shape"];
     // データが有効か確認する
-    const flag = this.getEnableSteel(vertexlist, shape);
+    //const flag = this.getEnableSteel(vertexlist, shape);
+    const flag = true;
     let vertices;
 
     if (flag) {
@@ -117,39 +118,59 @@ export class ThreePanelService {
 
     const scale = 0.1;
     // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
+    let b1 =
       vertexlist[0]["steel_b"] !== undefined
         ? vertexlist[0]["steel_b"] * scale
         : 0;
-    const h1 =
+    let h1 =
       vertexlist[0]["steel_h"] !== undefined
         ? vertexlist[0]["steel_h"] * scale
         : 0;
-    const w1 =
+    let w1 =
       vertexlist[0]["steel_w"] !== undefined
         ? vertexlist[0]["steel_w"] * scale
         : 0;
-    const b2 =
+    let b2 =
       vertexlist[1]["steel_b"] !== undefined
         ? vertexlist[1]["steel_b"] * scale
         : 0;
-    const h2 =
+    let h2 =
       vertexlist[1]["steel_h"] !== undefined
         ? vertexlist[1]["steel_h"] * scale
         : 0;
 
-    const b3 =
+    let b3 =
       vertexlist[2]["steel_b"] !== undefined
         ? vertexlist[2]["steel_b"] * scale
         : 0;
-    const h3 =
+    let h3 =
       vertexlist[2]["steel_h"] !== undefined
         ? vertexlist[2]["steel_h"] * scale
         : 0;
-    const w3 =
+    let w3 =
       vertexlist[2]["steel_w"] !== undefined
         ? vertexlist[2]["steel_w"] * scale
         : 0;
+
+    // 空白セルがあったときの処理
+    if (h3 === 0) {
+      h3 = h1;
+    }
+    if (h1 === 0) {
+      h1 = h3;
+    }
+    if (b3 === 0) {
+      b3 = b1;
+    }
+    if (b1 === 0) {
+      b1 = b3;
+    }
+    if (w1 === 0) {
+      w1 = b1 / 2;
+    }
+    if (w3 === 0) {
+      w3 = b3 / 2;
+    }
 
     // パターンごとに分岐
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
@@ -190,39 +211,59 @@ export class ThreePanelService {
 
     const scale = 0.1;
     // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
+    let b1 =
       vertexlist[0]["steel_b"] !== undefined
         ? vertexlist[0]["steel_b"] * scale
         : 0;
-    const h1 =
+    let h1 =
       vertexlist[0]["steel_h"] !== undefined
         ? vertexlist[0]["steel_h"] * scale
         : 0;
-    const w1 =
+    let w1 =
       vertexlist[0]["steel_w"] !== undefined
         ? vertexlist[0]["steel_w"] * scale
         : 0;
-    const b2 =
+    let b2 =
       vertexlist[1]["steel_b"] !== undefined
         ? vertexlist[1]["steel_b"] * scale
         : 0;
-    const h2 =
+    let h2 =
       vertexlist[1]["steel_h"] !== undefined
         ? vertexlist[1]["steel_h"] * scale
         : 0;
 
-    const b3 =
+    let b3 =
       vertexlist[2]["steel_b"] !== undefined
         ? vertexlist[2]["steel_b"] * scale
         : 0;
-    const h3 =
+    let h3 =
       vertexlist[2]["steel_h"] !== undefined
         ? vertexlist[2]["steel_h"] * scale
         : 0;
-    const w3 =
+    let w3 =
       vertexlist[2]["steel_w"] !== undefined
         ? vertexlist[2]["steel_w"] * scale
         : 0;
+
+    // 空白セルがあったときの処理
+    if (h3 === 0) {
+      h3 = h1;
+    }
+    if (h1 === 0) {
+      h1 = h3;
+    }
+    if (b3 === 0) {
+      b3 = b1;
+    }
+    if (b1 === 0) {
+      b1 = b3;
+    }
+    if (w1 === 0) {
+      w1 = h1 / 2;
+    }
+    if (w3 === 0) {
+      w3 = h3 / 2;
+    }
 
     // パターンごとに分岐
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
@@ -263,69 +304,134 @@ export class ThreePanelService {
 
     const scale = 0.1;
     // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
+    let b1 =
       vertexlist[0]["steel_b"] !== undefined
         ? vertexlist[0]["steel_b"] * scale
         : 0;
-    const h1 =
+    let h1 =
       vertexlist[0]["steel_h"] !== undefined
         ? vertexlist[0]["steel_h"] * scale
         : 0;
-    const w1 =
+    let w1 =
       vertexlist[0]["steel_w"] !== undefined
         ? vertexlist[0]["steel_w"] * scale
         : 0;
-    const b2 =
+    let b2 =
       vertexlist[1]["steel_b"] !== undefined
         ? vertexlist[1]["steel_b"] * scale
         : 0;
-    const h2 =
+    let h2 =
       vertexlist[1]["steel_h"] !== undefined
         ? vertexlist[1]["steel_h"] * scale
         : 0;
-    const w2 =
+    let w2 =
       vertexlist[1]["steel_w"] !== undefined
         ? vertexlist[1]["steel_w"] * scale
         : 0;
-    const b3 =
+    let b3 =
       vertexlist[2]["steel_b"] !== undefined
         ? vertexlist[2]["steel_b"] * scale
         : 0;
-    const h3 =
+    let h3 =
       vertexlist[2]["steel_h"] !== undefined
         ? vertexlist[2]["steel_h"] * scale
         : 0;
-    const w3 =
+    let w3 =
       vertexlist[2]["steel_w"] !== undefined
         ? vertexlist[2]["steel_w"] * scale
         : 0;
-    const b4 =
+    let b4 =
       vertexlist[3]["steel_b"] !== undefined
         ? vertexlist[3]["steel_b"] * scale
         : 0;
-    const h4 =
+    let h4 =
       vertexlist[3]["steel_h"] !== undefined
         ? vertexlist[3]["steel_h"] * scale
         : 0;
-    const w4 =
+    let w4 =
       vertexlist[3]["steel_w"] !== undefined
         ? vertexlist[3]["steel_w"] * scale
         : 0;
-    const b5 =
+    let b5 =
       vertexlist[4]["steel_b"] !== undefined
         ? vertexlist[4]["steel_b"] * scale
         : 0;
-    const h5 =
+    let h5 =
       vertexlist[4]["steel_h"] !== undefined
         ? vertexlist[4]["steel_h"] * scale
         : 0;
-    const w5 =
+    let w5 =
       vertexlist[4]["steel_w"] !== undefined
         ? vertexlist[4]["steel_w"] * scale
         : 0;
 
+    // 空白セルがあったときの処理
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (b4 === 0) {
+      b4 = b1;
+    }
+    if (b1 === 0) {
+      b1 = b4;
+    }
+
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (h3 === 0) {
+      h3 = h2;
+    }
+    if (h2 === 0) {
+      h2 = h3;
+    }
+    if (h4 === 0) {
+      h4 = h1;
+    }
+    if (h1 === 0) {
+      h1 = h4;
+    }
+
+    if (w3 === 0) {
+      w3 = w2;
+    }
+    if (w2 === 0) {
+      w2 = w3;
+    }
+
+    if (w1 === 0) {
+      w1 = (b1 - w2) / 2;
+    }
+
     // パターンごとに分岐
     const PIflag = w2 > b4 || w3 > b4;
+
+    // 空白セルがあったときの処理
+    if (PIflag) {
+      if (b5 === 0) {
+        b5 = b4;
+      }
+      if (h5 === 0) {
+        h5 = h4;
+      }
+      if (w4 === 0) {
+        w4 = b4 / 2;
+      }
+      if (w5 === 0) {
+        w5 = b5 / 2;
+      }
+    } else {
+      if (w4 === 0) {
+        w4 = (b4 - w3) / 2;
+      }
+    }
+
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
     ////////// 1部材について //////////
     // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
@@ -435,6 +541,7 @@ export class ThreePanelService {
       list.vertice.push(new THREE.Vector3(b5, -h5, 0));
       list.vertice.push(new THREE.Vector3(0, -h5, 0));
       list.position = new THREE.Vector3(w1 + (w2 + w3) / 2 - w5, -(h1 + h3), 0);
+      vertices.push(list); // 頂点情報を追加
     }
 
     return vertices;
@@ -655,13 +762,13 @@ export class ThreePanelService {
     if (shape === "I形" || shape === "H形") {
       until = 3;
     } else if (shape === "箱形/π形") {
-      until = 4;
+      until = 1;
     } else if (shape === "鋼管") {
       until = 1;
     } else {
       return false;
     }
-    // bとhの情報がなければ、falseでリターンし、描画を中止する
+    // bとhの情報がなければ、falseでリターンし、描11画を中止する
     let count: number = 1;
     for (const key of Object.keys(vertexlist)) {
       const row = vertexlist[key];
