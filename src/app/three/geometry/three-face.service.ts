@@ -413,17 +413,19 @@ export class ThreePanelService {
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
     ////////// 1部材について //////////
     // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
-    if (h2 === h3 || PIflag === true) {
+    // if (h2 === h3 || PIflag === true) {
+    if (h2 === h3) {
       list.vertice.push(new THREE.Vector3(0, 0, 0));
       list.vertice.push(new THREE.Vector3(b1, 0, 0));
       list.vertice.push(new THREE.Vector3(b1, -h1, 0));
       list.vertice.push(new THREE.Vector3(0, -h1, 0));
       list.position = new THREE.Vector3(0, 0, 0);
     } else {
-      // 未計算状態
+      // ななめ
+      let y = ((h3 - h2) / w2) * b1;
       list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b1, 0, 0));
-      list.vertice.push(new THREE.Vector3(b1, -h1, 0));
+      list.vertice.push(new THREE.Vector3(b1, y, 0));
+      list.vertice.push(new THREE.Vector3(b1, y - h1, 0));
       list.vertice.push(new THREE.Vector3(0, -h1, 0));
       list.position = new THREE.Vector3(0, 0, 0);
     }
@@ -433,27 +435,67 @@ export class ThreePanelService {
     list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
     // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
     if (w2 === w3) {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2, -h2, 0));
-      list.vertice.push(new THREE.Vector3(0, -h2, 0));
-      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      // if (h2 === h3) {
+      // } else {
+      // }
     } else if (w2 < w3) {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2 - (w3 - w2) / 2, -h2, 0));
-      list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2, 0));
       // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
       // 分岐を追加したら、コメントを削除
-      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 - (w3 - w2) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 - (w3 - w2) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
     } else {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2, 0, 0));
-      list.vertice.push(new THREE.Vector3(b2 + (w2 - w3) / 2, -h2, 0));
-      list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2, 0));
       // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
       // 分岐を追加したら、コメントを削除
-      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 + (w2 - w3) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 + (w2 - w3) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
     }
     vertices.push(list); // 頂点情報を追加
 
@@ -461,27 +503,61 @@ export class ThreePanelService {
     list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
     // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
     if (w2 === w3) {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3, -h3, 0));
-      list.vertice.push(new THREE.Vector3(0, -h3, 0));
-      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, -h3, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h3 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
     } else if (w2 < w3) {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3 + (w3 - w2) / 2, -h3, 0));
-      list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3, 0));
       // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
       // 分岐を追加したら、コメントを削除
-      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 + (w3 - w2) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 + (w3 - w2) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
     } else {
-      list.vertice.push(new THREE.Vector3(0, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3, 0, 0));
-      list.vertice.push(new THREE.Vector3(b3 - (w2 - w3) / 2, -h3, 0));
-      list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3, 0));
       // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
       // 分岐を追加したら、コメントを削除
-      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 - (w2 - w3) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 - (w2 - w3) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
     }
     vertices.push(list); // 頂点情報を追加
 
@@ -496,12 +572,10 @@ export class ThreePanelService {
       // box型であれば
       if (h2 === h3) {
         list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
-      } else if (h2 > h3) {
-        // 未計算状態. 計算後にコメントを削除
-        list.position = new THREE.Vector3(w1 - w4, -h1 - h2, 0); // パターンB
       } else {
         // 未計算状態. 計算後にコメントを削除
-        list.position = new THREE.Vector3(w1 - w4, -h1 - h2, 0); // パターンC
+        let y = ((h3 - h2) / w2) * w1 - h1 - h2;
+        list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, y, 0); // パターンC
       }
     } else {
       // PI型であれば
