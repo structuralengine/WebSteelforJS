@@ -189,67 +189,95 @@ export class ThreePanelService {
   }
 
   private createPanel_box(vertexlist): void {
-    // this.ClearData();
+    // this.ClearData();// memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
+
+    // 四角形の頂点を回収する
+    const vertices = this.getBoxVertices(vertexlist);
+    
+    const child = new THREE.Group();
+    for (const list of vertices) {
+      const points = [];
+      for (const num of [0, 1, 2, 0, 2, 3]) {
+        points.push(list.vertice[num])
+      };
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x3366cc,
+        side: THREE.DoubleSide,
+      });
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(list.position.x, list.position.y, list.position.z);
+      mesh['vertice'] = list.vertice;
+      mesh['pos'] = list.position;
+      child.add(mesh);
+    }
+    // 重心位置を算出し、重心位置を原点に移動する
+    const centroid: THREE.Vector3 = this.getCentroid(child);
+    child.position.set(-centroid.x, -centroid.y, -centroid.z);
+    this.panel_List.push(child);
+    this.scene.add(child);
+
 
     // vertexlistの中から必要なデータだけとりたい，かつスケールを変える
-    let newList = {};
-    for (let i = 1; i <= 5; i++) {
-      let secret = i - 2;
-      newList["b" + i] =
-        vertexlist[i - 1]["steel_b"] == void 0
-          ? newList["b" + secret]
-          : vertexlist[i - 1]["steel_b"] * 0.1;
-      newList["h" + i] =
-        vertexlist[i - 1]["steel_h"] == void 0
-          ? newList["h" + secret]
-          : vertexlist[i - 1]["steel_h"] * 0.1;
-      newList["w" + i] =
-        vertexlist[i - 1]["steel_w1"] == void 0
-          ? newList["w" + secret]
-          : vertexlist[i - 1]["steel_w"] * 0.1;
-    }
+    // let newList = {};
+    // for (let i = 1; i <= 5; i++) {
+    //   let secret = i - 2;
+    //   newList["b" + i] =
+    //     vertexlist[i - 1]["steel_b"] == void 0
+    //       ? newList["b" + secret]
+    //       : vertexlist[i - 1]["steel_b"] * 0.1;
+    //   newList["h" + i] =
+    //     vertexlist[i - 1]["steel_h"] == void 0
+    //       ? newList["h" + secret]
+    //       : vertexlist[i - 1]["steel_h"] * 0.1;
+    //   newList["w" + i] =
+    //     vertexlist[i - 1]["steel_w1"] == void 0
+    //       ? newList["w" + secret]
+    //       : vertexlist[i - 1]["steel_w"] * 0.1;
+    // }
 
-    let w2 = newList["w2"];
-    let b3 = newList["b3"];
+    // let w2 = newList["w2"];
+    // let b3 = newList["b3"];
 
-    let PIflg = w2 < b3 ? false : true;
-    let boxJud = PIflg == false ? 4 : 5;
-    let diago = false;
+    // let PIflg = w2 < b3 ? false : true;
+    // let boxJud = PIflg == false ? 4 : 5;
+    // let diago = false;
 
-    newList["x1"] = 0;
-    newList["x2"] = -(newList["b1"] / 2 - newList["w1"]);
+    // newList["x1"] = 0;
+    // newList["x2"] = -(newList["b1"] / 2 - newList["w1"]);
     // newList["x3"] = newList["b3"] / 2 - newList["w3"] - newList["w2"] / 2;
-    newList["x3"] = newList["x2"] + newList["b3"] / 2 - newList["w3"];
-    newList["x4"] = newList["x2"] + newList["w2"];
-    newList["x5"] = newList["x4"] + newList["b5"] / 2 - newList["w5"];
+    // newList["x3"] = newList["x2"] + newList["b3"] / 2 - newList["w3"];
+    // newList["x4"] = newList["x2"] + newList["w2"];
+    // newList["x5"] = newList["x4"] + newList["b5"] / 2 - newList["w5"];
 
-    if (newList["b1"] <= newList["w2"]) {
-      newList["y1"] = newList["h2"] / 2 - newList["h1"] / 2;
-    } else {
-      newList["y1"] = newList["h1"] / 2 + newList["h2"] / 2;
-    }
-    newList["y2"] = 0;
-    newList["y3"] = -(newList["h2"] / 2 + newList["h3"] / 2);
-    if (PIflg == false) {
-      newList["y4"] = -(newList["h2"] / 2 - newList["h4"] / 2);
-      const points = [];
-      if (newList["h2"] !== newList["h4"]) {
-        let x1 = newList["x2"] + newList["b2"] / 2;
-        let y1 = newList["y2"] + newList["h2"] / 2;
-        let x2 = newList["x4"] - newList["b4"] / 2;
-        let y2 = newList["y4"] + newList["h4"] / 2;
-        let x3 = x1;
-        let y3 = y1 - newList["h1"];
-        let x4 = x2;
-        let y4 = y2 - newList["h1"];
+    // if (newList["b1"] <= newList["w2"]) {
+    //   newList["y1"] = newList["h2"] / 2 - newList["h1"] / 2;
+    // } else {
+    //   newList["y1"] = newList["h1"] / 2 + newList["h2"] / 2;
+    // }
+    // newList["y2"] = 0;
+    // newList["y3"] = -(newList["h2"] / 2 + newList["h3"] / 2);
+    // if (PIflg == false) {
+    //   newList["y4"] = -(newList["h2"] / 2 - newList["h4"] / 2);
+    //   const points = [];
+    //   if (newList["h2"] !== newList["h4"]) {
+    //     let x1 = newList["x2"] + newList["b2"] / 2;
+    //     let y1 = newList["y2"] + newList["h2"] / 2;
+    //     let x2 = newList["x4"] - newList["b4"] / 2;
+    //     let y2 = newList["y4"] + newList["h4"] / 2;
+    //     let x3 = x1;
+    //     let y3 = y1 - newList["h1"];
+    //     let x4 = x2;
+    //     let y4 = y2 - newList["h1"];
 
         // const geometry2 = new THREE.PlaneGeometry(20, 20, 1, 1);
-        points.push(new THREE.Vector3(x1, y1, 0));
-        points.push(new THREE.Vector3(x2, y2, 0));
-        points.push(new THREE.Vector3(x3, y3, 0));
-        points.push(new THREE.Vector3(x2, y2, 0));
-        points.push(new THREE.Vector3(x4, y4, 0));
-        points.push(new THREE.Vector3(x3, y3, 0));
+        // points.push(new THREE.Vector3(x1, y1, 0));
+        // points.push(new THREE.Vector3(x2, y2, 0));
+        // points.push(new THREE.Vector3(x3, y3, 0));
+        // points.push(new THREE.Vector3(x2, y2, 0));
+        // points.push(new THREE.Vector3(x4, y4, 0));
+        // points.push(new THREE.Vector3(x3, y3, 0));
 
         // var material = new THREE.MeshBasicMaterial({ color: 0x8b0000 });
         // const points = [];
@@ -260,24 +288,24 @@ export class ThreePanelService {
         // const mesh = new THREE.Mesh(geometry, material);
         // this.panel_List.push(mesh);
         // this.scene.add(mesh);
-        diago = true;
-        var geometry = new THREE.BufferGeometry().setFromPoints(points);
+        // diago = true;
+        // var geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-        var shape = new THREE.Shape(points);
-        const material = new THREE.MeshBasicMaterial({
-          color: 0x3366cc,
-          side: THREE.DoubleSide,
-        });
-        const mesh = new THREE.Mesh(geometry, material);
-        this.panel_List.push(mesh);
-        this.scene.add(mesh);
-      }
-    } else {
-      newList["y4"] = newList["h2"] / 2 - newList["h4"] / 2;
-    }
-    newList["y5"] = newList["y4"] - newList["h4"] / 2 - newList["h5"] / 2;
+        // var shape = new THREE.Shape(points);
+        // const material = new THREE.MeshBasicMaterial({
+        //   color: 0x3366cc,
+        //   side: THREE.DoubleSide,
+        // });
+        // const mesh = new THREE.Mesh(geometry, material);
+        // this.panel_List.push(mesh);
+        // this.scene.add(mesh);
+      // }
+    // } else {
+    //   newList["y4"] = newList["h2"] / 2 - newList["h4"] / 2;
+    // }
+    // newList["y5"] = newList["y4"] - newList["h4"] / 2 - newList["h5"] / 2;
 
-    for (let i = diago ? 2 : 1; i <= boxJud; i++) {
+    // for (let i = diago ? 2 : 1; i <= boxJud; i++) {
       // 三次元
       // let geometry = new THREE.BoxBufferGeometry(
       //   newList["b" + i],
@@ -286,35 +314,219 @@ export class ThreePanelService {
       // );
 
       // 二次元
-      let geometry = new THREE.PlaneBufferGeometry(
-        newList["b" + i],
-        newList["h" + i],
-        1,
-        1
-      );
-      let material = new THREE.MeshBasicMaterial({
-        color: 0x8b0000,
-        side: THREE.DoubleSide,
-        opacity: 0.6,
-      });
-      let plane = new THREE.Mesh(geometry, material);
-      plane.name = "plane";
-      plane.position.set(newList["x" + i], newList["y" + i], 0);
-      this.scene.add(plane);
-      this.panel_List.push(plane);
+    //   let geometry = new THREE.PlaneBufferGeometry(
+    //     newList["b" + i],
+    //     newList["h" + i],
+    //     1,
+    //     1
+    //   );
+    //   let material = new THREE.MeshBasicMaterial({
+    //     color: 0x8b0000,
+    //     side: THREE.DoubleSide,
+    //     opacity: 0.6,
+    //   });
+    //   let plane = new THREE.Mesh(geometry, material);
+    //   plane.name = "plane";
+    //   plane.position.set(newList["x" + i], newList["y" + i], 0);
+    //   this.scene.add(plane);
+    //   this.panel_List.push(plane);
 
       // 三次元
       // geometry = new THREE.BoxBufferGeometry();
 
       // 二次元
-      geometry = new THREE.PlaneBufferGeometry();
+    //   geometry = new THREE.PlaneBufferGeometry();
 
       // if (w2 < b3) {
       //   this.shapeOfBox(newList);
       // } else {
       //   this.shapeOfPi(newList);
       // }
+    // }
+  }
+  private getBoxVertices(vertexlist){
+    
+    const vertices = []; // returnする頂点情報
+
+    const scale = 0.1;
+    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
+    const b1 = (vertexlist[0]['steel_b'] !== undefined) ? vertexlist[0]['steel_b'] * scale : 0;
+    const h1 = (vertexlist[0]['steel_h'] !== undefined) ? vertexlist[0]['steel_h'] * scale : 0;
+    const w1 = (vertexlist[0]['steel_w'] !== undefined) ? vertexlist[0]['steel_w'] * scale : 0;
+    const b2 = (vertexlist[1]['steel_b'] !== undefined) ? vertexlist[1]['steel_b'] * scale : 0;
+    const h2 = (vertexlist[1]['steel_h'] !== undefined) ? vertexlist[1]['steel_h'] * scale : 0;
+    const w2 = (vertexlist[1]['steel_w'] !== undefined) ? vertexlist[1]['steel_w'] * scale : 0;
+    const b3 = (vertexlist[2]['steel_b'] !== undefined) ? vertexlist[2]['steel_b'] * scale : 0;
+    const h3 = (vertexlist[2]['steel_h'] !== undefined) ? vertexlist[2]['steel_h'] * scale : 0;
+    const w3 = (vertexlist[2]['steel_w'] !== undefined) ? vertexlist[2]['steel_w'] * scale : 0;
+    const b4 = (vertexlist[3]['steel_b'] !== undefined) ? vertexlist[3]['steel_b'] * scale : 0;
+    const h4 = (vertexlist[3]['steel_h'] !== undefined) ? vertexlist[3]['steel_h'] * scale : 0;
+    const w4 = (vertexlist[3]['steel_w'] !== undefined) ? vertexlist[3]['steel_w'] * scale : 0;
+    const b5 = (vertexlist[4]['steel_b'] !== undefined) ? vertexlist[4]['steel_b'] * scale : 0;
+    const h5 = (vertexlist[4]['steel_h'] !== undefined) ? vertexlist[4]['steel_h'] * scale : 0;
+    const w5 = (vertexlist[4]['steel_w'] !== undefined) ? vertexlist[4]['steel_w'] * scale : 0;
+
+    // パターンごとに分岐
+    const PIflag = (w2 > b4 || w3 > b4);
+    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }
+    ////////// 1部材について //////////
+    // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
+    if (h2 === h3 || PIflag === true) {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, -h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
+    } else {
+      // 未計算状態
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, -h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
     }
+    vertices.push(list);  // 頂点情報を追加
+
+    ////////// 2部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2, -h2, 0));
+      list.vertice.push(new THREE.Vector3(0, -h2, 0));
+      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+    } else if (w2 < w3){
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2 - (w3-w2)/2, -h2, 0));
+      list.vertice.push(new THREE.Vector3(-(w3-w2)/2, -h2, 0));
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+    } else {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2, 0, 0));
+      list.vertice.push(new THREE.Vector3(b2 + (w2-w3)/2, -h2, 0));
+      list.vertice.push(new THREE.Vector3((w2-w3)/2, -h2, 0));
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+    }
+    vertices.push(list);  // 頂点情報を追加
+
+    ////////// 3部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3, -h3, 0));
+      list.vertice.push(new THREE.Vector3(0, -h3, 0));
+      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+    } else if (w2 < w3){
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3 + (w3-w2)/2, -h3, 0));
+      list.vertice.push(new THREE.Vector3((w3-w2)/2, -h3, 0));
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+    } else {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3, 0, 0));
+      list.vertice.push(new THREE.Vector3(b3 - (w2-w3)/2, -h3, 0));
+      list.vertice.push(new THREE.Vector3(-(w2-w3)/2, -h3, 0));
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+    }
+    vertices.push(list);  // 頂点情報を追加
+
+    ////////// 4部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // positionのみ分岐. 1, 2, 3部材の位置によって分岐する
+    list.vertice.push(new THREE.Vector3(0, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, -h4, 0));
+    list.vertice.push(new THREE.Vector3(0, -h4, 0));
+    if (PIflag === false) { // box型であれば
+      if (h2 === h3) {
+        list.position = new THREE.Vector3(w1 + (w2-w3)/2 - w4, -h1-h2, 0);  // パターンA
+      } else if (h2 > h3) {
+        // 未計算状態. 計算後にコメントを削除
+        list.position = new THREE.Vector3(w1 - w4, -h1-h2, 0);  // パターンB
+      } else {
+        // 未計算状態. 計算後にコメントを削除
+        list.position = new THREE.Vector3(w1 - w4, -h1-h2, 0);  // パターンC
+      }
+    } else {  // PI型であれば
+      list.position = new THREE.Vector3(w1 + (w2-w3)/2 - w4, -h1-h2, 0);  // パターンA
+    }
+    vertices.push(list);  // 頂点情報を追加
+
+    if (PIflag) { // PI型であれは5部材を設定する
+      ////////// 5部材について //////////
+      list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+      // w2 === w3の条件で形状が分岐する. 計算式が同じためpositionの分岐は無し.
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, -h5, 0));
+      list.vertice.push(new THREE.Vector3(0, -h5, 0));
+      list.position = new THREE.Vector3( w1 + (w2 + w3)/2 - w5, -(h1+h3), 0 );
+    }
+
+    return vertices;
+  }
+
+  private getCentroid(child): THREE.Vector3 {
+
+    let Ax: number = 0;
+    let Ay: number = 0;
+    let Az: number = 0;
+    let A: number = 0;
+    for (const mesh of child.children) {
+      const vertice = mesh.vertice;
+      const position = mesh.pos;
+      // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
+      const ab = new THREE.Vector3( vertice[1].x - vertice[0].x, 
+                                    vertice[1].y - vertice[0].y, 
+                                    vertice[1].z - vertice[0].z );
+      const ac = new THREE.Vector3( vertice[2].x - vertice[0].x, 
+                                    vertice[2].y - vertice[0].y, 
+                                    vertice[2].z - vertice[0].z );
+      const ad = new THREE.Vector3( vertice[3].x - vertice[0].x, 
+                                    vertice[3].y - vertice[0].y, 
+                                    vertice[3].z - vertice[0].z );
+      // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
+      const centroid1 = new THREE.Vector3(
+        (0 + ab.x + ac.x) / 3 + vertice[0].x, 
+        (0 + ab.y + ac.y) / 3 + vertice[0].y, 
+        (0 + ab.z + ac.z) / 3 + vertice[0].z, 
+      )
+      const area1: number = ( (ab.y * ac.z - ab.z * ac.y) ** 2
+                            + (ab.z * ac.x - ab.x * ac.z) ** 2
+                            + (ab.x * ac.y - ab.y * ac.x) ** 2) ** 0.5 / 2
+      // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
+      const centroid2 = new THREE.Vector3(
+        (0 + ac.x + ad.x) / 3 + vertice[0].x, 
+        (0 + ac.y + ad.y) / 3 + vertice[0].y, 
+        (0 + ac.z + ad.z) / 3 + vertice[0].z, 
+      )
+      const area2: number = ( (ac.y * ad.z - ac.z * ad.y) ** 2
+                            + (ac.z * ad.x - ac.x * ad.z) ** 2
+                            + (ac.x * ad.y - ac.y * ad.x) ** 2) ** 0.5 / 2
+      // 2つの三角形から, 四角形の重心（centroid0）と面積（area0）を算出し加算する
+      const area0 = area1 + area2;
+      Ax += ((centroid1.x*area1 + centroid2.x*area2 ) / area0 + position.x) * area0;
+      Ay += ((centroid1.y*area1 + centroid2.y*area2 ) / area0 + position.y) * area0;
+      Az += ((centroid1.z*area1 + centroid2.z*area2 ) / area0 + position.z) * area0;
+      A  += area0;
+    }
+    const centroid = new THREE.Vector3(Ax / A, Ay / A, Az / A);
+
+    return centroid
+    
   }
 
   private shapeOfBox(newList): void {
@@ -418,6 +630,7 @@ export class ThreePanelService {
       geometry = new THREE.PlaneBufferGeometry();
     }
   }
+
   // データをクリアする
   public ClearData(): void {
     for (const mesh of this.panel_List) {
