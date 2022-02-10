@@ -107,7 +107,6 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
               };
               SRCFlag = false;
             }
-            continue;
             /////////////// まず計算 ///////////////
             let section: any = null;
             try {
@@ -121,10 +120,12 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
 
             const titleColumn = this.result.getTitleString( section.member, position, side );
             const fck: any = this.helper.getFck(safety);
+            const column: any = this.getResultString(null);
+            continue;
 
             const value = this.calc.calcFatigue(res, section, fck, safety, fatigueInfo);
             if(value.N === 0) continue;
-            const column: any = this.getResultString(value );
+            // const column: any = this.getResultString(value );
 
             let fwyd3: number = 0
             if('fsvy_Hweb' in section.steel) {

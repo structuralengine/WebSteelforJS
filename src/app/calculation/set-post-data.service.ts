@@ -10,6 +10,7 @@ import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetRectService } from "./shape-data/set-rect.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
+import { SetBoxService } from "./shape-data/set-box.service";
 import { environment } from "src/environments/environment";
 
 
@@ -28,7 +29,8 @@ export class SetPostDataService {
     private circle: SetCircleService,
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
-    private vOval: SetVerticalOvalService) { }
+    private vOval: SetVerticalOvalService,
+    private box: SetBoxService,) { }
 
   // 計算(POST)するときのヘルパー ///////////////////////////////////////////////////////////////////////////
   public options = {
@@ -126,9 +128,9 @@ export class SetPostDataService {
           data['ConcreteElastic'] = shape.ConcreteElastic;
 
           // 鉄筋・鉄骨の本数
-          if('Bars' in shape){
-            data['Bars'] = shape.Bars;
-          }
+          // if('Bars' in shape){
+          //   data['Bars'] = shape.Bars;
+          // }
           if('Steels' in shape){
             data['Steels'] = shape.Steels;
           }
@@ -422,6 +424,10 @@ export class SetPostDataService {
 
       }
 
+    } else if (member.shape.indexOf('箱形/π形') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'Box';
+
     } else {
       throw ("断面形状：" + member.shape + " は適切ではありません。");
     }
@@ -471,6 +477,9 @@ export class SetPostDataService {
         break;
       case 'VerticalOval':      // 鉛直方向小判形
         result = this.vOval.getVerticalOval(member, index, force.side, safety, option);
+        break;
+      case 'Box':      // 鉛直方向小判形
+        result = this.box.getBox(target, member, index, force.side, safety, option);
         break;
       default:
         throw("断面形状：" + shapeName + " は適切ではありません。");

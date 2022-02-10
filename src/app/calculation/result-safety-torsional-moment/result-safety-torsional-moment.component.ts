@@ -58,10 +58,10 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     
     // 計算結果を集計する
     try {
-      this.safetyTorsionalMomentPages = this.getSafetyPages(postData);
-      this.isFulfilled = true;
-      this.calc.isEnable = true;
-      this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
+      // this.safetyTorsionalMomentPages = this.getSafetyPages(postData);
+      // this.isFulfilled = true;
+      // this.calc.isEnable = true;
+      // this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
     } catch (e) {
       this.err = e.toString();
       this.isFulfilled = false;
@@ -128,18 +128,28 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
               };
               SRCFlag = false;
             }
-            continue;
             /////////////// まず計算 ///////////////
             const sectionM = this.result.getSection("Md", res, safetyM);
             const sectionV = this.result.getSection("Vd", res, safetyV);
             const member = sectionM.member;
             const shape = sectionM.shape;
-            const Ast = sectionM.Ast;
+            // const Ast = sectionM.Ast;
 
             const titleColumn = this.result.getTitleString(sectionM.member, position, side);
             const fck: any = this.helper.getFck(safetyV);
 
-            const column: any = this.getResultString(
+            ////////// 仮配置ここから //////////
+            const column: any = this.getResultString(null);
+            /////////////// タイトル ///////////////
+            column['title1'] = { alien: "center", value: titleColumn.title1 };
+            column['title2'] = { alien: "center", value: titleColumn.title2 };
+            column['title3'] = { alien: "center", value: titleColumn.title3 };
+
+            page.columns.push(column);
+            ////////// 仮配置ここまで //////////
+            continue;
+
+            const columnn: any = this.getResultString(
               this.calc.calcMtud(OutputData, res, sectionM, sectionV, fck, safetyM, safetyV, position.La, force)
             );
 
