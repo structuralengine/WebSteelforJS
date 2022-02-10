@@ -69,48 +69,26 @@ export class ThreePanelService {
     const shape = vertexlist[0]["shape"];
     // データが有効か確認する
     //const flag = this.getEnableSteel(vertexlist, shape);
-    const flag = true;
     let vertices;
 
-    if (flag) {
-      switch (shape) {
-        case "I形":
-          vertices = this.getVertices_I(vertexlist);
-          this.createPlane(vertices);
-          break;
-        case "H形":
-          vertices = this.getVertices_H(vertexlist);
-          this.createPlane(vertices);
-          break;
-        case "箱形/π形":
-          vertices = this.getVertices_box(vertexlist);
-          this.createPlane(vertices);
-          break;
-        case "鋼管":
-          vertices = this.getVertices_pipe(vertexlist);
-      }
+    // if (flag) {
+    switch (shape) {
+      case "I形":
+        vertices = this.getVertices_I(vertexlist);
+        this.createPlane(vertices);
+        break;
+      case "H形":
+        vertices = this.getVertices_H(vertexlist);
+        this.createPlane(vertices);
+        break;
+      case "箱形/π形":
+        vertices = this.getVertices_box(vertexlist);
+        this.createPlane(vertices);
+        break;
+      case "鋼管":
+        vertices = this.getVertices_pipe(vertexlist);
     }
-  }
-
-  private getVertices_pipe(vertexlist) {
-    const scale = 0.1;
-    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
-      vertexlist[0]["steel_b"] !== undefined
-        ? vertexlist[0]["steel_b"] * scale
-        : 0;
-    const h1 =
-      vertexlist[0]["steel_h"] !== undefined
-        ? vertexlist[0]["steel_h"] * scale
-        : 0;
-    const geometry = new THREE.TorusGeometry((b1 - h1) / 2, h1 / 2, 4, 200);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x3366cc,
-      side: THREE.DoubleSide,
-    });
-    const torus = new THREE.Mesh(geometry, material);
-    this.panel_List.push(torus);
-    this.scene.add(torus);
+    // }
   }
 
   private getVertices_I(vertexlist) {
@@ -547,6 +525,27 @@ export class ThreePanelService {
     return vertices;
   }
 
+  private getVertices_pipe(vertexlist) {
+    const scale = 0.1;
+    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
+    const b1 =
+      vertexlist[0]["steel_b"] !== undefined
+        ? vertexlist[0]["steel_b"] * scale
+        : 0;
+    const h1 =
+      vertexlist[0]["steel_h"] !== undefined
+        ? vertexlist[0]["steel_h"] * scale
+        : 0;
+    const geometry = new THREE.TorusGeometry((b1 - h1) / 2, h1 / 2, 4, 200);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0x3366cc,
+      side: THREE.DoubleSide,
+    });
+    const torus = new THREE.Mesh(geometry, material);
+    this.panel_List.push(torus);
+    this.scene.add(torus);
+  }
+
   private getCentroid(child): THREE.Vector3 {
     let Ax: number = 0;
     let Ay: number = 0;
@@ -637,108 +636,6 @@ export class ThreePanelService {
     child.position.set(-centroid.x, -centroid.y, -centroid.z);
     this.panel_List.push(child);
     this.scene.add(child);
-  }
-
-  private shapeOfBox(newList): void {
-    // ②を基準として，矩形の重心間距離を求める→各矩形のx,y座標
-    newList["x1"] = 0;
-    newList["x2"] = -(newList["b1"] / 2 - newList["w1"]);
-    // newList["x3"] = newList["b3"] / 2 - newList["w3"] - newList["w2"] / 2;
-    newList["x3"] = newList["x2"] + newList["b3"] / 2 - newList["w3"];
-
-    newList["x4"] = newList["x2"] + newList["w2"];
-
-    if (newList["b1"] == newList["w2"]) {
-      newList["y1"] = newList["h2"] / 2 - newList["h1"] / 2;
-    } else {
-      newList["y1"] = newList["h1"] / 2 + newList["h2"] / 2;
-    }
-    newList["y2"] = 0;
-    newList["y3"] = -(newList["h2"] / 2 + newList["h3"] / 2);
-    newList["y4"] = newList["h2"] / 2 - newList["h4"] / 2;
-
-    for (let i = 1; i <= 4; i++) {
-      // 三次元
-      // let geometry = new THREE.BoxBufferGeometry(
-      //   newList["b" + i],
-      //   newList["h" + i],
-      //   50
-      // );
-
-      // 二次元
-      let geometry = new THREE.PlaneBufferGeometry(
-        newList["b" + i],
-        newList["h" + i],
-        50
-      );
-      let material = new THREE.MeshBasicMaterial({
-        color: 0x8b0000,
-        side: THREE.DoubleSide,
-        opacity: 0.6,
-      });
-      let plane = new THREE.Mesh(geometry, material);
-      plane.name = "plane";
-      plane.position.set(newList["x" + i], newList["y" + i], 0);
-      this.scene.add(plane);
-      this.panel_List.push(plane);
-
-      // 三次元
-      // geometry = new THREE.BoxBufferGeometry();
-
-      // 二次元
-      geometry = new THREE.PlaneBufferGeometry();
-    }
-  }
-
-  private shapeOfPi(newList): void {
-    // ②を基準として，矩形の重心間距離を求める→各矩形のx,y座標
-    newList["x1"] = 0;
-    newList["x2"] = -(newList["b1"] / 2 - newList["w1"]);
-    newList["x3"] = newList["x2"] + newList["b3"] / 2 - newList["w3"];
-    newList["x4"] = newList["x2"] + newList["w2"];
-    newList["x5"] = newList["x4"] + newList["b5"] / 2 - newList["w5"];
-
-    if (newList["b1"] == newList["w2"]) {
-      newList["y1"] = newList["h2"] / 2 - newList["h1"] / 2;
-    } else {
-      newList["y1"] = newList["h1"] / 2 + newList["h2"] / 2;
-    }
-    newList["y2"] = 0;
-    newList["y3"] = -(newList["h2"] / 2 + newList["h3"] / 2);
-    newList["y4"] = newList["h2"] / 2 - newList["h4"] / 2;
-    newList["y5"] = newList["y4"] - newList["h4"] / 2 - newList["h5"] / 2;
-
-    for (let i = 1; i <= 5; i++) {
-      // 三次元
-      // let geometry = new THREE.BoxBufferGeometry(
-      //   newList["b" + i],
-      //   newList["h" + i],
-      //   50
-      // );
-
-      // 二次元
-      let geometry = new THREE.PlaneBufferGeometry(
-        newList["b" + i],
-        newList["h" + i],
-        50
-      );
-      let material = new THREE.MeshBasicMaterial({
-        color: 0x8b0000,
-        side: THREE.DoubleSide,
-        opacity: 0.6,
-      });
-      let plane = new THREE.Mesh(geometry, material);
-      plane.name = "plane";
-      plane.position.set(newList["x" + i], newList["y" + i], 0);
-      this.scene.add(plane);
-      this.panel_List.push(plane);
-
-      // 三次元
-      // geometry = new THREE.BoxBufferGeometry();
-
-      // 二次元
-      geometry = new THREE.PlaneBufferGeometry();
-    }
   }
 
   // データをクリアする
