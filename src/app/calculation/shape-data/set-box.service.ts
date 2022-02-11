@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { InputBarsService } from 'src/app/components/bars/bars.service';
 import { InputSteelsService } from 'src/app/components/steels/steels.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
+import * as THREE from "three";
 import { environment } from 'src/environments/environment';
 import { ResultDataService } from '../result-data.service';
 
@@ -13,7 +14,7 @@ export class SetBoxService {
   constructor(
     private bars: InputBarsService,
     private steel: InputSteelsService,
-    private helper: DataHelperModule
+    private helper: DataHelperModule,
   ) { }
 
   // 矩形断面の POST 用 データ作成
@@ -527,6 +528,405 @@ export class SetBoxService {
     }
     return result;
 
+  }
+
+  public getVertices_box(vertexlist) {
+    const vertices = []; // returnする頂点情報
+
+    const scale = 0.1;
+    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
+    let b1 =
+      vertexlist[0]["steel_b"] !== undefined
+        ? vertexlist[0]["steel_b"] * scale
+        : 0;
+    let h1 =
+      vertexlist[0]["steel_h"] !== undefined
+        ? vertexlist[0]["steel_h"] * scale
+        : 0;
+    let w1 =
+      vertexlist[0]["steel_w"] !== undefined
+        ? vertexlist[0]["steel_w"] * scale
+        : 0;
+    let b2 =
+      vertexlist[1]["steel_b"] !== undefined
+        ? vertexlist[1]["steel_b"] * scale
+        : 0;
+    let h2 =
+      vertexlist[1]["steel_h"] !== undefined
+        ? vertexlist[1]["steel_h"] * scale
+        : 0;
+    let w2 =
+      vertexlist[1]["steel_w"] !== undefined
+        ? vertexlist[1]["steel_w"] * scale
+        : 0;
+    let b3 =
+      vertexlist[2]["steel_b"] !== undefined
+        ? vertexlist[2]["steel_b"] * scale
+        : 0;
+    let h3 =
+      vertexlist[2]["steel_h"] !== undefined
+        ? vertexlist[2]["steel_h"] * scale
+        : 0;
+    let w3 =
+      vertexlist[2]["steel_w"] !== undefined
+        ? vertexlist[2]["steel_w"] * scale
+        : 0;
+    let b4 =
+      vertexlist[3]["steel_b"] !== undefined
+        ? vertexlist[3]["steel_b"] * scale
+        : 0;
+    let h4 =
+      vertexlist[3]["steel_h"] !== undefined
+        ? vertexlist[3]["steel_h"] * scale
+        : 0;
+    let w4 =
+      vertexlist[3]["steel_w"] !== undefined
+        ? vertexlist[3]["steel_w"] * scale
+        : 0;
+    let b5 =
+      vertexlist[4]["steel_b"] !== undefined
+        ? vertexlist[4]["steel_b"] * scale
+        : 0;
+    let h5 =
+      vertexlist[4]["steel_h"] !== undefined
+        ? vertexlist[4]["steel_h"] * scale
+        : 0;
+    let w5 =
+      vertexlist[4]["steel_w"] !== undefined
+        ? vertexlist[4]["steel_w"] * scale
+        : 0;
+
+    // 空白セルがあったときの処理
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (b4 === 0) {
+      b4 = b1;
+    }
+    if (b1 === 0) {
+      b1 = b4;
+    }
+
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (h3 === 0) {
+      h3 = h2;
+    }
+    if (h2 === 0) {
+      h2 = h3;
+    }
+    if (h4 === 0) {
+      h4 = h1;
+    }
+    if (h1 === 0) {
+      h1 = h4;
+    }
+
+    if (w3 === 0) {
+      w3 = w2;
+    }
+    if (w2 === 0) {
+      w2 = w3;
+    }
+
+    if (w1 === 0) {
+      w1 = (b1 - w2) / 2;
+    }
+
+    // パターンごとに分岐
+    const PIflag = w2 > b4 || w3 > b4;
+
+    // 空白セルがあったときの処理
+    if (PIflag) {
+      if (b5 === 0) {
+        b5 = b4;
+      }
+      if (h5 === 0) {
+        h5 = h4;
+      }
+      if (w4 === 0) {
+        w4 = b4 / 2;
+      }
+      if (w5 === 0) {
+        w5 = b5 / 2;
+      }
+    } else {
+      if (w4 === 0) {
+        w4 = (b4 - w3) / 2;
+      }
+    }
+
+    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
+    ////////// 1部材について //////////
+    // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
+    // if (h2 === h3 || PIflag === true) {
+    if (h2 === h3) {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, -h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
+    } else {
+      // ななめ
+      let y = ((h3 - h2) / w2) * b1;
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, y, 0));
+      list.vertice.push(new THREE.Vector3(b1, y - h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 2部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      // if (h2 === h3) {
+      // } else {
+      // }
+    } else if (w2 < w3) {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 - (w3 - w2) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 - (w3 - w2) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+    } else {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 + (w2 - w3) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 + (w2 - w3) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 3部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, -h3, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h3 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    } else if (w2 < w3) {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 + (w3 - w2) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 + (w3 - w2) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    } else {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 - (w2 - w3) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 - (w2 - w3) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 4部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // positionのみ分岐. 1, 2, 3部材の位置によって分岐する
+    list.vertice.push(new THREE.Vector3(0, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, -h4, 0));
+    list.vertice.push(new THREE.Vector3(0, -h4, 0));
+    if (PIflag === false) {
+      // box型であれば
+      if (h2 === h3) {
+        list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
+      } else {
+        // 未計算状態. 計算後にコメントを削除
+        let y = ((h3 - h2) / w2) * w1 - h1 - h2;
+        list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, y, 0); // パターンC
+      }
+    } else {
+      // PI型であれば
+      list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    if (PIflag) {
+      // PI型であれは5部材を設定する
+      ////////// 5部材について //////////
+      list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+      // w2 === w3の条件で形状が分岐する. 計算式が同じためpositionの分岐は無し.
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, -h5, 0));
+      list.vertice.push(new THREE.Vector3(0, -h5, 0));
+      list.position = new THREE.Vector3(w1 + (w2 + w3) / 2 - w5, -(h1 + h3), 0);
+      vertices.push(list); // 頂点情報を追加
+    }
+
+    return vertices;
+  }
+
+  public getCentroid_box(vertices): THREE.Vector3 {
+    let Ax: number = 0;
+    let Ay: number = 0;
+    let Az: number = 0;
+    let A: number = 0;
+    for (const num of Object.keys(vertices)) {
+      const vertice = vertices[num].vertice;
+      const position = vertices[num].position;
+      // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
+      const ab = new THREE.Vector3(
+        vertice[1].x - vertice[0].x,
+        vertice[1].y - vertice[0].y,
+        vertice[1].z - vertice[0].z
+      );
+      const ac = new THREE.Vector3(
+        vertice[2].x - vertice[0].x,
+        vertice[2].y - vertice[0].y,
+        vertice[2].z - vertice[0].z
+      );
+      const ad = new THREE.Vector3(
+        vertice[3].x - vertice[0].x,
+        vertice[3].y - vertice[0].y,
+        vertice[3].z - vertice[0].z
+      );
+      // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
+      const centroid1 = new THREE.Vector3(
+        (0 + ab.x + ac.x) / 3 + vertice[0].x,
+        (0 + ab.y + ac.y) / 3 + vertice[0].y,
+        (0 + ab.z + ac.z) / 3 + vertice[0].z
+      );
+      const area1: number =
+        ((ab.y * ac.z - ab.z * ac.y) ** 2 +
+          (ab.z * ac.x - ab.x * ac.z) ** 2 +
+          (ab.x * ac.y - ab.y * ac.x) ** 2) **
+          0.5 /
+        2;
+      // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
+      const centroid2 = new THREE.Vector3(
+        (0 + ac.x + ad.x) / 3 + vertice[0].x,
+        (0 + ac.y + ad.y) / 3 + vertice[0].y,
+        (0 + ac.z + ad.z) / 3 + vertice[0].z
+      );
+      const area2: number =
+        ((ac.y * ad.z - ac.z * ad.y) ** 2 +
+          (ac.z * ad.x - ac.x * ad.z) ** 2 +
+          (ac.x * ad.y - ac.y * ad.x) ** 2) **
+          0.5 /
+        2;
+      // 2つの三角形から, 四角形の重心（centroid0）と面積（area0）を算出し加算する
+      const area0 = area1 + area2;
+      Ax +=
+        ((centroid1.x * area1 + centroid2.x * area2) / area0 + position.x) *
+        area0;
+      Ay +=
+        ((centroid1.y * area1 + centroid2.y * area2) / area0 + position.y) *
+        area0;
+      Az +=
+        ((centroid1.z * area1 + centroid2.z * area2) / area0 + position.z) *
+        area0;
+      A += area0;
+    }
+    const centroid = new THREE.Vector3(Ax / A, Ay / A, Az / A);
+
+    return centroid;
+  }
+
+  // 断面二次モーメントの算出
+  private getMomentOfInertia(vertices: any[], key: string = 'x'): number {
+    let I: number = 1000;
+    if (key === 'x') {
+
+    } else if (key === 'y') {
+
+    }
+    return I
   }
 
 
