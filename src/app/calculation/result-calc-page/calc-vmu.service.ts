@@ -59,153 +59,153 @@ export class CalcVmuService {
     result["Vd"] = Vd;
 
     // 換算断面
-    const h: number = section.shape.H;
-    result["H"] = h;
-    let hw2 = null; //小判型における換算断面の幅
-    if (section.shape.Hw !== null) {
-      hw2 = section.shape.Hw
-    }
+    // const h: number = section.shape.H;
+    // result["H"] = h;
+    // let hw2 = null; //小判型における換算断面の幅
+    // if (section.shape.Hw !== null) {
+    //   hw2 = section.shape.Hw
+    // }
 
-    const bw: number = section.shape.B;
-    result["B"] = bw;
-    let bw2 = null; //小判型における換算断面の幅
-    if (section.shape.Bw !== null) {
-      bw2 = section.shape.Bw
-    }
+    // const bw: number = section.shape.B;
+    // result["B"] = bw;
+    // let bw2 = null; //小判型における換算断面の幅
+    // if (section.shape.Bw !== null) {
+    //   bw2 = section.shape.Bw
+    // }
 
     // 有効高さ
-    const dsc = section.Ast.dst;
-    let d: number = (hw2 === null) ? h - dsc : hw2 - dsc;;
-    result["d"] = d;
+    // const dsc = section.Ast.dst;
+    // let d: number = (hw2 === null) ? h - dsc : hw2 - dsc;;
+    // result["d"] = d;
 
     //  tanθc + tanθt
-    const tan: number = section.tan;
-    let Vhd: number = 0;
-    if (tan !== null && tan !== 0) {
-      Vhd = (-Md1 / d * 1000) * tan;
-      result["Vhd"] = Vhd;
-    }
+    // const tan: number = section.tan;
+    // let Vhd: number = 0;
+    // if (tan !== null && tan !== 0) {
+    //   Vhd = (-Md1 / d * 1000) * tan;
+    //   result["Vhd"] = Vhd;
+    // }
 
     // せん断スパン
-    let La = this.helper.toNumber(Laa);
-    if (La === null) {
-      La = Number.MAX_VALUE;
-    } else {
-      if (La === 1) {
-        La = Math.abs(Md / Vd) * 1000; // せん断スパン=1 は せん断スパンを自動で計算する
-      }
-      result["La"] = La;
-    }
+    // let La = this.helper.toNumber(Laa);
+    // if (La === null) {
+    //   La = Number.MAX_VALUE;
+    // } else {
+    //   if (La === 1) {
+    //     La = Math.abs(Md / Vd) * 1000; // せん断スパン=1 は せん断スパンを自動で計算する
+    //   }
+    //   result["La"] = La;
+    // }
 
     // 引張鉄筋比
-    let pc: number;
-    if (section.shape.Bw === null) {
-      pc = section.Ast.Ast / (section.shape.B * d);
-    } else {
-      pc = section.Ast.Ast / (section.shape.Bw * d);
-    }
+    // let pc: number;
+    // if (section.shape.Bw === null) {
+    //   pc = section.Ast.Ast / (section.shape.B * d);
+    // } else {
+    //   pc = section.Ast.Ast / (section.shape.Bw * d);
+    // }
 
     // 帯鉄筋
-    let Aw: number = this.helper.toNumber(section.Aw.Aw);
-    let fwyd: number = this.helper.toNumber(section.Aw.fwyd);
-    let deg: number = this.helper.toNumber(section.Aw.deg);
-    if (deg === null) { deg = 90; }
-    let Ss: number = this.helper.toNumber(section.Aw.Ss);
-    if (Ss === null) { Ss = Number.MAX_VALUE; }
-    if (Aw === null || fwyd === null) {
-      Aw = 0;
-      fwyd = 0;
-    } else {
-      result["Aw"] = Aw;
-      result["AwString"] = section.Aw.AwString;
-      result["fwyd"] = section.Aw.fwyd;
-      result["deg"] = deg;
-      result["Ss"] = Ss;
-    }
+    // let Aw: number = this.helper.toNumber(section.Aw.Aw);
+    // let fwyd: number = this.helper.toNumber(section.Aw.fwyd);
+    // let deg: number = this.helper.toNumber(section.Aw.deg);
+    // if (deg === null) { deg = 90; }
+    // let Ss: number = this.helper.toNumber(section.Aw.Ss);
+    // if (Ss === null) { Ss = Number.MAX_VALUE; }
+    // if (Aw === null || fwyd === null) {
+    //   Aw = 0;
+    //   fwyd = 0;
+    // } else {
+    //   result["Aw"] = Aw;
+    //   result["AwString"] = section.Aw.AwString;
+    //   result["fwyd"] = section.Aw.fwyd;
+    //   result["deg"] = deg;
+    //   result["Ss"] = Ss;
+    // }
 
     // 折り曲げ鉄筋
-    let Asb: number = this.helper.toNumber(section.Asb.Asb);
-    let fwyd2: number = this.helper.toNumber(section.Asb.fwyd);
-    let deg2: number = this.helper.toNumber(section.Asb.deg);
-    if (deg2 === null) { deg2 = 90; }
-    let Ss2: number = this.helper.toNumber(section.Asb.Ss);
-    if (Ss2 === null) { Ss2 = Number.MAX_VALUE; }
-    if (Asb === null || fwyd2 === null) {
-      Asb = 0;
-      fwyd2 = 0;
-    } else {
-      result["Asb"] = Asb;
-      result["AsbString"] = section.Asb.AsbString;
-      result["fwyd2"] = section.Asb.fwyd;
-      result["deg2"] = deg2;
-      result["Ss2"] = Ss2;
-    }
+    // let Asb: number = this.helper.toNumber(section.Asb.Asb);
+    // let fwyd2: number = this.helper.toNumber(section.Asb.fwyd);
+    // let deg2: number = this.helper.toNumber(section.Asb.deg);
+    // if (deg2 === null) { deg2 = 90; }
+    // let Ss2: number = this.helper.toNumber(section.Asb.Ss);
+    // if (Ss2 === null) { Ss2 = Number.MAX_VALUE; }
+    // if (Asb === null || fwyd2 === null) {
+    //   Asb = 0;
+    //   fwyd2 = 0;
+    // } else {
+    //   result["Asb"] = Asb;
+    //   result["AsbString"] = section.Asb.AsbString;
+    //   result["fwyd2"] = section.Asb.fwyd;
+    //   result["deg2"] = deg2;
+    //   result["Ss2"] = Ss2;
+    // }
 
     // コンクリート材料
-    const fck: number = this.helper.toNumber(fc.fck);
-    if (fck === null) {
-      return result;
-    }
-    result["fck"] = fck;
+    // const fck: number = this.helper.toNumber(fc.fck);
+    // if (fck === null) {
+    //   return result;
+    // }
+    // result["fck"] = fck;
 
-    let rc: number = this.helper.toNumber(fc.rc);
-    if (rc === null) {
-      rc = 1;
-    }
-    result["rc"] = rc;
+    // let rc: number = this.helper.toNumber(fc.rc);
+    // if (rc === null) {
+    //   rc = 1;
+    // }
+    // result["rc"] = rc;
 
-    let fcd: number = this.helper.toNumber(fc.fcd);
-    if (fcd === null) {
-      fcd = fck;
-    }
-    result["fcd"] = fcd;
+    // let fcd: number = this.helper.toNumber(fc.fcd);
+    // if (fcd === null) {
+    //   fcd = fck;
+    // }
+    // result["fcd"] = fcd;
 
     // 鉄筋材料
-    let fsy: number = this.helper.toNumber(section.Ast.fsy);
-    if (fsy !== null) {
-      result["fsy"] = fsy;
-    }
+    // let fsy: number = this.helper.toNumber(section.Ast.fsy);
+    // if (fsy !== null) {
+    //   result["fsy"] = fsy;
+    // }
 
-    let rs: number = this.helper.toNumber(section.Ast.rs);
-    if (rs === null) {
-      rs = 1;
-    }
-    result["rs"] = rs;
+    // let rs: number = this.helper.toNumber(section.Ast.rs);
+    // if (rs === null) {
+    //   rs = 1;
+    // }
+    // result["rs"] = rs;
 
-    result["fsyd"] = fsy / rs;
+    // result["fsyd"] = fsy / rs;
 
-    let rVcd: number = this.helper.toNumber(fc.rVcd);;
-    if (rVcd === null) {
-      rVcd = 1;
-    }
+    // let rVcd: number = this.helper.toNumber(fc.rVcd);;
+    // if (rVcd === null) {
+    //   rVcd = 1;
+    // }
 
     // 鉄骨情報
     // CFT の場合：section.steel.thickness
-    let web_I_height = this.helper.toNumber(section.steel.I.value.heightW);
-    let web_I_thickness = this.helper.toNumber(section.steel.I.value.thicknessW);
-    let fsvyd_IWeb = null;
-    let Asv = null;
-    if(web_I_thickness !== null){
-      Asv = web_I_height * web_I_thickness;
-      fsvyd_IWeb = ('fsvy_Iweb' in section.steel) ? this.helper.toNumber(section.steel.fsvy_Iweb.fvyd) : null;
+    // let web_I_height = this.helper.toNumber(section.steel.I.value.heightW);
+    // let web_I_thickness = this.helper.toNumber(section.steel.I.value.thicknessW);
+    // let fsvyd_IWeb = null;
+    // let Asv = null;
+    // if(web_I_thickness !== null){
+    //   Asv = web_I_height * web_I_thickness;
+    //   fsvyd_IWeb = ('fsvy_Iweb' in section.steel) ? this.helper.toNumber(section.steel.fsvy_Iweb.fvyd) : null;
 
-      if (section.shapeName === "Circle") {
-        web_I_height = this.helper.toNumber(section.shape.H); // 鋼材高さ
-        web_I_thickness = this.helper.toNumber(section.steel.I.tension_flange);; // 鋼材厚さ
-        const H = section.member.B;
-        const B = H - web_I_thickness * 2;
-        const Hw = ((-1 - Math.PI / 4) * H ** 2 + 2 * H * B - (1 - Math.PI / 4) * B ** 2) / (2 * B - 2 * H);
-        const Bw = Hw - web_I_thickness * 2;
-        Asv = (Hw ** 2 - Bw ** 2) / 2 //鋼材断面積
-      }
-    }
+    //   if (section.shapeName === "Circle") {
+    //     web_I_height = this.helper.toNumber(section.shape.H); // 鋼材高さ
+    //     web_I_thickness = this.helper.toNumber(section.steel.I.tension_flange);; // 鋼材厚さ
+    //     const H = section.member.B;
+    //     const B = H - web_I_thickness * 2;
+    //     const Hw = ((-1 - Math.PI / 4) * H ** 2 + 2 * H * B - (1 - Math.PI / 4) * B ** 2) / (2 * B - 2 * H);
+    //     const Bw = Hw - web_I_thickness * 2;
+    //     Asv = (Hw ** 2 - Bw ** 2) / 2 //鋼材断面積
+    //   }
+    // }
 
     //result['Hw'] = ( (-1-Math.PI/4)*H**2 + 2*H*result['B'] - (1-Math.PI/4)*result['B']**2)/(2*result['B'] - 2*H);
     //result['Bw'] = result['Hw'] - result['H'] + result['B'];
 
     // 部材係数
-    const Mu = res.Reactions[0].M.Mi;
-    result["Mu"] = Mu;
+    // const Mu = res.Reactions[0].M.Mi;
+    // result["Mu"] = Mu;
 
     // せん断耐力の照査
     let V_rbc: number = 1;
@@ -214,67 +214,67 @@ export class CalcVmuService {
       V_rbc = 1;
     }
 
-    const Vwcd: any = this.calcVwcd(fcd, (bw2 === null) ? bw : bw2, d, V_rbc);
-    for (const key of Object.keys(Vwcd)) {
-      result[key] = Vwcd[key];
-    }
+    // const Vwcd: any = this.calcVwcd(fcd, (bw2 === null) ? bw : bw2, d, V_rbc);
+    // for (const key of Object.keys(Vwcd)) {
+    //   result[key] = Vwcd[key];
+    // }
 
-    if (La / d >= 2) {
+    // if (La / d >= 2) {
 
-      result["rbc"] = V_rbc;
+    //   result["rbc"] = V_rbc;
 
-      let V_rbs: number = this.helper.toNumber(safety.safety_factor.V_rbs);
-      if (V_rbs === null) {
-        V_rbs = 1;
-      }
-      result["rbs"] = V_rbs;
+    //   let V_rbs: number = this.helper.toNumber(safety.safety_factor.V_rbs);
+    //   if (V_rbs === null) {
+    //     V_rbs = 1;
+    //   }
+    //   result["rbs"] = V_rbs;
 
-      const Vyd: any = this.calcVyd(
-        fcd, d, pc, Nd, h,
-        Mu, bw, V_rbc, rVcd, deg, deg2,
-        Aw, Asb, fwyd, fwyd2, Ss, Ss2, V_rbs,
-        web_I_height, web_I_thickness, fsvyd_IWeb, Asv);
-      for (const key of Object.keys(Vyd)) {
-        result[key] = Vyd[key];
-      }
-    } else {
+    //   const Vyd: any = this.calcVyd(
+    //     fcd, d, pc, Nd, h,
+    //     Mu, bw, V_rbc, rVcd, deg, deg2,
+    //     Aw, Asb, fwyd, fwyd2, Ss, Ss2, V_rbs,
+    //     web_I_height, web_I_thickness, fsvyd_IWeb, Asv);
+    //   for (const key of Object.keys(Vyd)) {
+    //     result[key] = Vyd[key];
+    //   }
+    // } else {
       // La / d < 2 の場合
-      let V_rbs: number = this.helper.toNumber(safety.safety_factor.rbs);
-      if (V_rbs === null) {
-        V_rbs = 1;
-      }
-      result["rbs"] = V_rbs;
+    //   let V_rbs: number = this.helper.toNumber(safety.safety_factor.rbs);
+    //   if (V_rbs === null) {
+    //     V_rbs = 1;
+    //   }
+    //   result["rbs"] = V_rbs;
 
-      V_rbc = this.helper.toNumber(safety.safety_factor.rbd);
-      if (V_rbc === null) {
-        V_rbc = 1.2;
-      }
-      result["rbc"] = V_rbc;
+    //   V_rbc = this.helper.toNumber(safety.safety_factor.rbd);
+    //   if (V_rbc === null) {
+    //     V_rbc = 1.2;
+    //   }
+    //   result["rbc"] = V_rbc;
 
-      const speci1 = this.basic.get_specification1();
-      const speci2 = this.basic.get_specification2();
-      if (speci1 === 0 && (speci2 === 2 || speci2 === 5)) {
+    //   const speci1 = this.basic.get_specification1();
+    //   const speci2 = this.basic.get_specification2();
+    //   if (speci1 === 0 && (speci2 === 2 || speci2 === 5)) {
         // JR東日本の場合
-        const Vydd = this.calcVydd(
-          fcd, d, La, pc, Nd, h, hw2,
-          Mu, bw, bw2, V_rbc, rVcd, deg, deg2,
-          Aw, Asb, fwyd, fwyd2, Ss, Ss2)
+    //     const Vydd = this.calcVydd(
+    //       fcd, d, La, pc, Nd, h, hw2,
+    //       Mu, bw, bw2, V_rbc, rVcd, deg, deg2,
+    //       Aw, Asb, fwyd, fwyd2, Ss, Ss2)
 
-        for (const key of Object.keys(Vydd)) {
-          result[key] = Vydd[key];
-        }
+    //     for (const key of Object.keys(Vydd)) {
+    //       result[key] = Vydd[key];
+    //     }
 
-      } else {
+    //   } else {
         // 標準の式
-        const Vdd: any = this.calcVdd(
-          fcd, d, Aw, bw, Ss,
-          La, Nd, h, Mu, pc, V_rbc);
-        for (const key of Object.keys(Vdd)) {
-          result[key] = Vdd[key];
-        }
-      }
+    //     const Vdd: any = this.calcVdd(
+    //       fcd, d, Aw, bw, Ss,
+    //       La, Nd, h, Mu, pc, V_rbc);
+    //     for (const key of Object.keys(Vdd)) {
+    //       result[key] = Vdd[key];
+    //     }
+    //   }
 
-    }
+    // }
 
 
     let ri: number = this.helper.toNumber(safety.safety_factor.ri);
@@ -283,31 +283,31 @@ export class CalcVmuService {
     }
     result["ri"] = ri;
 
-    let Vyd_Ratio: number = 0;
-    if ("Vyd" in result) {
-      Vyd_Ratio = (ri * (result.Vd - Vhd)) / result.Vyd;
-    } else if ("Vdd" in result) {
-      Vyd_Ratio = (ri * (result.Vd - Vhd)) / result.Vdd;
-    }
-    result["Vyd_Ratio"] = Vyd_Ratio;
+    // let Vyd_Ratio: number = 0;
+    // if ("Vyd" in result) {
+    //   Vyd_Ratio = (ri * (result.Vd - Vhd)) / result.Vyd;
+    // } else if ("Vdd" in result) {
+    //   Vyd_Ratio = (ri * (result.Vd - Vhd)) / result.Vdd;
+    // }
+    // result["Vyd_Ratio"] = Vyd_Ratio;
 
-    let Vyd_Result: string = "NG";
-    if (Vyd_Ratio < 1) {
-      Vyd_Result = "OK";
-    }
-    result["Vyd_Result"] = Vyd_Result;
+    // let Vyd_Result: string = "NG";
+    // if (Vyd_Ratio < 1) {
+    //   Vyd_Result = "OK";
+    // }
+    // result["Vyd_Result"] = Vyd_Result;
 
-    let Vwcd_Ratio: number = 0;
-    if ("Vwcd" in result) {
-      Vwcd_Ratio = (ri * (result.Vd - Vhd)) / result.Vwcd;
-    }
-    result["Vwcd_Ratio"] = Vwcd_Ratio;
+    // let Vwcd_Ratio: number = 0;
+    // if ("Vwcd" in result) {
+    //   Vwcd_Ratio = (ri * (result.Vd - Vhd)) / result.Vwcd;
+    // }
+    // result["Vwcd_Ratio"] = Vwcd_Ratio;
 
-    let Vwcd_Result: string = "NG";
-    if (Vwcd_Ratio < 1) {
-      Vwcd_Result = "OK";
-    }
-    result["Vwcd_Result"] = Vwcd_Result;
+    // let Vwcd_Result: string = "NG";
+    // if (Vwcd_Ratio < 1) {
+    //   Vwcd_Result = "OK";
+    // }
+    // result["Vwcd_Result"] = Vwcd_Result;
 
     return result;
   }

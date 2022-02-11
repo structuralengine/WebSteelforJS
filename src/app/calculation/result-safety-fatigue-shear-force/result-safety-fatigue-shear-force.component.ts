@@ -109,21 +109,76 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
             }
             /////////////// まず計算 ///////////////
             let section: any = null;
-            try {
+            // try {
               section = this.result.getSteelStruct("Vd", res[0], safety);
-            } catch (e) {
-              continue;
-            }
+            // } catch (e) {
+              // continue;
+            // }
             const member = section.member;
             const shape = section.shape;
             const Ast = section.Ast;
 
             const titleColumn = this.result.getTitleString( section.member, position, side );
             const fck: any = this.helper.getFck(safety);
-            const column: any = this.getResultString(null);
+            const value = this.calc.calcFatigue(res, section, fck, safety, fatigueInfo);
+            ////////// 仮配置ここから //////////
+            const column: any = this.getResultString(value);
+            /////////////// タイトル ///////////////
+            column['title1'] = { alien: "center", value: titleColumn.title1 };
+            column['title2'] = { alien: "center", value: titleColumn.title2 };
+            column['title3'] = { alien: "center", value: titleColumn.title3 };
+            ///////////////// 鉄骨断面情報 /////////////////
+            column['A'] = this.result.alien(section.steels.A);
+            column['Ix'] = this.result.alien(null);
+            column['Iy'] = this.result.alien(null);
+            ///////////////// 形状 /////////////////
+            column['B'] = this.result.alien(null);
+            column['H'] = this.result.alien(null);
+            ///////////////// 鉄骨情報 /////////////////
+            column['steel_I_tension'] = this.result.alien(null);
+            column['steel_I_web'] = this.result.alien(null);
+            column['steel_I_compress'] = this.result.alien(null);
+            column['steel_H_tension'] = this.result.alien(null);
+            column['steel_H_web'] = this.result.alien(null);
+            /////////////// 引張鉄筋 ///////////////
+            column['tan'] = this.result.alien(null);
+            column['Ast'] = this.result.alien(null);
+            column['AstString'] = this.result.alien(null);
+            column['dst'] = this.result.alien(null);
+            column['tcos'] = this.result.alien(null);
+            /////////////// 圧縮鉄筋 ///////////////
+            column['Asc'] = this.result.alien(null);
+            column['AscString'] = this.result.alien(null);
+            column['dsc'] = this.result.alien(null);
+            column['ccos'] = this.result.alien(null);
+            /////////////// 側面鉄筋 ///////////////
+            column['AseString'] = this.result.alien(null);
+            column['dse'] = this.result.alien(null);
+            /////////////// コンクリート情報 ///////////////
+            column['fck'] = this.result.alien(null);
+            column['rc'] = this.result.alien(null);
+            column['fcd'] = this.result.alien(null);
+            /////////////// 鉄筋強度情報 ///////////////
+            column['fsy'] = this.result.alien(null);
+            column['rs'] = this.result.alien(null);
+            column['fsd'] = this.result.alien(null);
+            /////////////// 鉄骨情報 ///////////////
+            column['fsy_steel'] = this.result.alien(null);
+            column['fsd_steel'] = this.result.alien(null);
+            column['fsy_steel'] = this.result.alien(null);
+            column['fsd_steel'] = this.result.alien(null);
+            column['rs_steel'] = this.result.alien(null);
+            /////////////// 鉄骨情報 ///////////////
+            column['fwyd3'] = this.result.alien(null);
+            /////////////// 総括表用 ///////////////
+            column['index'] = position.index;
+            column['side_summary'] = side;
+
+            page.columns.push(column);
+            ////////// 仮配置ここまで //////////
             continue;
 
-            const value = this.calc.calcFatigue(res, section, fck, safety, fatigueInfo);
+            //const value = this.calc.calcFatigue(res, section, fck, safety, fatigueInfo);
             if(value.N === 0) continue;
             // const column: any = this.getResultString(value );
 
@@ -288,6 +343,7 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
       r2: { alien: "center", value: "-" },
 
       rs: { alien: "center", value: "-" },
+      rs2: { alien: "center", value: "-" }, // 追加
       frd: { alien: "center", value: "-" },
       frd2: { alien: "center", value: "-" },
 
@@ -298,6 +354,10 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
       ratio2: { alien: "center", value: "-" },
       result2: { alien: "center", value: "-" },
     };
+
+    if (re === null) {
+      return result;
+    }
 
     // 帯鉄筋
     if ("Aw" in re) {

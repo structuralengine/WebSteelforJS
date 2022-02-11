@@ -89,108 +89,111 @@ export class ResultDataService {
     const steel: any = this.steel.getCalcData(res.index); // 鉄骨
     if (steel === null) {
       return section;
+    } else {
+      steel['A'] = section.steels.A
+      section.steels = steel
     }
 
     // 断面係数を追加
     let steel_A = 0;
     let steel_Ay = 0;
     let I = 0;
-    const Zs_data = {
-      Ic: {
-        b: steel.I.lower_width,
-        h: steel.I.lower_thickness,
-        yi: steel.I.upper_thickness + steel.I.web_height + steel.I.lower_thickness / 2,
-        A: null,
-        Io: null,
-      },
-      Iw: {
-        b: steel.I.web_thickness,
-        h: steel.I.web_height,
-        yi: steel.I.upper_thickness + steel.I.web_height / 2,
-        A: null,
-        Io: null,
-      },
-      It: {
-        b: steel.I.upper_width,
-        h: steel.I.upper_thickness,
-        yi: steel.I.upper_thickness / 2,
-        A: null,
-        Io: null,
-      },
-      Hl: {
-        b: steel.H.left_thickness,
-        h: steel.H.left_width,
-        yi: null,
-        A: null,
-        Io: null,
-      },
-      Hw: {
-        b: steel.H.web_height,
-        h: steel.H.web_thickness,
-        yi: null,
-        A: null,
-        Io: null,
-      },
-      Hr: {
-        b: steel.H.right_thickness,
-        h: steel.H.right_width,
-        yi: null,
-        A: null,
-        Io: null,
-      },
-      IH: {
-        b: steel.I.web_thickness,
-        h: steel.H.web_thickness,
-        yi: null,
-        A: null,
-        Io: null,
-      }
-    }
+    // const Zs_data = {
+    //   Ic: {
+    //     b: steel.I.lower_width,
+    //     h: steel.I.lower_thickness,
+    //     yi: steel.I.upper_thickness + steel.I.web_height + steel.I.lower_thickness / 2,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   Iw: {
+    //     b: steel.I.web_thickness,
+    //     h: steel.I.web_height,
+    //     yi: steel.I.upper_thickness + steel.I.web_height / 2,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   It: {
+    //     b: steel.I.upper_width,
+    //     h: steel.I.upper_thickness,
+    //     yi: steel.I.upper_thickness / 2,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   Hl: {
+    //     b: steel.H.left_thickness,
+    //     h: steel.H.left_width,
+    //     yi: null,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   Hw: {
+    //     b: steel.H.web_height,
+    //     h: steel.H.web_thickness,
+    //     yi: null,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   Hr: {
+    //     b: steel.H.right_thickness,
+    //     h: steel.H.right_width,
+    //     yi: null,
+    //     A: null,
+    //     Io: null,
+    //   },
+    //   IH: {
+    //     b: steel.I.web_thickness,
+    //     h: steel.H.web_thickness,
+    //     yi: null,
+    //     A: null,
+    //     Io: null,
+    //   }
+    // }
     // H型鋼の中心位置を調整
-    let yi: number = 0
-    if (Zs_data.IH.b !== null) {
-      if (steel.H.left_width >= steel.H.right_width) {
-        yi = steel.H.left_cover - steel.I.upper_cover + steel.H.left_width / 2;
-      } else {
-        yi = steel.H.left_cover - steel.I.upper_cover + steel.H.right_width / 2;
-      }
-    } else {
-      if (steel.H.left_width >= steel.H.right_width) {
-        yi = steel.H.left_width / 2;
-      } else {
-        yi = steel.H.right_width / 2;
-      }
-    }
-    Zs_data.Hl.yi = yi;
-    Zs_data.Hw.yi = yi;
-    Zs_data.Hr.yi = yi;
-    Zs_data.IH.yi = yi;
+    // let yi: number = 0
+    // if (Zs_data.IH.b !== null) {
+    //   if (steel.H.left_width >= steel.H.right_width) {
+    //     yi = steel.H.left_cover - steel.I.upper_cover + steel.H.left_width / 2;
+    //   } else {
+    //     yi = steel.H.left_cover - steel.I.upper_cover + steel.H.right_width / 2;
+    //   }
+    // } else {
+    //   if (steel.H.left_width >= steel.H.right_width) {
+    //     yi = steel.H.left_width / 2;
+    //   } else {
+    //     yi = steel.H.right_width / 2;
+    //   }
+    // }
+    // Zs_data.Hl.yi = yi;
+    // Zs_data.Hw.yi = yi;
+    // Zs_data.Hr.yi = yi;
+    // Zs_data.IH.yi = yi;
 
     // 総断面積の算出
-    for (let key of Object.keys(Zs_data)) {
-      Zs_data[key].A = Zs_data[key].b * Zs_data[key].h;
-      if (key !== 'IH') {
-        steel_A += Zs_data[key].A;
-        steel_Ay += Zs_data[key].A * Zs_data[key].yi;
-      } else {
-        steel_A -= Zs_data[key].A;
-        steel_Ay -= Zs_data[key].A * Zs_data[key].yi;
-      }
-    }
-    if (steel_A === 0) { return section };
-    const ye = steel_Ay / steel_A;
+    // for (let key of Object.keys(Zs_data)) {
+    //   Zs_data[key].A = Zs_data[key].b * Zs_data[key].h;
+    //   if (key !== 'IH') {
+    //     steel_A += Zs_data[key].A;
+    //     steel_Ay += Zs_data[key].A * Zs_data[key].yi;
+    //   } else {
+    //     steel_A -= Zs_data[key].A;
+    //     steel_Ay -= Zs_data[key].A * Zs_data[key].yi;
+    //   }
+    // }
+    // if (steel_A === 0) { return section };
+    // const ye = steel_Ay / steel_A;
     // 断面係数の算出
-    for (let key of Object.keys(Zs_data)) {
-      Zs_data[key].Io = (Zs_data[key].b * Zs_data[key].h ** 3) / 12;
-      const Ayeyi = Zs_data[key].A * (ye - Zs_data[key].yi) ** 2;
-      if (key !== 'IH') {
-        I += (Zs_data[key].Io + Ayeyi);
-      } else {
-        I -= (Zs_data[key].Io + Ayeyi);
-      }
-    }
-    const Zs = I / ye;
-    section.steel["Zs"] = Zs;
+    // for (let key of Object.keys(Zs_data)) {
+    //   Zs_data[key].Io = (Zs_data[key].b * Zs_data[key].h ** 3) / 12;
+    //   const Ayeyi = Zs_data[key].A * (ye - Zs_data[key].yi) ** 2;
+    //   if (key !== 'IH') {
+    //     I += (Zs_data[key].Io + Ayeyi);
+    //   } else {
+    //     I -= (Zs_data[key].Io + Ayeyi);
+    //   }
+    // }
+    // const Zs = I / ye;
+    section.steels["Zs"] = 1000;// 一旦仮値
 
     return section
   }
@@ -224,8 +227,11 @@ export class ResultDataService {
       case 'Box':
         section = this.box.getBoxShape(member, target, index, side, safety, {});
         for (const num of Object.keys(section.steel)) {
-          if (num === 'rs') continue;
-          result.steels[num] = section.steel[num];
+          // if (num === 'rs' || num === 'A') {
+          //   result.steels[num] = section.steel[num];
+          // } else {
+            result.steels[num] = section.steel[num];
+          // }
         }
         break;
 

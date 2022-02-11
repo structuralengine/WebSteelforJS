@@ -58,10 +58,10 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     
     // 計算結果を集計する
     try {
-      // this.safetyTorsionalMomentPages = this.getSafetyPages(postData);
-      // this.isFulfilled = true;
-      // this.calc.isEnable = true;
-      // this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
+      this.safetyTorsionalMomentPages = this.getSafetyPages(postData);
+      this.isFulfilled = true;
+      this.calc.isEnable = true;
+      this.summary.setSummaryTable("safetyTorsionalMoment", this.safetyTorsionalMomentPages);
     } catch (e) {
       this.err = e.toString();
       this.isFulfilled = false;
@@ -139,19 +139,66 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
             const fck: any = this.helper.getFck(safetyV);
 
             ////////// 仮配置ここから //////////
-            const column: any = this.getResultString(null);
+            const data = this.calc.calcMtud(OutputData, res, sectionM, sectionV, fck, safetyM, safetyV, position.La, force);
+            const column: any = this.getResultString(data);
             /////////////// タイトル ///////////////
             column['title1'] = { alien: "center", value: titleColumn.title1 };
             column['title2'] = { alien: "center", value: titleColumn.title2 };
             column['title3'] = { alien: "center", value: titleColumn.title3 };
+            ///////////////// 鉄骨断面情報 /////////////////
+            column['A'] = this.result.alien(sectionM.steels.A);
+            column['Ix'] = this.result.alien(null);
+            column['Iy'] = this.result.alien(null);
+            ///////////////// 形状 /////////////////
+            column['B'] = this.result.alien(null);
+            column['H'] = this.result.alien(null);
+            ///////////////// 鉄骨情報 /////////////////
+            column['steel_I_tension'] = this.result.alien(null);
+            column['steel_I_web'] = this.result.alien(null);
+            column['steel_I_compress'] = this.result.alien(null);
+            column['steel_H_tension'] = this.result.alien(null);
+            column['steel_H_web'] = this.result.alien(null);
+            /////////////// 引張鉄筋 ///////////////
+            column['tan'] = this.result.alien(null);
+            column['Ast'] = this.result.alien(null);
+            column['AstString'] = this.result.alien(null);
+            column['dst'] = this.result.alien(null);
+            column['tcos'] = this.result.alien(null);
+            /////////////// 圧縮鉄筋 ///////////////
+            column['Asc'] = this.result.alien(null);
+            column['AscString'] = this.result.alien(null);
+            column['dsc'] = this.result.alien(null);
+            column['ccos'] = this.result.alien(null);
+            /////////////// 側面鉄筋 ///////////////
+            column['AseString'] = this.result.alien(null);
+            column['dse'] = this.result.alien(null);
+            /////////////// コンクリート情報 ///////////////
+            column['fck'] = this.result.alien(null);
+            column['rc'] = this.result.alien(null);
+            column['fcd'] = this.result.alien(null);
+            /////////////// 鉄筋強度情報 ///////////////
+            column['fsy'] = this.result.alien(null);
+            column['rs'] = this.result.alien(null);
+            column['fsd'] = this.result.alien(null);
+            /////////////// 鉄骨情報 ///////////////
+            column['fsy_steel'] = this.result.alien(null);
+            column['fsd_steel'] = this.result.alien(null);
+            column['fsy_steel'] = this.result.alien(null);
+            column['fsd_steel'] = this.result.alien(null);
+            column['rs_steel'] = this.result.alien(null);
+            /////////////// 鉄骨情報 ///////////////
+            column['fwyd3'] = this.result.alien(null);
+            /////////////// 総括表用 ///////////////
+            column['index'] = position.index;
+            column['side_summary'] = side;
 
             page.columns.push(column);
             ////////// 仮配置ここまで //////////
             continue;
 
-            const columnn: any = this.getResultString(
-              this.calc.calcMtud(OutputData, res, sectionM, sectionV, fck, safetyM, safetyV, position.La, force)
-            );
+            // const column: any = this.getResultString(
+            //   this.calc.calcMtud(OutputData, res, sectionM, sectionV, fck, safetyM, safetyV, position.La, force)
+            // );
 
             let fwyd3: number = 0
             if ('fsvy_Hweb' in sectionV.steel) {

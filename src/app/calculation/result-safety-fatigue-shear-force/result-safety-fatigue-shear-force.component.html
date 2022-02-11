@@ -172,6 +172,30 @@
         </ng-container>
       </tr>
       <tr>
+        <th class="cell_name2">断面積 A</th>
+        <th class="cell_name3">(mm<sup>2</sup>)</th>
+        <ng-container *ngFor="let column of pages.columns; index as c">
+          <td colspan="2" class="{{column.A.alien}} g-left2">
+            {{column.A.value}}</td>
+        </ng-container>
+      </tr>
+      <tr>
+        <th class="cell_name2">Ix</th>
+        <th class="cell_name3">(mm<sup>2</sup>)</th>
+        <ng-container *ngFor="let column of pages.columns; index as c">
+          <td colspan="2" class="{{column.Ix.alien}} g-left2">
+            {{column.Ix.value}}</td>
+        </ng-container>
+      </tr>
+      <tr>
+        <th class="cell_name2 g-bottom2">Iy</th>
+        <th class="cell_name3 g-bottom2">(mm<sup>2</sup>)</th>
+        <ng-container *ngFor="let column of pages.columns; index as c">
+          <td colspan="2" class="{{column.Iy.alien}} g-bottom2 g-left2">
+            {{column.Iy.value}}</td>
+        </ng-container>
+      </tr>
+      <!--<tr>
         <th class="cell_name2">B Bf</th>
         <th class="cell_name3">(mm)</th>
         <ng-container *ngFor="let column of pages.columns; index as c">
@@ -217,7 +241,6 @@
                 {{column.steel_I_web.value}}</td>
             </ng-container>
             <ng-container *ngIf="column.CFTFlag">
-              <!--<td class="{{column.steel_I_tension.alien}} g-bottom2" colspan="2">-->
               <td colspan="2" class="center g-left2">
                 （CFT）</td>
             </ng-container>
@@ -245,7 +268,6 @@
                 {{column.steel_H_tension.value}}</td>
             </ng-container>
             <ng-container *ngIf="column.CFTFlag">
-              <!--<td class="{{column.steel_I_tension.alien}}" colspan="2">-->
               <td class="center" colspan="2">
                 厚さ {{column.steel_I_tension.value}} mm</td>
             </ng-container>
@@ -456,7 +478,7 @@
               {{column.ar_steel.value}}</td>
           </ng-container>
         </tr>
-      </ng-container>
+      </ng-container>-->
       <tr>
         <th class="cell_name2">Vpd</th>
         <th class="cell_name3">(kN)</th>

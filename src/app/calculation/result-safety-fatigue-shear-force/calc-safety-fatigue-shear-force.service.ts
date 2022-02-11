@@ -207,41 +207,41 @@ export class CalcSafetyFatigueShearForceService {
     }
 
     // せん断補強鉄筋の設計応力度
-    const crackInfo = this.crack.getCalcData(resMin.index); // 環境条件
-    let kr: number = this.helper.toNumber(crackInfo.kr);
-    if (kr === null) { kr = 0.5; }
-    result['kr'] = kr;
+    // const crackInfo = this.crack.getCalcData(resMin.index); // 環境条件
+    // let kr: number = this.helper.toNumber(crackInfo.kr);
+    // if (kr === null) { kr = 0.5; }
+    // result['kr'] = kr;
 
     // 鉄骨の計算に用いる係数ar
-    let ar_steel = 1;
-    if ('Zs' in section.steel) { 
-      const Zs = section.steel.Zs;
-      ar_steel = (section.Ast.Ast * result.z) / (Zs + section.Ast.Ast * result.z);
-      result['Zs'] = Zs;
-      result['ar_steel'] = ar_steel;
-    }
+    // let ar_steel = 1;
+    // if ('Zs' in section.steel) { 
+    //   const Zs = section.steel.Zs;
+    //   ar_steel = (section.Ast.Ast * result.z) / (Zs + section.Ast.Ast * result.z);
+    //   result['Zs'] = Zs;
+    //   result['ar_steel'] = ar_steel;
+    // }
 
     // スターラップの永久応力度
-    const tmpWrd1: number = ar_steel * ( Vpd + Vrd ) - kr * result.Vcd;
-    let tmpWrd2: number = (result.Aw * result.z) / result.Ss;
-    if (section.Asb.Asb !== null){
-      tmpWrd2 += (result.Asb * result.z * (Math.cos(Math.PI * result.deg2 / 180) 
-                                        +  Math.sin(Math.PI * result.deg2 / 180)) ** 3) / result.Ss2;
-    }
-    const tmpWrd3: number = ar_steel * Vpd + result.Vcd;
-    const tmpWrd4: number = ar_steel * (Vpd + Vrd) + result.Vcd;
-    let sigma_min: number = (tmpWrd1 / tmpWrd2) * (tmpWrd3 / tmpWrd4);
-    if (sigma_min === null) { return result; }
-    sigma_min = sigma_min * 1000;
-    result['sigma_min'] = sigma_min;
-    const _sigma_min = Math.max(sigma_min, 0);
+    // const tmpWrd1: number = ar_steel * ( Vpd + Vrd ) - kr * result.Vcd;
+    // let tmpWrd2: number = (result.Aw * result.z) / result.Ss;
+    // if (section.Asb.Asb !== null){
+    //   tmpWrd2 += (result.Asb * result.z * (Math.cos(Math.PI * result.deg2 / 180) 
+    //                                     +  Math.sin(Math.PI * result.deg2 / 180)) ** 3) / result.Ss2;
+    // }
+    // const tmpWrd3: number = ar_steel * Vpd + result.Vcd;
+    // const tmpWrd4: number = ar_steel * (Vpd + Vrd) + result.Vcd;
+    // let sigma_min: number = (tmpWrd1 / tmpWrd2) * (tmpWrd3 / tmpWrd4);
+    // if (sigma_min === null) { return result; }
+    // sigma_min = sigma_min * 1000;
+    // result['sigma_min'] = sigma_min;
+    // const _sigma_min = Math.max(sigma_min, 0);
 
     // スターラップの変動応力度
-    let sigma_rd: number = (tmpWrd1 / tmpWrd2) * (ar_steel * Vrd / tmpWrd4);
-    if (sigma_rd === null) { return result; }
-    sigma_rd = sigma_rd * 1000;
-    result['sigma_rd'] = sigma_rd;
-    const _sigma_rd = Math.max(sigma_rd, 0);
+    // let sigma_rd: number = (tmpWrd1 / tmpWrd2) * (ar_steel * Vrd / tmpWrd4);
+    // if (sigma_rd === null) { return result; }
+    // sigma_rd = sigma_rd * 1000;
+    // result['sigma_rd'] = sigma_rd;
+    // const _sigma_rd = Math.max(sigma_rd, 0);
 
     // f200 の計算
     let rs = this.helper.toNumber(safety.safety_factor.rs);
@@ -250,31 +250,31 @@ export class CalcSafetyFatigueShearForceService {
 
     let k = 0.12;
 
-    const fai: number = this.helper.toNumber(section.Aw.stirrup_dia);
-    if (fai === null) { return result; }
+    // const fai: number = this.helper.toNumber(section.Aw.stirrup_dia);
+    // if (fai === null) { return result; }
 
-    const fwud: number = this.helper.toNumber(section.Aw.fwud);
-    if (fwud === null) { return result; }
-    result['fwud'] = fwud;
+    // const fwud: number = this.helper.toNumber(section.Aw.fwud);
+    // if (fwud === null) { return result; }
+    // result['fwud'] = fwud;
 
-    const inputFatigue: any = tmpFatigue.share;
+    // const inputFatigue: any = tmpFatigue.share;
 
-    let r1: number = this.helper.toNumber(inputFatigue.r1_2);
-    if (r1 === null) { r1 = 0.65; }
-    result['r1'] = r1;
+    // let r1: number = this.helper.toNumber(inputFatigue.r1_2);
+    // if (r1 === null) { r1 = 0.65; }
+    // result['r1'] = r1;
 
-    let ar: number = 3.09 - 0.003 * fai;
+    // let ar: number = 3.09 - 0.003 * fai;
 
     let reference_count: number = this.helper.toNumber(this.fatigue.reference_count);
     if (reference_count === null) {
       reference_count = 2000000;
     }
-    const tmp201: number = Math.pow(10, ar) / Math.pow(reference_count, k);
-    const tmp202: number = 1 - _sigma_min / fwud;
-    const fsr200: number = r1 * tmp201 * tmp202 / rs;
-    if(option['k12'] === false){
-      result['fsr200'] = fsr200;
-    }
+    // const tmp201: number = Math.pow(10, ar) / Math.pow(reference_count, k);
+    // const tmp202: number = 1 - _sigma_min / fwud;
+    // const fsr200: number = r1 * tmp201 * tmp202 / rs;
+    // if(option['k12'] === false){
+    //   result['fsr200'] = fsr200;
+    // }
 
     const ri: number = safety.safety_factor.ri;
     result['ri'] = ri;
@@ -282,22 +282,22 @@ export class CalcSafetyFatigueShearForceService {
     let rb = this.helper.toNumber(safety.safety_factor.rbs);
     if (rb === null) { rb = 1; }
 
-    const ratio200: number = ri * _sigma_rd / (fsr200 / rb);
-    if(option['k12'] === false){    
-      result['ratio200'] = ratio200;
-      if (ratio200 < 1) {
-        k = 0.06;
-        ar = 2.71 - 0.003 * fai;
-      } else {
-        k = 0.12;
-        ar = 3.09 - 0.003 * fai;
-      }
-    } else {
-      k = 0.12;
-      ar = 3.09 - 0.003 * fai;
-    }
-    result['k']  = k;
-    result['ar']  = ar;
+    // const ratio200: number = ri * _sigma_rd / (fsr200 / rb);
+    // if(option['k12'] === false){    
+    //   result['ratio200'] = ratio200;
+    //   if (ratio200 < 1) {
+    //     k = 0.06;
+    //     ar = 2.71 - 0.003 * fai;
+    //   } else {
+    //     k = 0.12;
+    //     ar = 3.09 - 0.003 * fai;
+    //   }
+    // } else {
+    //   k = 0.12;
+    //   ar = 3.09 - 0.003 * fai;
+    // }
+    // result['k']  = k;
+    // result['ar']  = ar;
 
     // 標準列車荷重観山の総等価繰返し回数 N の計算
     let T: number = this.helper.toNumber(this.fatigue.service_life);
@@ -307,84 +307,84 @@ export class CalcSafetyFatigueShearForceService {
     const jA = j[0];
     const jB = j[1];
 
-    let SASC: number = this.helper.toNumber(inputFatigue.SA);
-    if (SASC === null) {
-      SASC = 1;
-    } else if(jA > 0) {
-      result['SASC'] = SASC;
-    }
+    // let SASC: number = this.helper.toNumber(inputFatigue.SA);
+    // if (SASC === null) {
+    //   SASC = 1;
+    // } else if(jA > 0) {
+    //   result['SASC'] = SASC;
+    // }
   
-    let SBSC: number = this.helper.toNumber(inputFatigue.SB);
-    if (SBSC === null) {
-      SBSC = 1;
-    } else if(jB > 0){
-      result['SBSC'] = SBSC;
-    }
+    // let SBSC: number = this.helper.toNumber(inputFatigue.SB);
+    // if (SBSC === null) {
+    //   SBSC = 1;
+    // } else if(jB > 0){
+    //   result['SBSC'] = SBSC;
+    // }
 
-    let a: number = this.helper.toNumber(inputFatigue.A);
-    if (a === null) {
-      a = 1;
-    } else {
-      result['a'] = a;
-    }
+    // let a: number = this.helper.toNumber(inputFatigue.A);
+    // if (a === null) {
+    //   a = 1;
+    // } else {
+    //   result['a'] = a;
+    // }
     
-    let b: number = this.helper.toNumber(inputFatigue.B);
-    if (b === null) {
-      b = 1;
-    } else {
-      result['b'] = b;
-    }
+    // let b: number = this.helper.toNumber(inputFatigue.B);
+    // if (b === null) {
+    //   b = 1;
+    // } else {
+    //   result['b'] = b;
+    // }
 
-    let NA = 0;
-    let NB = 0;
-    if (k === 0.06) {
-      NA = this.helper.toNumber(inputFatigue.NA06);
-      NB = this.helper.toNumber(inputFatigue.NB06);
-    } else {
-      NA = this.helper.toNumber(inputFatigue.NA12);
-      NB = this.helper.toNumber(inputFatigue.NB12);
-    }
-    if (NA === null) {
-      NA = 0;
-    } else if(jA > 0){
-      result['NA'] = NA;
-    }
-    if (NB === null) {
-      NB = 0;
-    } else if(jB > 0){
-      result['NB'] = NB;
-    }
+    // let NA = 0;
+    // let NB = 0;
+    // if (k === 0.06) {
+    //   NA = this.helper.toNumber(inputFatigue.NA06);
+    //   NB = this.helper.toNumber(inputFatigue.NB06);
+    // } else {
+    //   NA = this.helper.toNumber(inputFatigue.NA12);
+    //   NB = this.helper.toNumber(inputFatigue.NB12);
+    // }
+    // if (NA === null) {
+    //   NA = 0;
+    // } else if(jA > 0){
+    //   result['NA'] = NA;
+    // }
+    // if (NB === null) {
+    //   NB = 0;
+    // } else if(jB > 0){
+    //   result['NB'] = NB;
+    // }
 
-    const tmpN1: number = 365 * T * jA * NA * Math.pow(SASC, 1 / k);
-    const tmpN2: number = 365 * T * jB * NB * Math.pow(SBSC, 1 / k);
-    const N: number = tmpN1 + tmpN2;
-    result['N'] = Math.round(N / 100) * 100;
+    // const tmpN1: number = 365 * T * jA * NA * Math.pow(SASC, 1 / k);
+    // const tmpN2: number = 365 * T * jB * NB * Math.pow(SBSC, 1 / k);
+    // const N: number = tmpN1 + tmpN2;
+    // result['N'] = Math.round(N / 100) * 100;
 
     // frd の計算
-    const tmpR21: number = Math.pow(a, 1 / k);
-    const tmpR22: number = Math.pow(1 - a, 1 / k);
-    const tmpR23: number = (tmpR21 + tmpR22) * ((1 - b) + b);
-    const r2: number = Math.pow(1 / tmpR23, k);
-    result['r2'] = r2;
+    // const tmpR21: number = Math.pow(a, 1 / k);
+    // const tmpR22: number = Math.pow(1 - a, 1 / k);
+    // const tmpR23: number = (tmpR21 + tmpR22) * ((1 - b) + b);
+    // const r2: number = Math.pow(1 / tmpR23, k);
+    // result['r2'] = r2;
 
-    const tmpfrd1: number = Math.pow(10, ar) / Math.pow(N, k);
-    const tmpfrd2: number = 1 - _sigma_min / fwud;
-    const frd: number = r1 * r2 * tmpfrd1 * tmpfrd2 / rs;
-    result['frd'] = frd;
+    // const tmpfrd1: number = Math.pow(10, ar) / Math.pow(N, k);
+    // const tmpfrd2: number = 1 - _sigma_min / fwud;
+    // const frd: number = r1 * r2 * tmpfrd1 * tmpfrd2 / rs;
+    // result['frd'] = frd;
 
-    if (ratio200 < 1 && N <= reference_count) {
-      return result;
-    }
+    // if (ratio200 < 1 && N <= reference_count) {
+    //   return result;
+    // }
 
-    const ratio: number = ri * _sigma_rd / (frd / rb);
-    if(ratio > 0){
-      result['ratio'] = ratio;
-    }
+    // const ratio: number = ri * _sigma_rd / (frd / rb);
+    // if(ratio > 0){
+    //   result['ratio'] = ratio;
+    // }
 
     // 折り曲げ鉄筋の情報があれば、まとめて計算する。
-    if (section.Asb.Asb !== null) { 
-      this.bend(section, result, inputFatigue, reference_count, rb, fai);
-    };
+    // if (section.Asb.Asb !== null) { 
+    //   this.bend(section, result, inputFatigue, reference_count, rb, fai);
+    // };
 
     return result;
 

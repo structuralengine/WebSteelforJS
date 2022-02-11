@@ -336,6 +336,7 @@ export class SetBoxService {
       //   fsy_right: null,
       //   fvy_web: null,
       // },
+      A: null, 
       rs: null
     };
     for (const num of Object.keys(stl)) {
@@ -447,17 +448,23 @@ export class SetBoxService {
       //   );
       // }
 
+      let A: number = 0;
       // 1~5を入手
       for (const num of Object.keys(steel)) {
-        if (num === 'rs') continue;
+        if (num === 'rs' || num === 'A') continue;
         const steel0 = steel[num];
         for (const key of ['steel_b', 'steel_h', 'steel_w']) {
           steel0[key] = stl[num][key];
         }
+        // 断面積を算出し, 加算する
+        A += steel0['steel_b'] * steel0['steel_h'];
         // 鉄骨強度を入手し, fsyに入れる
         // steel0['fsy'] = this.helper.getFsyk2(stl[num]upper_thickness, safety.material_steel);
         steel0['fsy'] = 235;  // 鉄骨幅は部材ナンバーごとに異なるため、一旦保留
       }
+      // 断面積を代入
+      steel.A = A;
+      console.log("break")
     }
 
     result['steel'] = steel;
