@@ -190,33 +190,33 @@ export class InputSteelsService {
         // 当該入力行 の情報を入手
         result = this.default_steels(index);
         for (const key of Object.keys(result)) {
-          if (["I", "H"].includes(key)) {
-            for (const k of Object.keys(result[key])) {
-              if (k in data[key]) {
-                result[key][k] = data[key][k];
-              }
-            }
-          } else {
+          // if (["I", "H"].includes(key)) {
+          //   for (const k of Object.keys(result[key])) {
+          //     if (k in data[key]) {
+          //       result[key][k] = data[key][k];
+          //     }
+          //   }
+          // } else {
             result[key] = data[key];
-          }
+          // }
         }
       }
       // 当該入力行より上の行
-      let endFlg = true;
-      for (const key of ["I", "H"]) {
-        const resteel = data[key];
-        const re = result[key];
-        for (const k of Object.keys(re)) {
-          if (re[k] === null && k in resteel) {
-            re[k] = this.helper.toNumber(resteel[k]);
-            endFlg = false; // まだ終わらない
-          }
-        }
-      }
-      if (endFlg === true) {
-        // 全ての値に有効な数値(null以外)が格納されたら終了する
-        break;
-      }
+      // let endFlg = true;
+      // for (const key of ["I", "H"]) {
+      //   const resteel = data[key];
+      //   const re = result[key];
+      //   for (const k of Object.keys(re)) {
+      //     if (re[k] === null && k in resteel) {
+      //       re[k] = this.helper.toNumber(resteel[k]);
+      //       endFlg = false; // まだ終わらない
+      //     }
+      //   }
+      // }
+      // if (endFlg === true) {
+      //   // 全ての値に有効な数値(null以外)が格納されたら終了する
+      //   break;
+      // }
     }
 
     return result;

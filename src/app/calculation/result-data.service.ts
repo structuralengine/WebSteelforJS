@@ -9,6 +9,7 @@ import { SetRectService } from "./shape-data/set-rect.service";
 import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
+import { SetBoxService } from "./shape-data/set-box.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,7 +25,8 @@ export class ResultDataService {
     private circle: SetCircleService,
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
-    private vOval: SetVerticalOvalService) { }
+    private vOval: SetVerticalOvalService,
+    private box: SetBoxService,) { }
 
   // 表題の共通した行
   public getTitleString(member: any, position: any, side: string): any {
@@ -198,16 +200,7 @@ export class ResultDataService {
     const result = {
       member: null,
       shapeName: null,
-      shape: {
-        B: null,
-        H: null,
-        Bt: null,
-        t: null,
-        Bw: null, // 換算断面情報
-        Hw: null, // 換算断面情報
-        B_summary: null, // 総括表用
-        H_summary: null,  // 総括表用
-      },
+      steels: {},
       CFTFlag: false,
     };
 
@@ -227,104 +220,31 @@ export class ResultDataService {
     // 断面情報
     let section: any;
     switch (shapeName) {
-      case 'Circle':            // 円形
-        if (target === 'Md') {
-          section = this.circle.getCircleShape(member, index, safety, {});
-          result['Ast'] = this.getAst(section, safety, target);
-          result.shape.H = section.H;
-          result.shape.B = section.B;
-          result.shape.Hw = section.Hw;
-        } else {
-          section = this.circle.getCircleVdShape(member, index, safety);
-          result['Ast'] = this.getAstCircleVd(section, safety);
-          result.shape.H = section.H;
-          result.shape.B = section.B;
-          result.shape.Hw = section.Hw;
-          result.shape.Bw = section.Bw;
-        }
-        result.shape.B_summary = section.B_summary;
-        result.shape.H_summary = section.H_summary;
-        // CFTの判定用のフラグ
-        if ('steel' in section) {
-          result.CFTFlag = true;
-        }
-        break;
 
-      case 'Ring':              // 円環
-        if (target === 'Md') {
-          section = this.circle.getRingShape(member, index, safety, {});
-          result['Ast'] = this.getAst(section, safety, target);
-        } else {
-          result['Ast'] = this.getAstCircleVd(section, safety,);
-          section = this.circle.getRingVdShape(member, index, safety);
+      case 'Box':
+        section = this.box.getBoxShape(member, target, index, side, safety, {});
+        for (const num of Object.keys(section.steel)) {
+          if (num === 'rs') continue;
+          result.steels[num] = section.steel[num];
         }
-        result.shape.H = section.H;
-        result.shape.B = section.B;
-        result.shape.B_summary = section.B_summary;
-        result.shape.H_summary = section.H_summary;
-        break;
-
-      case 'Rectangle':         // 矩形
-        section = this.rect.getRectangleShape(member, target, index, side, safety, {});
-        result['Ast'] = this.getAst(section, safety, target);
-        result['Ase'] = this.getAse(section);
-        if('side_cover' in section){
-          result['side_cover'] = section.side_cover
-        }
-        result.shape.H = section.H;
-        result.shape.B = section.B;
-        break;
-
-      case 'Tsection':          // T形
-      case 'InvertedTsection':  // 逆T形
-        section = this.rect.getTsectionShape(member, target, index, side, safety, {});
-        result['Ast'] = this.getAst(section, safety, target);
-        result['Ase'] = this.getAse(section);
-        if('side_cover' in section){
-          result['side_cover'] = section.side_cover
-        }
-        result.shape.H = section.H;
-        result.shape.B = section.B;
-        result.shape.Bt = section.Bt;
-        result.shape.t = section.t;
-        break;
-
-      case 'HorizontalOval':    // 水平方向小判形
-        section = this.hOval.getShape(member, index, side, safety, {});
-        result['Ast'] = this.getAst(section, safety, target);
-        result.shape.H = section.H;
-        result.shape.B = section.B;
-        result.shape.Bw = section.Bw;
-        result.shape.B_summary = section.B_summary;
-        result.shape.H_summary = section.H_summary;
-        break;
-
-      case 'VerticalOval':      // 鉛直方向小判形
-        section = this.vOval.getShape(member, index, side, safety, {});
-        result['Ast'] = this.getAst(section, safety, target);
-        result.shape.H = section.H;
-        result.shape.Hw = section.Hw;
-        result.shape.B = section.B;
-        result.shape.B_summary = section.B_summary;
-        result.shape.H_summary = section.H_summary;
         break;
 
       default:
         throw ("断面形状：" + shapeName + " は適切ではありません。");
     }
 
-    result['Asc'] = this.getAsc(section);
-    result['Ase'] = this.getAse(section);
+    // result['Asc'] = this.getAsc(section);
+    // result['Ase'] = this.getAse(section);
 
-    result['steel'] = this.getSteel(section, safety, side, target);
+    // result['steel'] = this.getSteel(section, safety, side, target);
 
     // せん断の場合 追加でパラメータを設定する
-    if (target === 'Vd') {
-      const vmuSection = this.getVmuSection(section, safety);
-      for (const key of Object.keys(vmuSection)) {
-        result[key] = vmuSection[key];
-      }
-    }
+    // if (target === 'Vd') {
+    //   const vmuSection = this.getVmuSection(section, safety);
+    //   for (const key of Object.keys(vmuSection)) {
+    //     result[key] = vmuSection[key];
+    //   }
+    // }
 
     return result;
   }

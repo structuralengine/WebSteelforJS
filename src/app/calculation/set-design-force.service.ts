@@ -60,7 +60,7 @@ export class SetDesignForceService {
         return new Array(); // 存在しない着目点がある
       }
 
-      const key = target + pickupNo;
+      const key = pickupNo;
       const value = { comb: null };
       let flg = false;
       for (const k of ["Mt", "Md", "Nd", "Vd"]) {

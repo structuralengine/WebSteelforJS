@@ -40,7 +40,8 @@ export class CalcEarthquakesTosionalMomentService {
   //    return;
   //  }
 
-   const No7 = (this.save.isManual()) ? 7 : this.basic.pickup_torsional_moment_no(7);
+  // const No7 = (this.save.isManual()) ? 7 : this.basic.pickup_torsional_moment_no(7);
+  const No7 = (this.save.isManual()) ? 5 : this.basic.pickup_torsional_moment_no(5);
    this.DesignForceList = this.force.getDesignForceList(
      'Mt', No7);
 
