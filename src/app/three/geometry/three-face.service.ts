@@ -8,6 +8,7 @@ import { InputSteelsService } from "src/app/components/steels/steels.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { DataTexture3D } from "three";
 import { SetBoxService } from "src/app/calculation/shape-data/set-box.service";
+import { SetCircleService } from "src/app/calculation/shape-data/set-circle.service";
 
 @Injectable({
   providedIn: "root",
@@ -26,6 +27,8 @@ export class ThreePanelService {
   public y: number = 0;
   public z: number = 0;
 
+  public old_element = {};
+
   public max: number = 0;
   public select: number = 0;
 
@@ -34,6 +37,7 @@ export class ThreePanelService {
     private http: HttpClient,
     private steel: InputSteelsService,
     private box: SetBoxService,
+    private circle: SetCircleService,
     private helper: DataHelperModule
   ) {
     this.panel_List = new Array();
@@ -58,6 +62,10 @@ export class ThreePanelService {
     // for (let i = 0; i < data.length; i++) {
     let vertexlist = {};
     let element = {};
+
+    let flg: boolean = false;
+
+    this.old_element = {};
     // var length = 5;
     // var start = this.select;
     // var arr = Array.apply(null, new Array(length)).map(function (v, i) {
@@ -85,11 +93,31 @@ export class ThreePanelService {
       );
 
       if (j % 5 === 0 && Math.floor(Number(i) / 5) == this.select) {
-        vertexlist["shape"] = data[Number(i) - 4]["shape"];
-        element = vertexlist;
+        if (
+          vertexlist["b1"] === 0 &&
+          vertexlist["b3"] === 0 &&
+          !(Number(i) < 5)
+        ) {
+          element = this.old_element;
+        } else {
+          vertexlist["shape"] = data[Number(i) - 4]["shape"];
+          element = vertexlist;
+        }
+        flg = true;
       }
 
       if (j % 5 === 0) {
+        if (!flg || Number(i) < 5) {
+          vertexlist["shape"] = data[Number(i) - 4]["shape"];
+          if (vertexlist["b1"] === 0 && vertexlist["b3"] === 0) {
+            if (Number(i) < 5) {
+              this.old_element = vertexlist;
+            }
+          } else {
+            this.old_element = {};
+            this.old_element = vertexlist;
+          }
+        }
         vertexlist = {};
       }
 
@@ -135,9 +163,9 @@ export class ThreePanelService {
         child = this.createPlane(vertices);
         break;
       case "鋼管":
-        vertices = this.getVertices_pipe(element);
-        centroid = this.box.getCentroid_box(vertices);
-        child = this.createPlane(vertices);
+        vertices = this.circle.getVertices_pipe(element);
+        centroid = this.circle.getCentroid_pipe(vertices);
+        child = this.circle.createPlane(vertices);
         break;
     }
     child.position.set(-centroid.x, -centroid.y, -centroid.z);
@@ -583,26 +611,6 @@ export class ThreePanelService {
   }
   */
 
-  private getVertices_pipe(vertexlist) {
-    const scale = 0.1;
-    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
-      vertexlist[0]["steel_b"] !== undefined
-        ? vertexlist[0]["steel_b"] * scale
-        : 0;
-    const h1 =
-      vertexlist[0]["steel_h"] !== undefined
-        ? vertexlist[0]["steel_h"] * scale
-        : 0;
-    const geometry = new THREE.TorusGeometry((b1 - h1) / 2, h1 / 2, 4, 200);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x3366cc,
-      side: THREE.DoubleSide,
-    });
-    const torus = new THREE.Mesh(geometry, material);
-    this.panel_List.push(torus);
-    this.scene.add(torus);
-  }
   /*
   private getCentroid(child): THREE.Vector3 {
     let Ax: number = 0;

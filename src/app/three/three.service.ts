@@ -8,7 +8,7 @@ import { SceneService } from "./scene.service";
 })
 export class ThreeService {
   public mode: string;
-  private currentIndex: number;
+  public currentIndex: number = 0;
   public canvasElement: HTMLCanvasElement;
 
   public selectedNumber: number;
