@@ -97,12 +97,12 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
 
     // 例外
-    if(sp1 === 0){
-      if( this.basic.get_specification2() === 2){
-        // JR東日本
-        result[3].r1 = 1.00; // 復旧性の γi =1.00
-      }
-    }
+    // if(sp1 === 0){
+    //   if( this.basic.get_specification2() === 2){
+    //     // JR東日本
+    //     result[3].r1 = 1.00; // 復旧性の γi =1.00
+    //   }
+    // }
 
     return result;
 

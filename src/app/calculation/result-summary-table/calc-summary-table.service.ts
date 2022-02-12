@@ -220,36 +220,36 @@ export class CalcSummaryTableService {
                 : this.default(index, side);
 
             // 断面位置
-            columns.title.title0 = col.g_name;
+            columns.title.title0 = '-'; // col.g_name;
             columns.title.title1 = col.title1.value;
             columns.title.title2 = col.title2.value;
             columns.title.title3 = col.title3.value;
             // 断面形状
-            columns.shape.name = col.shape_summary;
-            columns.shape.B = col.B.value;
-            columns.shape.H = col.H.value;
-            columns.shape.B_summary = col.B_summary;
-            columns.shape.H_summary = col.H_summary;
+            columns.shape.name = '-'; // col.shape_summary;
+            columns.shape.B = '-'; // col.B.value;
+            columns.shape.H = '-'; // col.H.value;
+            columns.shape.B_summary = '-'; // col.B_summary;
+            columns.shape.H_summary = '-'; // col.H_summary;
             // 鉄骨情報
-            columns.steel.I_tension = col.steel_I_tension.value;
-            columns.steel.I_web = col.steel_I_web.value;
-            columns.steel.I_compress = col.steel_I_compress.value;
-            columns.steel.H_flange = col.steel_H_tension.value;
-            columns.steel.H_web = col.steel_H_web.value;
-            columns.steel.CFTFlag = col.CFTFlag;
+            // columns.steel.I_tension = col.steel_I_tension.value;
+            // columns.steel.I_web = col.steel_I_web.value;
+            // columns.steel.I_compress = col.steel_I_compress.value;
+            // columns.steel.H_flange = col.steel_H_tension.value;
+            // columns.steel.H_web = col.steel_H_web.value;
+            // columns.steel.CFTFlag = col.CFTFlag;
             // 鉄筋量
-            columns.As.AstString = col.AstString.value;
-            columns.As.AscString = col.AscString.value;
-            columns.As.AseString = col.AseString.value;
-            columns.As.AwString = col.AwString.value;
-            columns.As.Ss = col.Ss.value;
+            // columns.As.AstString = col.AstString.value;
+            // columns.As.AscString = col.AscString.value;
+            // columns.As.AseString = col.AseString.value;
+            // columns.As.AwString = col.AwString.value;
+            // columns.As.Ss = col.Ss.value;
             // 照査結果
-            columns.earthquakesMoment.ri = col.ri.value;
-            columns.earthquakesTorsionalMoment.Md = col.Md.value;
-            columns.earthquakesTorsionalMoment.Vd = col.Vd.value;
-            columns.earthquakesTorsionalMoment.Mtd = col.Mt.value;
-            columns.earthquakesTorsionalMoment.Mtud3_Ratio = col.Mtud3_Ratio.value;
-            columns.earthquakesTorsionalMoment.Mtud4_Ratio = col.Mtud4_Ratio.value;
+            // columns.earthquakesMoment.ri = '-'; // col.ri.value;
+            columns.earthquakesTorsionalMoment.Md = '-'; // col.Md.value;
+            columns.earthquakesTorsionalMoment.Vd = '-'; // col.Vd.value;
+            columns.earthquakesTorsionalMoment.Mtd = '-'; // col.Mt.value;
+            columns.earthquakesTorsionalMoment.Mtud3_Ratio = '-'; // col.Mtud3_Ratio.value;
+            columns.earthquakesTorsionalMoment.Mtud4_Ratio = '-'; // col.Mtud4_Ratio.value;
             //鉄骨情報のフラグ
             if (col.steelFlag) this.isSRC = true;
 
@@ -463,32 +463,32 @@ export class CalcSummaryTableService {
                 : this.default(index, side);
 
             // 断面位置
-            columns.title.title0 = col.g_name;
+            columns.title.title0 = '-'; // col.g_name;
             columns.title.title1 = col.title1.value;
             columns.title.title2 = col.title2.value;
             columns.title.title3 = col.title3.value;
             // 断面形状
-            columns.shape.name = col.shape_summary;
-            columns.shape.B = col.B.value;
-            columns.shape.H = col.H.value;
-            columns.shape.B_summary = col.B_summary;
-            columns.shape.H_summary = col.H_summary;
+            columns.shape.name = '-'; // col.shape_summary;
+            columns.shape.B = '-'; // col.B.value;
+            columns.shape.H = '-'; // col.H.value;
+            columns.shape.B_summary = '-'; // col.B_summary;
+            columns.shape.H_summary = '-'; // col.H_summary;
             // 鉄骨情報
-            columns.steel.I_tension = col.steel_I_tension.value;
-            columns.steel.I_web = col.steel_I_web.value;
-            columns.steel.I_compress = col.steel_I_compress.value;
-            columns.steel.H_flange = col.steel_H_tension.value;
-            columns.steel.H_web = col.steel_H_web.value;
-            columns.steel.CFTFlag = col.CFTFlag;
+            // columns.steel.I_tension = col.steel_I_tension.value;
+            // columns.steel.I_web = col.steel_I_web.value;
+            // columns.steel.I_compress = col.steel_I_compress.value;
+            // columns.steel.H_flange = col.steel_H_tension.value;
+            // columns.steel.H_web = col.steel_H_web.value;
+            // columns.steel.CFTFlag = col.CFTFlag;
             // 鉄筋量
-            columns.As.AstString = col.AstString.value;
-            columns.As.AwString = col.AwString.value;
-            columns.As.Ss = col.Ss.value;
+            // columns.As.AstString = col.AstString.value;
+            // columns.As.AwString = col.AwString.value;
+            // columns.As.Ss = col.Ss.value;
             // 照査結果
-            columns.safetyFatigueShearForce.sigma_min = col.sigma_min.value;
-            columns.safetyFatigueShearForce.sigma_rd = col.sigma_rd.value;
-            columns.safetyFatigueShearForce.frd = col.frd.value;
-            columns.safetyFatigueShearForce.ratio = col.ratio.value;
+            columns.safetyFatigueShearForce.sigma_min = '-'; // col.sigma_min.value;
+            columns.safetyFatigueShearForce.sigma_rd = '-'; // col.sigma_rd.value;
+            columns.safetyFatigueShearForce.frd = '-'; // col.frd.value;
+            columns.safetyFatigueShearForce.ratio = '-'; // col.ratio.value;
             //鉄骨情報のフラグ
             if (col.steelFlag) this.isSRC = true;
 
@@ -606,36 +606,36 @@ export class CalcSummaryTableService {
                 : this.default(index, side);
 
             // 断面位置
-            columns.title.title0 = col.g_name;
+            columns.title.title0 = '-'; // col.g_name;
             columns.title.title1 = col.title1.value;
             columns.title.title2 = col.title2.value;
             columns.title.title3 = col.title3.value;
             // 断面形状
-            columns.shape.name = col.shape_summary;
-            columns.shape.B = col.B.value;
-            columns.shape.H = col.H.value;
-            columns.shape.B_summary = col.B_summary;
-            columns.shape.H_summary = col.H_summary;
+            columns.shape.name = '-'; // col.shape_summary;
+            columns.shape.B = '-'; // col.B.value;
+            columns.shape.H = '-'; // col.H.value;
+            columns.shape.B_summary = '-'; // col.B_summary;
+            columns.shape.H_summary = '-'; // col.H_summary;
             // 鉄骨情報
-            columns.steel.I_tension = col.steel_I_tension.value;
-            columns.steel.I_web = col.steel_I_web.value;
-            columns.steel.I_compress = col.steel_I_compress.value;
-            columns.steel.H_flange = col.steel_H_tension.value;
-            columns.steel.H_web = col.steel_H_web.value;
-            columns.steel.CFTFlag = col.CFTFlag;
+            // columns.steel.I_tension = col.steel_I_tension.value;
+            // columns.steel.I_web = col.steel_I_web.value;
+            // columns.steel.I_compress = col.steel_I_compress.value;
+            // columns.steel.H_flange = col.steel_H_tension.value;
+            // columns.steel.H_web = col.steel_H_web.value;
+            // columns.steel.CFTFlag = col.CFTFlag;
             // 鉄筋量
-            columns.As.AstString = col.AstString.value;
-            columns.As.AscString = col.AscString.value;
-            columns.As.AseString = col.AseString.value;
-            columns.As.AwString = col.AwString.value;
-            columns.As.Ss = col.Ss.value;
+            // columns.As.AstString = col.AstString.value;
+            // columns.As.AscString = col.AscString.value;
+            // columns.As.AseString = col.AseString.value;
+            // columns.As.AwString = col.AwString.value;
+            // columns.As.Ss = col.Ss.value;
             // 照査結果
-            columns.safetyMoment.ri = col.ri.value;
-            columns.safetyTorsionalMoment.Md = col.Md.value;
-            columns.safetyTorsionalMoment.Vd = col.Vd.value;
-            columns.safetyTorsionalMoment.Mtd = col.Mt.value;
-            columns.safetyTorsionalMoment.Mtud3_Ratio = col.Mtud3_Ratio.value;
-            columns.safetyTorsionalMoment.Mtud4_Ratio = col.Mtud4_Ratio.value;
+            // columns.safetyMoment.ri = '-'; // col.ri.value;
+            columns.safetyTorsionalMoment.Md = '-'; // col.Md.value;
+            columns.safetyTorsionalMoment.Vd = '-'; // col.Vd.value;
+            columns.safetyTorsionalMoment.Mtd = '-'; // col.Mt.value;
+            columns.safetyTorsionalMoment.Mtud3_Ratio = '-'; // col.Mtud3_Ratio.value;
+            columns.safetyTorsionalMoment.Mtud4_Ratio = '-'; // col.Mtud4_Ratio.value;
             //鉄骨情報のフラグ
             if (col.steelFlag) this.isSRC = true;
 

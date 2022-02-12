@@ -377,7 +377,7 @@ export class InputBasicInformationService  {
       }
     }
 
-    this.specification2_list = basic.specification2_list;
+    // this.specification2_list = basic.specification2_list;
     this.conditions_list = basic.conditions_list;
   }
 
@@ -391,7 +391,7 @@ export class InputBasicInformationService  {
       pickup_torsional_moment: this.pickup_torsional_moment,
 
       specification1_list: this.specification1_list, // 適用
-      specification2_list: this.specification2_list, // 仕様
+      // specification2_list: this.specification2_list, // 仕様
       conditions_list: this.conditions_list         // 設計条件
     }
   }

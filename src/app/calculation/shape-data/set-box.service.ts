@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { InputBarsService } from 'src/app/components/bars/bars.service';
 import { InputSteelsService } from 'src/app/components/steels/steels.service';
 import { DataHelperModule } from 'src/app/providers/data-helper.module';
+import * as THREE from "three";
 import { environment } from 'src/environments/environment';
 import { ResultDataService } from '../result-data.service';
 
@@ -13,7 +14,7 @@ export class SetBoxService {
   constructor(
     private bars: InputBarsService,
     private steel: InputSteelsService,
-    private helper: DataHelperModule
+    private helper: DataHelperModule,
   ) { }
 
   // 矩形断面の POST 用 データ作成
@@ -39,33 +40,6 @@ export class SetBoxService {
 
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
-    // 鉄筋情報を集計
-    // const result2 = this.getRectBar(shape, safety, side);
-    // for (const key of Object.keys(result2)) {
-    //   result[key] = result2[key];
-    // }
-
-    // 配筋が上下対象でなければ、symmetry = false
-    // const Bars = result['Bars'];
-    // let j = Bars.length - 1;
-    // grid_loop:
-    // for (let i = 0; i < Bars.length; i++) {
-    //   const b1 = Bars[i];
-    //   const b2 = Bars[j];
-    //   const d1 = b1.Depth
-    //   const d2 = section.Height - b2.Depth;
-    //   if (d1 !== d2) {
-    //     result.symmetry = false;
-    //     break;
-    //   }
-    //   for (const key of ['i', 'n', 'ElasticID']) {
-    //     if (d1[key] !== d2[key]) {
-    //       result.symmetry = false;
-    //       break grid_loop;
-    //     }
-    //   }
-    //   j--;
-    // }
     return result;
   }
 
@@ -104,10 +78,10 @@ export class SetBoxService {
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
     // 鉄筋情報を集計
-    const result2 = this.getRectBar(shape, safety, side);
-    for (const key of Object.keys(result2)) {
-      result[key] = result2[key];
-    }
+    // const result2 = this.getRectBar(shape, safety, side);
+    // for (const key of Object.keys(result2)) {
+    //   result[key] = result2[key];
+    // }
 
     return result;
   }
@@ -147,10 +121,10 @@ export class SetBoxService {
     result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
     // 鉄筋情報を集計
-    const result2 = this.getRectBar(shape, safety, side);
-    for (const key of Object.keys(result2)) {
-      result[key] = result2[key];
-    }
+    // const result2 = this.getRectBar(shape, safety, side);
+    // for (const key of Object.keys(result2)) {
+    //   result[key] = result2[key];
+    // }
 
     return result;
   }
@@ -166,23 +140,6 @@ export class SetBoxService {
       member:null,
     };
 
-    // const bar: any = this.bars.getCalcData(index);
-    // const haunch: number = (target === 'Md') ? bar.haunch_M : bar.haunch_V;
-
-    // let h: number = this.helper.toNumber(member.H);
-    // if (this.helper.toNumber(haunch) !== null) {
-    //   h += haunch * 1;
-    // }
-    // result.H = h;
-
-    // const b = this.helper.toNumber(member.B);
-    // result.B = b;
-
-    // if (h === null || b === null) {
-    //   throw ('形状の入力が正しくありません');
-    // }
-
-    // result.tan = bar.tan;
 
     return result
   }
@@ -211,131 +168,12 @@ export class SetBoxService {
 
     const result = this.getSection(member, target, index);
 
-    // const bar: any = this.bars.getCalcData(index); // 鉄筋
     const stl: any = this.steel.getCalcData(index); // 鉄骨
 
-    // let tension: any;
-    // let compress: any;
-    // switch (side) {
-    //   case "上側引張":
-    //     tension = this.helper.rebarInfo(bar.rebar1);
-    //     compress = this.helper.rebarInfo(bar.rebar2);
-    //     break;
-    //   case "下側引張":
-    //     tension = this.helper.rebarInfo(bar.rebar2);
-    //     compress = this.helper.rebarInfo(bar.rebar1);
-    //     break;
-    // }
-    // if (tension !== null) {
-    //   if (tension.rebar_ss === null) {
-    //     tension.rebar_ss = result.B / tension.line;
-    //   }
-    //   if ('barCenterPosition' in option) {
-    //     if (option.barCenterPosition) {
-    //       // 多段配筋を１段に
-    //       tension.dsc = this.helper.getBarCenterPosition(tension, 1);
-    //       tension.line = tension.rebar_n;
-    //       tension.n = 1;
-    //     }
-    //   }
-
-    //   // tension
-    //   const fsyt = this.helper.getFsyk(
-    //     tension.rebar_dia,
-    //     safety.material_bar,
-    //     "tensionBar"
-    //   );
-    //   if (fsyt.fsy === 235) tension.mark = "R"; // 鉄筋強度が 235 なら 丸鋼
-    //   tension['fsy'] = fsyt;
-
-    //   if('M_rs' in safety.safety_factor){
-    //     tension['rs'] = safety.safety_factor.M_rs;
-    //   } else if('V_rs' in safety.safety_factor){
-    //     tension['rs'] = safety.safety_factor.V_rs;
-    //   }
-
-    //   // 登録
-    //   result['tension'] = tension;
-    // }
-
-    //   // compres
-    // if (safety.safety_factor.range >= 2 && compress !== null) {
-    //   const fsyc = this.helper.getFsyk(
-    //     compress.rebar_dia,
-    //     safety.material_bar,
-    //     "tensionBar"
-    //   );
-    //   if (fsyc.fsy === 235) compress.mark = "R"; // 鉄筋強度が 235 なら 丸鋼
-    //   compress['fsy'] = fsyc;
-
-    //   if('M_rs' in safety.safety_factor){
-    //     compress['rs'] = safety.safety_factor.M_rs;
-    //   } else if('V_rs' in safety.safety_factor){
-    //     compress['rs'] = safety.safety_factor.V_rs;
-    //   }
-
-    //   result['compress'] = compress;
-    // }
-
-    // sidebar
-    // if (safety.safety_factor.range >= 3) {
-    //   if (compress === null) { compress = { dsc: 0 } }
-    //   const sidebar: any = this.helper.sideInfo(bar.sidebar1,bar.sidebar2, tension.dsc, compress.dsc, result.H);
-    //   if (sidebar !== null) {
-    //     const fsye = this.helper.getFsyk(
-    //       sidebar.rebar_dia,
-    //       safety.material_bar,
-    //       "sidebar"
-    //     );
-    //     if (fsye.fsy === 235) sidebar.mark = "R"; // 鉄筋強度が 235 なら 丸鋼
-    //     sidebar['fsy'] = fsye;
-
-    //     if('M_rs' in safety.safety_factor){
-    //       sidebar['rs'] = safety.safety_factor.M_rs;
-    //     } else if('V_rs' in safety.safety_factor){
-    //       sidebar['rs'] = safety.safety_factor.V_rs;
-    //     }
-
-    //     result['sidebar'] = sidebar;
-    //   }
-    // }
-    // ねじり用側面かぶり
-    // const side_cover: number = this.helper.toNumber(bar.sidebar2.side_cover);
-    // if(side_cover !== null){
-    //   result['side_cover'] = side_cover;
-    // }
-    //
-    // result['stirrup'] = bar.stirrup;
-    // result['bend'] = bar.bend;
 
     // steel
     const steel = {
-      // I: {
-      //   position: null,
-      //   tension_thickness: null,
-      //   tension_width: null,
-      //   compress_thickness: null,
-      //   compress_width: null,
-      //   web_thickness: null,
-      //   web_height: null,
-      //   fsy_tension: null,
-      //   fsy_web: null,
-      //   fsy_compress: null,
-      //   fvy_web: null // せん断強度
-      // },
-      // H: {
-      //   position: null,
-      //   left_thickness: null,
-      //   left_width: null,
-      //   right_thickness: null,
-      //   right_width: null,
-      //   web_thickness: null,
-      //   web_height: null,
-      //   fsy_left: null,
-      //   fsy_web: null,
-      //   fsy_right: null,
-      //   fvy_web: null,
-      // },
+      A: null, 
       rs: null
     };
     for (const num of Object.keys(stl)) {
@@ -355,109 +193,23 @@ export class SetBoxService {
 
       steel.rs = safety.safety_factor.S_rs;
 
-      // 横向き
-      // for (const key of ['left', 'right']) {
-      //   const key1 = key + '_thickness';
-      //   const key2 = key + '_width';
-
-      //   const thickness = stl.H[key1];
-      //   steel.H[key1] = thickness;
-      //   steel.H[key2] = stl.H[key2];
-
-      //   steel.H['fsy_' + key] = this.helper.getFsyk2(
-      //     thickness,
-      //     safety.material_steel,
-      //   );
-      // }
-      // steel.H.web_thickness = stl.H.web_thickness;
-      // steel.H.web_height = stl.H.web_height;
-      // steel.H.fsy_web = this.helper.getFsyk2(
-      //   steel.H.web_thickness,
-      //   safety.material_steel,
-      // );
-
-
-      // 縦向きのH鋼
-      // switch (side) {
-      //   case "上側引張":
-
-      //     steel.I.tension_thickness = stl.I.upper_thickness;
-      //     steel.I.tension_width = stl.I.upper_width;
-      //     steel.I.compress_thickness = stl.I.lower_thickness;
-      //     steel.I.compress_width = stl.I.lower_width;
-
-      //     const I_Height = stl.I.upper_thickness + stl.I.web_height + stl.I.lower_thickness;
-      //     steel.I.position = result.H - (stl.I.upper_cover + I_Height);
-
-      //     let H_Height = 0;
-      //     if (stl.H.left_width !== null) {
-      //       H_Height = stl.H.left_width;
-      //     }
-      //     if (stl.H.right_width !== null) {
-      //       H_Height = Math.max(H_Height, stl.H.right_width);
-      //     }
-      //     if (H_Height !== 0) {
-      //       steel.H.position = result.H - (stl.H.left_cover + H_Height);
-      //     }
-
-      //     steel.I.fsy_tension = this.helper.getFsyk2(
-      //       stl.I.upper_thickness,
-      //       safety.material_steel,
-      //     );
-      //     steel.I.fsy_compress = this.helper.getFsyk2(
-      //       stl.I.lower_thickness,
-      //       safety.material_steel,
-      //     );
-      //     break;
-
-      //   case "下側引張":
-      //     steel.I.tension_thickness = stl.I.lower_thickness;
-      //     steel.I.tension_width = stl.I.lower_width;
-      //     steel.I.compress_thickness = stl.I.upper_thickness;
-      //     steel.I.compress_width = stl.I.upper_width;
-
-      //     steel.I.position = stl.I.upper_cover;
-
-      //     steel.H.position = stl.H.left_cover;
-
-      //     steel.I.fsy_tension = this.helper.getFsyk2(
-      //       stl.I.lower_thickness,
-      //       safety.material_steel,
-      //     );
-      //     steel.I.fsy_compress = this.helper.getFsyk2(
-      //       stl.I.upper_thickness,
-      //       safety.material_steel,
-      //     );
-      //     break;
-      // }
-      // steel.I.web_thickness = stl.I.web_thickness;
-      // steel.I.web_height = stl.I.web_height;
-      // steel.I.fsy_web = this.helper.getFsyk2(
-      //   steel.I.web_thickness,
-      //   safety.material_steel,
-      // );
-
-
-      // web のせん断強度
-      // for (const key of ['I', 'H']) {
-      //   steel[key].fvy_web = this.helper.getFsyk2(
-      //     stl[key].web_thickness,
-      //     safety.material_steel,
-      //     'fvy'
-      //   );
-      // }
-
+      let A: number = 0;
       // 1~5を入手
       for (const num of Object.keys(steel)) {
-        if (num === 'rs') continue;
+        if (num === 'rs' || num === 'A') continue;
         const steel0 = steel[num];
         for (const key of ['steel_b', 'steel_h', 'steel_w']) {
           steel0[key] = stl[num][key];
         }
+        // 断面積を算出し, 加算する
+        A += steel0['steel_b'] * steel0['steel_h'];
         // 鉄骨強度を入手し, fsyに入れる
         // steel0['fsy'] = this.helper.getFsyk2(stl[num]upper_thickness, safety.material_steel);
         steel0['fsy'] = 235;  // 鉄骨幅は部材ナンバーごとに異なるため、一旦保留
       }
+      // 断面積を代入
+      steel.A = A;
+      console.log("break")
     }
 
     result['steel'] = steel;
@@ -481,186 +233,6 @@ export class SetBoxService {
     if (hf === null) { hf = result.H; }
     result['Bt'] = bf;
     result['t'] = hf;
-
-    return result;
-  }
-
-  // 矩形、Ｔ形断面の 鉄筋のPOST用 データを登録する。
-  private getRectBar(section: any, safety: any, side: string): any {
-
-    const result = {
-      Bars: new Array(),
-      Steels: new Array(),
-      SteelElastic: new Array(),
-    };
-
-    const h: number = section.H; // ハンチを含む高さ
-    const tension: any = section.tension;
-
-    const tensionBar = this.getCompresBar(tension, safety);
-    const tensionBarList = tensionBar.Bars;
-    // 有効な入力がなかった場合は null を返す.
-    if (tensionBarList.length < 1) {
-      return null;
-    }
-
-    // 鉄筋強度の入力
-    for (const elastic of tensionBar.SteelElastic) {
-      if (result.SteelElastic.find(
-        (e) => e.ElasticID === elastic.ElasticID) === undefined) {
-        result.SteelElastic.push(elastic);
-      }
-    }
-
-    // 圧縮鉄筋 をセットする
-    let compresBarList: any[] = new Array();
-    if ('compress' in section) {
-      const compress: any = section.compress;
-      const compresBar = this.getCompresBar(compress, safety);
-      compresBarList = compresBar.Bars;
-
-      // 鉄筋強度の入力
-      for (const elastic of compresBar.SteelElastic) {
-        if (result.SteelElastic.find(
-          (e) => e.ElasticID === elastic.ElasticID) === undefined) {
-          result.SteelElastic.push(elastic);
-        }
-      }
-    }
-
-    // 側方鉄筋 をセットする
-    let sideBarList = new Array();
-    if ('sidebar' in section) {
-      const sideInfo: any = section.sidebar;
-      const sideBar = this.getSideBar(
-        sideInfo,
-        safety
-      );
-      sideBarList = sideBar.Bars;
-      // 鉄筋強度の入力
-      for (const elastic of sideBar.SteelElastic) {
-        result.SteelElastic.push(elastic);
-      }
-    }
-
-    // 鉄筋の登録 --------------------------------------- 
-    let index = 1;
-    // 圧縮鉄筋の登録
-    for (const Asc of compresBarList) {
-      Asc.n = Asc.n;
-      Asc.Depth = Asc.Depth;
-      Asc['index'] = index++;
-      result.Bars.push(Asc);
-    }
-
-    // 側面鉄筋の登録
-    for (const Ase of sideBarList) {
-      Ase.n = Ase.n;
-      Ase['index'] = index++;
-      result.Bars.push(Ase);
-    }
-
-    // 引張鉄筋の登録
-    for (const Ast of tensionBarList) {
-      Ast.n = Ast.n;
-      Ast.Depth = h - Ast.Depth;
-      Ast.IsTensionBar = true;
-      Ast['index'] = index++;
-      result.Bars.push(Ast);
-    }
-
-    // 鉄骨の登録 --------------------------------------- 
-    const steel = this.getSteel(section, side);
-    for (const key of Object.keys(steel)) {
-      for (const value of steel[key]) {
-        result[key].push(value);
-      }
-    }
-
-    return result;
-  }
-
-  // 矩形、Ｔ形断面における 上側（圧縮側）の 鉄筋情報を生成する関数
-  private getCompresBar(barInfo: any, safety: any): any {
-    const result = {
-      Bars: new Array(),
-      SteelElastic: new Array(),
-    };
-
-    // 鉄筋強度の入力
-    const rs = barInfo.rs;
-
-    const fsy = barInfo.fsy;
-    const id = "t" + fsy.id;
-
-    result.SteelElastic.push({
-      fsk: fsy.fsy / rs,
-      Es: 200,
-      ElasticID: id,
-    });
-
-    // 鉄筋径
-    const dia: string = barInfo.mark + barInfo.rebar_dia;
-
-    // 鉄筋情報を登録
-    let rebar_n = barInfo.rebar_n;
-    const dsc = barInfo.dsc / barInfo.cos;
-    const space = barInfo.space / barInfo.cos;
-    for (let i = 0; i < barInfo.n; i++) {
-      const dst: number = dsc + i * space;
-      const Steel1 = {
-        Depth: dst,
-        i: dia,
-        n: Math.min(barInfo.line, rebar_n * barInfo.cos),
-        IsTensionBar: false,
-        ElasticID: id,
-      };
-      result.Bars.push(Steel1);
-      rebar_n = rebar_n - barInfo.line;
-    }
-
-    return result;
-  }
-
-  // 矩形、Ｔ形断面における 側面鉄筋 の 鉄筋情報を生成する関数
-  private getSideBar(barInfo: any, safety: any): any {
-
-    const result = {
-      Bars: new Array(),
-      SteelElastic: new Array(),
-    };
-
-    if (barInfo === null) {
-      return result; // 側方鉄筋の入力が無い場合
-    }
-
-    // 鉄筋強度
-    const fsy1 = barInfo.fsy;
-    const id = "s" + fsy1.id;
-
-    // 鉄筋径
-    let dia: string = barInfo.mark + barInfo.side_dia;
-
-    // 鉄筋情報を登録
-    for (let i = 0; i < barInfo.n; i++) {
-      const Steel1 = {
-        Depth: barInfo.cover + i * barInfo.space,
-        i: dia,
-        n: barInfo.line,
-        IsTensionBar: false,
-        ElasticID: id,
-      };
-      result.Bars.push(Steel1);
-    }
-
-    // 鉄筋強度の入力
-    const rs = barInfo.rs;
-
-    result.SteelElastic.push({
-      fsk: fsy1.fsy / rs,
-      Es: 200,
-      ElasticID: id,
-    });
 
     return result;
   }
@@ -956,6 +528,405 @@ export class SetBoxService {
     }
     return result;
 
+  }
+
+  public getVertices_box(vertexlist) {
+    const vertices = []; // returnする頂点情報
+
+    const scale = 0.1;
+    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
+    let b1 =
+      vertexlist[0]["steel_b"] !== undefined
+        ? vertexlist[0]["steel_b"] * scale
+        : 0;
+    let h1 =
+      vertexlist[0]["steel_h"] !== undefined
+        ? vertexlist[0]["steel_h"] * scale
+        : 0;
+    let w1 =
+      vertexlist[0]["steel_w"] !== undefined
+        ? vertexlist[0]["steel_w"] * scale
+        : 0;
+    let b2 =
+      vertexlist[1]["steel_b"] !== undefined
+        ? vertexlist[1]["steel_b"] * scale
+        : 0;
+    let h2 =
+      vertexlist[1]["steel_h"] !== undefined
+        ? vertexlist[1]["steel_h"] * scale
+        : 0;
+    let w2 =
+      vertexlist[1]["steel_w"] !== undefined
+        ? vertexlist[1]["steel_w"] * scale
+        : 0;
+    let b3 =
+      vertexlist[2]["steel_b"] !== undefined
+        ? vertexlist[2]["steel_b"] * scale
+        : 0;
+    let h3 =
+      vertexlist[2]["steel_h"] !== undefined
+        ? vertexlist[2]["steel_h"] * scale
+        : 0;
+    let w3 =
+      vertexlist[2]["steel_w"] !== undefined
+        ? vertexlist[2]["steel_w"] * scale
+        : 0;
+    let b4 =
+      vertexlist[3]["steel_b"] !== undefined
+        ? vertexlist[3]["steel_b"] * scale
+        : 0;
+    let h4 =
+      vertexlist[3]["steel_h"] !== undefined
+        ? vertexlist[3]["steel_h"] * scale
+        : 0;
+    let w4 =
+      vertexlist[3]["steel_w"] !== undefined
+        ? vertexlist[3]["steel_w"] * scale
+        : 0;
+    let b5 =
+      vertexlist[4]["steel_b"] !== undefined
+        ? vertexlist[4]["steel_b"] * scale
+        : 0;
+    let h5 =
+      vertexlist[4]["steel_h"] !== undefined
+        ? vertexlist[4]["steel_h"] * scale
+        : 0;
+    let w5 =
+      vertexlist[4]["steel_w"] !== undefined
+        ? vertexlist[4]["steel_w"] * scale
+        : 0;
+
+    // 空白セルがあったときの処理
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (b4 === 0) {
+      b4 = b1;
+    }
+    if (b1 === 0) {
+      b1 = b4;
+    }
+
+    if (b3 === 0) {
+      b3 = b2;
+    }
+    if (b2 === 0) {
+      b2 = b3;
+    }
+    if (h3 === 0) {
+      h3 = h2;
+    }
+    if (h2 === 0) {
+      h2 = h3;
+    }
+    if (h4 === 0) {
+      h4 = h1;
+    }
+    if (h1 === 0) {
+      h1 = h4;
+    }
+
+    if (w3 === 0) {
+      w3 = w2;
+    }
+    if (w2 === 0) {
+      w2 = w3;
+    }
+
+    if (w1 === 0) {
+      w1 = (b1 - w2) / 2;
+    }
+
+    // パターンごとに分岐
+    const PIflag = w2 > b4 || w3 > b4;
+
+    // 空白セルがあったときの処理
+    if (PIflag) {
+      if (b5 === 0) {
+        b5 = b4;
+      }
+      if (h5 === 0) {
+        h5 = h4;
+      }
+      if (w4 === 0) {
+        w4 = b4 / 2;
+      }
+      if (w5 === 0) {
+        w5 = b5 / 2;
+      }
+    } else {
+      if (w4 === 0) {
+        w4 = (b4 - w3) / 2;
+      }
+    }
+
+    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
+    ////////// 1部材について //////////
+    // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
+    // if (h2 === h3 || PIflag === true) {
+    if (h2 === h3) {
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, -h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
+    } else {
+      // ななめ
+      let y = ((h3 - h2) / w2) * b1;
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b1, y, 0));
+      list.vertice.push(new THREE.Vector3(b1, y - h1, 0));
+      list.vertice.push(new THREE.Vector3(0, -h1, 0));
+      list.position = new THREE.Vector3(0, 0, 0);
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 2部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h2 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      // if (h2 === h3) {
+      // } else {
+      // }
+    } else if (w2 < w3) {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 - (w3 - w2) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 - (w3 - w2) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w3 - w2) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+    } else {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2 + (w2 - w3) / 2, -h2, 0));
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2, 0));
+        list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b2;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b2 + (w2 - w3) / 2, -h2 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
+        list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
+      }
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 3部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    if (w2 === w3) {
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, -h3, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b2, y, 0));
+        list.vertice.push(new THREE.Vector3(b2, -h3 + y / 2, 0));
+        list.vertice.push(new THREE.Vector3(0, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    } else if (w2 < w3) {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 + (w3 - w2) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 + (w3 - w2) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3((w3 - w2) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    } else {
+      // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
+      // 分岐を追加したら、コメントを削除
+      if (h2 === h3) {
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3 - (w2 - w3) / 2, -h3, 0));
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3, 0));
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
+      } else {
+        let y = ((h3 - h2) / w2) * b3;
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(b3, y, 0));
+        list.vertice.push(
+          new THREE.Vector3(b3 - (w2 - w3) / 2, -h3 + y / 2, 0)
+        );
+        list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3 + y / 2, 0));
+        y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
+        list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
+      }
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    ////////// 4部材について //////////
+    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    // positionのみ分岐. 1, 2, 3部材の位置によって分岐する
+    list.vertice.push(new THREE.Vector3(0, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, 0, 0));
+    list.vertice.push(new THREE.Vector3(b4, -h4, 0));
+    list.vertice.push(new THREE.Vector3(0, -h4, 0));
+    if (PIflag === false) {
+      // box型であれば
+      if (h2 === h3) {
+        list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
+      } else {
+        // 未計算状態. 計算後にコメントを削除
+        let y = ((h3 - h2) / w2) * w1 - h1 - h2;
+        list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, y, 0); // パターンC
+      }
+    } else {
+      // PI型であれば
+      list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
+    }
+    vertices.push(list); // 頂点情報を追加
+
+    if (PIflag) {
+      // PI型であれは5部材を設定する
+      ////////// 5部材について //////////
+      list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+      // w2 === w3の条件で形状が分岐する. 計算式が同じためpositionの分岐は無し.
+      list.vertice.push(new THREE.Vector3(0, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, 0, 0));
+      list.vertice.push(new THREE.Vector3(b5, -h5, 0));
+      list.vertice.push(new THREE.Vector3(0, -h5, 0));
+      list.position = new THREE.Vector3(w1 + (w2 + w3) / 2 - w5, -(h1 + h3), 0);
+      vertices.push(list); // 頂点情報を追加
+    }
+
+    return vertices;
+  }
+
+  public getCentroid_box(vertices): THREE.Vector3 {
+    let Ax: number = 0;
+    let Ay: number = 0;
+    let Az: number = 0;
+    let A: number = 0;
+    for (const num of Object.keys(vertices)) {
+      const vertice = vertices[num].vertice;
+      const position = vertices[num].position;
+      // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
+      const ab = new THREE.Vector3(
+        vertice[1].x - vertice[0].x,
+        vertice[1].y - vertice[0].y,
+        vertice[1].z - vertice[0].z
+      );
+      const ac = new THREE.Vector3(
+        vertice[2].x - vertice[0].x,
+        vertice[2].y - vertice[0].y,
+        vertice[2].z - vertice[0].z
+      );
+      const ad = new THREE.Vector3(
+        vertice[3].x - vertice[0].x,
+        vertice[3].y - vertice[0].y,
+        vertice[3].z - vertice[0].z
+      );
+      // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
+      const centroid1 = new THREE.Vector3(
+        (0 + ab.x + ac.x) / 3 + vertice[0].x,
+        (0 + ab.y + ac.y) / 3 + vertice[0].y,
+        (0 + ab.z + ac.z) / 3 + vertice[0].z
+      );
+      const area1: number =
+        ((ab.y * ac.z - ab.z * ac.y) ** 2 +
+          (ab.z * ac.x - ab.x * ac.z) ** 2 +
+          (ab.x * ac.y - ab.y * ac.x) ** 2) **
+          0.5 /
+        2;
+      // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
+      const centroid2 = new THREE.Vector3(
+        (0 + ac.x + ad.x) / 3 + vertice[0].x,
+        (0 + ac.y + ad.y) / 3 + vertice[0].y,
+        (0 + ac.z + ad.z) / 3 + vertice[0].z
+      );
+      const area2: number =
+        ((ac.y * ad.z - ac.z * ad.y) ** 2 +
+          (ac.z * ad.x - ac.x * ad.z) ** 2 +
+          (ac.x * ad.y - ac.y * ad.x) ** 2) **
+          0.5 /
+        2;
+      // 2つの三角形から, 四角形の重心（centroid0）と面積（area0）を算出し加算する
+      const area0 = area1 + area2;
+      Ax +=
+        ((centroid1.x * area1 + centroid2.x * area2) / area0 + position.x) *
+        area0;
+      Ay +=
+        ((centroid1.y * area1 + centroid2.y * area2) / area0 + position.y) *
+        area0;
+      Az +=
+        ((centroid1.z * area1 + centroid2.z * area2) / area0 + position.z) *
+        area0;
+      A += area0;
+    }
+    const centroid = new THREE.Vector3(Ax / A, Ay / A, Az / A);
+
+    return centroid;
+  }
+
+  // 断面二次モーメントの算出
+  private getMomentOfInertia(vertices: any[], key: string = 'x'): number {
+    let I: number = 1000;
+    if (key === 'x') {
+
+    } else if (key === 'y') {
+
+    }
+    return I
   }
 
 

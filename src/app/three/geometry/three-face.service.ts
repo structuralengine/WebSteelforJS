@@ -7,6 +7,7 @@ import { randFloat } from "three/src/math/MathUtils";
 import { InputSteelsService } from "src/app/components/steels/steels.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { DataTexture3D } from "three";
+import { SetBoxService } from "src/app/calculation/shape-data/set-box.service";
 
 @Injectable({
   providedIn: "root",
@@ -32,6 +33,7 @@ export class ThreePanelService {
     private scene: SceneService,
     private http: HttpClient,
     private steel: InputSteelsService,
+    private box: SetBoxService,
     private helper: DataHelperModule
   ) {
     this.panel_List = new Array();
@@ -112,24 +114,35 @@ export class ThreePanelService {
     // データが有効か確認する
     //const flag = this.getEnableSteel(vertexlist, shape);
     let vertices;
+    let child: THREE.Group;
+    let centroid: THREE.Vector3 = new THREE.Vector3()
 
     // if (flag) {
     switch (shape) {
       case "I形":
-        vertices = this.getVertices_I(element);
-        this.createPlane(vertices);
+        vertices = this.getVertices_I(vertexlist);
+        centroid = this.box.getCentroid_box(vertices);
+        child = this.createPlane(vertices);
         break;
       case "H形":
-        vertices = this.getVertices_H(element);
-        this.createPlane(vertices);
+        vertices = this.getVertices_H(vertexlist);
+        centroid = this.box.getCentroid_box(vertices);
+        child = this.createPlane(vertices);
         break;
       case "箱形/π形":
-        vertices = this.getVertices_box(element);
-        this.createPlane(vertices);
+        vertices = this.box.getVertices_box(vertexlist);
+        centroid = this.box.getCentroid_box(vertices);
+        child = this.createPlane(vertices);
         break;
       case "鋼管":
-        vertices = this.getVertices_pipe(element);
+        vertices = this.getVertices_pipe(vertexlist);
+        centroid = this.box.getCentroid_box(vertices);
+        child = this.createPlane(vertices);
+        break;
     }
+    child.position.set(-centroid.x, -centroid.y, -centroid.z);
+    this.panel_List.push(child);
+    this.scene.add(child);
     // }
   }
 
@@ -318,8 +331,10 @@ export class ThreePanelService {
 
     return vertices;
   }
+  
+  /*
+  private getVertices_box(vertexlist) {
 
-  private getVertices_box(element) {
     const vertices = []; // returnする頂点情報
 
     // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
@@ -752,6 +767,7 @@ export class ThreePanelService {
 
     return vertices;
   }
+  */
 
   private getVertices_pipe(vertexlist) {
     const scale = 0.1;
@@ -773,7 +789,7 @@ export class ThreePanelService {
     this.panel_List.push(torus);
     this.scene.add(torus);
   }
-
+/*
   private getCentroid(child): THREE.Vector3 {
     let Ax: number = 0;
     let Ay: number = 0;
@@ -838,9 +854,9 @@ export class ThreePanelService {
     const centroid = new THREE.Vector3(Ax / A, Ay / A, Az / A);
 
     return centroid;
-  }
+  }*/
 
-  private createPlane(vertices: any) {
+  private createPlane(vertices: any): THREE.Group {
     const child = new THREE.Group();
     for (const list of vertices) {
       const points = [];
@@ -859,11 +875,12 @@ export class ThreePanelService {
       mesh["pos"] = list.position;
       child.add(mesh);
     }
-    // 重心位置を算出し、重心位置を原点に移動する
-    const centroid: THREE.Vector3 = this.getCentroid(child);
-    child.position.set(-centroid.x, -centroid.y, -centroid.z);
-    this.panel_List.push(child);
-    this.scene.add(child);
+    // 重心位置を算出し、重心位置を原点に移動する <- 外部で実行する
+    // const centroid: THREE.Vector3 = this.box.getCentroid_box(vertices);
+    // child.position.set(-centroid.x, -centroid.y, -centroid.z);
+    // this.panel_List.push(child);
+    // this.scene.add(child);
+    return child;
   }
 
   // データをクリアする
