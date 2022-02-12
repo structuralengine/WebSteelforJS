@@ -11,6 +11,7 @@ import * as THREE from "three";
 import { ThreePanelService } from "./geometry/three-face.service";
 
 import { SceneService } from "./scene.service";
+import { ThreeService } from "./three.service";
 
 @Component({
   selector: "app-three",
@@ -19,8 +20,14 @@ import { SceneService } from "./scene.service";
 })
 export class ThreeComponent implements AfterViewInit, OnDestroy {
   @ViewChild("myCanvas", { static: true }) private canvasRef!: ElementRef;
+  private w: number;
+  private h: number;
 
-  constructor(private ngZone: NgZone, private scene: SceneService) {
+  constructor(
+    private ngZone: NgZone,
+    private scene: SceneService,
+    private three: ThreeService
+  ) {
     THREE.Object3D.DefaultUp.set(0, 0, 1);
   }
 
@@ -29,20 +36,23 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    let w = window.innerWidth - 850;
+    this.w = window.innerWidth - 819;
     if (window.innerWidth < 1250) {
-      w = window.innerWidth - 220;
+      this.w = window.innerWidth - 219;
     }
-    let h = (w * 9) / 16;
+    // let h = (w * 9) / 16;
+    this.h = window.innerHeight - 120;
     this.scene.OnInit(
       this.getAspectRatio(),
       this.canvas,
       devicePixelRatio,
-      w,
-      h
+      this.w,
+      this.h
     );
+
     // レンダリングする
     this.animate();
+    this.three.canvasElement = this.canvas;
   }
 
   ngOnDestroy() {}
@@ -72,12 +82,12 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   // ウインドウがリサイズした時のイベント処理
   @HostListener("window:resize", ["$event"])
   public onResize(event: Event) {
-    let w = window.innerWidth - 850;
+    this.w = window.innerWidth - 819;
     if (window.innerWidth < 1250) {
-      w = window.innerWidth - 220;
+      this.w = window.innerWidth - 219;
     }
-    let h = (w * 9) / 16;
-    this.scene.onResize(this.getAspectRatio(), w, h);
+    this.h = window.innerHeight - 120;
+    this.scene.onResize(this.getAspectRatio(), this.w, this.h);
   }
 
   private getAspectRatio(): number {
@@ -85,5 +95,6 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
       return 0;
     }
     return this.canvas.clientWidth / this.canvas.clientHeight;
+    // return this.w / this.h;
   }
 }

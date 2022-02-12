@@ -35,7 +35,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     private save: SaveDataService,
     private panel: ThreePanelService,
     private three: ThreeService,
-    private scene: SceneService,
+    private scene: SceneService
   ) {}
 
   ngOnInit() {
@@ -52,16 +52,23 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         reactive: true,
         sortable: false,
         locale: "jp",
-        width: isManual ? 580: 600,
+        width: isManual ? 580 : 700,
         height: this.tableHeight().toString(),
         numberCell: { show: false }, // 行番号
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
         freezeCols: isManual ? 3 : 4,
+        beforeTableView: (evt, ui) => {
+          this.three.changeData("steels", i);
+        },
+        selectEnd: (evt, ui) => {
+          const range = ui.selection.iCells.ranges;
+          const row = range[0].r1;
+          this.three.selectChange("steels", row);
+        },
         change: (evt, ui) => {
           //this.saveData();
-          this.three.changeData('steels', i);
-          this.scene.render();
+          this.three.changeData("steels", i);
         },
       };
       this.option_list.push(op);
@@ -173,7 +180,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataIndx: "steel_w",
         sortable: false,
         width: 70,
-      },
+      }
       /* {
         title: "w2",
         dataType: "float",
