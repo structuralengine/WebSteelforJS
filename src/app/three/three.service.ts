@@ -18,15 +18,11 @@ export class ThreeService {
 
   public fileName: string;
 
-  constructor(
-    private face: ThreePanelService,
-    private scene: SceneService,
-  ) {}
+  constructor(private face: ThreePanelService, private scene: SceneService) {}
 
   //////////////////////////////////////////////////////
   // 初期化
-  public OnInit(): void {
-  }
+  public OnInit(): void {}
 
   //////////////////////////////////////////////////////
   // ファイルを開く処理する
@@ -39,6 +35,7 @@ export class ThreeService {
   public changeData(mode: string = "", index: number = 0): void {
     switch (mode) {
       case "steels":
+        this.face.max = 0;
         this.face.changeData(index);
         break;
 
@@ -53,4 +50,21 @@ export class ThreeService {
     this.currentIndex = index;
   }
 
+  public selectChange(mode: string = "", row: number = 0): void {
+    switch (mode) {
+      case "steels":
+        this.face.select = Math.floor(row / 5);
+        this.face.changeData(this.currentIndex);
+        break;
+
+      default:
+        // 何御しない
+        return;
+    }
+
+    // 再描画
+    this.scene.render();
+
+    // this.currentIndex = index;
+  }
 }
