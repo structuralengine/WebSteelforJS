@@ -45,7 +45,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       sortable: false,
       locale: "jp",
       height: this.tableHeight().toString(),
-      width: 400,
+      width: isManual ? 400 : 520,
       numberCell: { show: isManual }, // 行番号
       colModel: this.columnHeaders,
       change: (evt, ui) => {

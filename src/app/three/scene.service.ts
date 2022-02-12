@@ -51,12 +51,12 @@ export class SceneService {
     this.addControls();
 
     // 床面を生成する
-    this.createHelper();
+    // this.createHelper();
   }
 
   // 床面を生成する
   private createHelper() {
-    this.GridHelper = new THREE.GridHelper(10, 10);
+    this.GridHelper = new THREE.GridHelper(20, 20);
     this.GridHelper.geometry.rotateX(Math.PI / 2);
     this.scene.add(this.GridHelper);
   }
@@ -83,10 +83,10 @@ export class SceneService {
       Width / 100,
       Height / 100,
       -Height / 100,
-      -10,
-      10
+      -100,
+      100
     );
-    this.camera.position.set(0, 0, 1);
+    this.camera.position.set(0, 0, 50);
     this.camera.name = "camera";
     this.scene.add(this.camera);
   }
@@ -111,6 +111,10 @@ export class SceneService {
 
   // リサイズ
   public onResize(deviceRatio: number, Width: number, Height: number): void {
+    this.camera.left = -Width / 100;
+    this.camera.right = Width / 100;
+    this.camera.top = Height / 100;
+    this.camera.bottom = -Height / 100;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(Width, Height);
     this.render();
