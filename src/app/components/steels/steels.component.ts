@@ -29,6 +29,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
   public table_datas: any[];
   // タブのヘッダ名
   public groupe_name: string[];
+  private row: number = 0;
 
   constructor(
     private steel: InputSteelsService,
@@ -59,15 +60,15 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataModel: { data: this.table_datas[i] },
         freezeCols: isManual ? 3 : 4,
         beforeTableView: (evt, ui) => {
-          this.three.changeData("steels", i);
+          this.three.selectChange("steels", this.row);
+          this.three.changeData("steels", this.three.currentIndex);
         },
         selectEnd: (evt, ui) => {
           const range = ui.selection.iCells.ranges;
-          const row = range[0].r1;
-          this.three.selectChange("steels", row);
+          this.row = range[0].r1;
+          this.three.selectChange("steels", this.row);
         },
         change: (evt, ui) => {
-          //this.saveData();
           this.three.changeData("steels", i);
         },
       };
@@ -221,6 +222,11 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.options = this.option_list[id];
     this.grid.options = this.options;
     this.grid.refreshDataAndView();
+
+    this.row = 0;
+    this.three.currentIndex = id;
+    this.three.selectChange("steels", this.row);
+    this.three.changeData("steels", this.three.currentIndex);
   }
 
   // アクティブになっているボタンを全て非アクティブにする
