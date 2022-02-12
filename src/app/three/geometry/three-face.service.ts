@@ -115,27 +115,27 @@ export class ThreePanelService {
     //const flag = this.getEnableSteel(vertexlist, shape);
     let vertices;
     let child: THREE.Group;
-    let centroid: THREE.Vector3 = new THREE.Vector3()
+    let centroid: THREE.Vector3 = new THREE.Vector3();
 
     // if (flag) {
     switch (shape) {
       case "I形":
-        vertices = this.getVertices_I(vertexlist);
+        vertices = this.getVertices_I(element);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
       case "H形":
-        vertices = this.getVertices_H(vertexlist);
+        vertices = this.getVertices_H(element);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
       case "箱形/π形":
-        vertices = this.box.getVertices_box(vertexlist);
+        vertices = this.box.getVertices_box(element);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
       case "鋼管":
-        vertices = this.getVertices_pipe(vertexlist);
+        vertices = this.getVertices_pipe(element);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
@@ -331,7 +331,7 @@ export class ThreePanelService {
 
     return vertices;
   }
-  
+
   /*
   private getVertices_box(vertexlist) {
 
@@ -789,7 +789,7 @@ export class ThreePanelService {
     this.panel_List.push(torus);
     this.scene.add(torus);
   }
-/*
+  /*
   private getCentroid(child): THREE.Vector3 {
     let Ax: number = 0;
     let Ay: number = 0;
