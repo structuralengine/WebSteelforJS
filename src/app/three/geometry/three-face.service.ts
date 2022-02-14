@@ -79,23 +79,32 @@ export class ThreePanelService {
       //for (let j = 0; j < data[i].length; j++) {
       // vertexlist.push(data[i][j]);
       vertexlist["shape"] = row["shape"];
-      vertexlist["b" + String(j)] =
+      vertexlist["steel_b" + String(j)] =
         row["steel_b"] == void 0 || null ? 0 : row["steel_b"];
-      vertexlist["h" + String(j)] =
+      vertexlist["steel_h" + String(j)] =
         row["steel_h"] == void 0 || null ? 0 : row["steel_h"];
-      vertexlist["w" + String(j)] =
+      vertexlist["steel_w" + String(j)] =
         row["steel_w"] == void 0 || null ? 0 : row["steel_w"];
+      vertexlist["lib_b" + String(j)] =
+        row["lib_b"] == void 0 || null ? 0 : row["lib_b"];
+      vertexlist["lib_h" + String(j)] =
+        row["lib_h"] == void 0 || null ? 0 : row["lib_h"];
+      vertexlist["lib_w" + String(j)] =
+        row["lib_w"] == void 0 || null ? 0 : row["lib_w"];
+      vertexlist["lib_n" + String(j)] =
+        row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
+
       this.max = Math.max(
         this.max,
-        vertexlist["b" + String(j)],
-        vertexlist["h" + String(j)],
-        vertexlist["w" + String(j)]
+        vertexlist["steel_b" + String(j)],
+        vertexlist["steel_h" + String(j)],
+        vertexlist["steel_w" + String(j)]
       );
 
       if (j % 5 === 0 && Math.floor(Number(i) / 5) == this.select) {
         if (
-          vertexlist["b1"] === 0 &&
-          vertexlist["b3"] === 0 &&
+          vertexlist["steel_b1"] === 0 &&
+          vertexlist["steel_b3"] === 0 &&
           !(Number(i) < 5)
         ) {
           element = this.old_element;
@@ -109,7 +118,7 @@ export class ThreePanelService {
       if (j % 5 === 0) {
         if (!flg || Number(i) < 5) {
           vertexlist["shape"] = data[Number(i) - 4]["shape"];
-          if (vertexlist["b1"] === 0 && vertexlist["b3"] === 0) {
+          if (vertexlist["steel_b1"] === 0 && vertexlist["steel_b3"] === 0) {
             if (Number(i) < 5) {
               this.old_element = vertexlist;
             }
@@ -130,7 +139,9 @@ export class ThreePanelService {
 
     for (const key of Object.keys(element)) {
       if (key !== "shape") {
-        element[key] = element[key] * scale;
+        if (!key.includes("n")) {
+          element[key] = element[key] * scale;
+        }
       }
     }
 

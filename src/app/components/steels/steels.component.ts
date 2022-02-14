@@ -53,7 +53,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         reactive: true,
         sortable: false,
         locale: "jp",
-        width: isManual ? 580 : 700,
+        width: isManual ? 860 : 980,
         height: this.tableHeight().toString(),
         numberCell: { show: false }, // 行番号
         colModel: this.columnHeaders,
@@ -162,33 +162,80 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         styleHead: { background: "#f5f5f5" },
       },
       {
-        title: "b",
-        dataType: "float",
-        dataIndx: "steel_b",
-        sortable: false,
-        width: 70,
-      },
-      {
-        title: "h",
-        dataType: "float",
-        dataIndx: "steel_h",
-        sortable: false,
-        width: 70,
-      },
-      {
-        title: "w",
-        dataType: "float",
-        dataIndx: "steel_w",
-        sortable: false,
-        width: 70,
-      }
-      /* {
+        title: "フランジ/ウェブ長",
+        align: "center",
+        colModel: [
+          {
+            title: "b",
+            dataType: "float",
+            dataIndx: "steel_b",
+            sortable: false,
+            width: 70,
+          },
+          {
+            title: "h",
+            dataType: "float",
+            dataIndx: "steel_h",
+            sortable: false,
+            width: 70,
+          },
+          {
+            title: "w",
+            dataType: "float",
+            dataIndx: "steel_w",
+            sortable: false,
+            width: 70,
+          },
+          /* {
         title: "w2",
         dataType: "float",
         dataIndx: "steel_w2",
         sortable: false,
         width: 70,
       } */
+        ],
+      },
+      {
+        title: "リブ長",
+        align: "center",
+        colModel: [
+          {
+            title: "b",
+            dataType: "float",
+            dataIndx: "lib_b",
+            sortable: false,
+            width: 70,
+          },
+          {
+            title: "h",
+            dataType: "float",
+            dataIndx: "lib_h",
+            sortable: false,
+            width: 70,
+          },
+          {
+            title: "w",
+            dataType: "float",
+            dataIndx: "lib_w",
+            sortable: false,
+            width: 70,
+          },
+          {
+            title: "n",
+            dataType: "integer",
+            dataIndx: "lib_n",
+            sortable: false,
+            width: 70,
+          },
+          /* {
+        title: "w2",
+        dataType: "float",
+        dataIndx: "steel_w2",
+        sortable: false,
+        width: 70,
+      } */
+        ],
+      }
     );
   }
 
@@ -225,8 +272,6 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.row = 0;
     this.three.currentIndex = id;
-    this.three.selectChange("steels", this.row);
-    this.three.changeData("steels", this.three.currentIndex);
   }
 
   // アクティブになっているボタンを全て非アクティブにする
