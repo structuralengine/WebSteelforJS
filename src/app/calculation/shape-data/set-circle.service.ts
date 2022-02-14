@@ -525,7 +525,10 @@ export class SetCircleService {
   public getVertices_pipe(element) {
     const vertices = []; // returnする頂点情報
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    list.vertice.push(element["b1"] / 2 - element["h1"] / 2, element["h1"] / 2);
+    list.vertice.push(
+      element["steel_b1"] / 2 - element["steel_h1"] / 2,
+      element["steel_h1"] / 2
+    );
     list.position = new THREE.Vector3(0, 0, 0);
     vertices.push(list);
 

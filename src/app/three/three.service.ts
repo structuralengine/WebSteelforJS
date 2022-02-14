@@ -40,7 +40,7 @@ export class ThreeService {
         break;
 
       default:
-        // 何御しない
+        // 何もしない
         return;
     }
 
@@ -58,7 +58,7 @@ export class ThreeService {
         break;
 
       default:
-        // 何御しない
+        // 何もしない
         return;
     }
 

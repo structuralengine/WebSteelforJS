@@ -44,6 +44,10 @@ export class InputSteelsService {
       steel_h: null,
       steel_w1: null,
       steel_w2: null,
+      lib_b: null,
+      lib_h: null,
+      lib_w: null,
+      lib_n: null,
     };
   }
   // private default_I_steel(): any {
@@ -112,6 +116,10 @@ export class InputSteelsService {
           column1["steel_b"] = data["1"].steel_b;
           column1["steel_h"] = data["1"].steel_h;
           column1["steel_w"] = data["1"].steel_w;
+          column1["lib_b"] = data["1"].lib_b;
+          column1["lib_h"] = data["1"].lib_h;
+          column1["lib_w"] = data["1"].lib_w;
+          column1["lib_n"] = data["1"].lib_n;
           // column1["steel_w2"] = data["1"].steel_w2;
 
           table_groupe.push(column1);
@@ -121,6 +129,10 @@ export class InputSteelsService {
           column2["steel_b"] = data["2"].steel_b;
           column2["steel_h"] = data["2"].steel_h;
           column2["steel_w"] = data["2"].steel_w;
+          column2["lib_b"] = data["2"].lib_b;
+          column2["lib_h"] = data["2"].lib_h;
+          column2["lib_w"] = data["2"].lib_w;
+          column2["lib_n"] = data["2"].lib_n;
           // column2["steel_w2"] = data["2"].steel_w2;
           table_groupe.push(column2);
 
@@ -129,6 +141,10 @@ export class InputSteelsService {
           column3["steel_b"] = data["3"].steel_b;
           column3["steel_h"] = data["3"].steel_h;
           column3["steel_w"] = data["3"].steel_w;
+          column3["lib_b"] = data["3"].lib_b;
+          column3["lib_h"] = data["3"].lib_h;
+          column3["lib_w"] = data["3"].lib_w;
+          column3["lib_n"] = data["3"].lib_n;
           // column3["steel_w2"] = data["3"].steel_w2;
           table_groupe.push(column3);
 
@@ -137,6 +153,10 @@ export class InputSteelsService {
           column4["steel_b"] = data["4"].steel_b;
           column4["steel_h"] = data["4"].steel_h;
           column4["steel_w"] = data["4"].steel_w;
+          column4["lib_b"] = data["4"].lib_b;
+          column4["lib_h"] = data["4"].lib_h;
+          column4["lib_w"] = data["4"].lib_w;
+          column4["lib_n"] = data["4"].lib_n;
           // column4["steel_w2"] = data["4"].steel_w2;
           table_groupe.push(column4);
 
@@ -145,6 +165,11 @@ export class InputSteelsService {
           column5["steel_b"] = data["5"].steel_b;
           column5["steel_h"] = data["5"].steel_h;
           column5["steel_w"] = data["5"].steel_w;
+          column5["lib_b"] = data["5"].lib_b;
+          column5["lib_h"] = data["5"].lib_h;
+          column5["lib_w"] = data["5"].lib_w;
+          column5["lib_n"] = data["5"].lib_n;
+
           // column5["steel_w2"] = data["5"].steel_w2;
           table_groupe.push(column5);
           count++;
@@ -197,7 +222,7 @@ export class InputSteelsService {
           //     }
           //   }
           // } else {
-            result[key] = data[key];
+          result[key] = data[key];
           // }
         }
       }
@@ -241,30 +266,50 @@ export class InputSteelsService {
       b["1"].steel_b = column1.steel_b;
       b["1"].steel_h = column1.steel_h;
       b["1"].steel_w = column1.steel_w;
+      b["1"].lib_b = column1.lib_b;
+      b["1"].lib_h = column1.lib_h;
+      b["1"].lib_w = column1.lib_w;
+      b["1"].lib_n = column1.lib_n;
       // b["1"].steel_w2 = column1.steel_w2;
 
       b["2"].title = column2.design_point_id;
       b["2"].steel_b = column2.steel_b;
       b["2"].steel_h = column2.steel_h;
       b["2"].steel_w = column2.steel_w;
+      b["2"].lib_b = column2.lib_b;
+      b["2"].lib_h = column2.lib_h;
+      b["2"].lib_w = column2.lib_w;
+      b["2"].lib_n = column2.lib_n;
       // b["2"].steel_w2 = column2.steel_w2;
 
       b["3"].title = column3.design_point_id;
       b["3"].steel_b = column3.steel_b;
       b["3"].steel_h = column3.steel_h;
       b["3"].steel_w = column3.steel_w;
+      b["3"].lib_b = column3.lib_b;
+      b["3"].lib_h = column3.lib_h;
+      b["3"].lib_w = column3.lib_w;
+      b["3"].lib_n = column3.lib_n;
       // b["3"].steel_w2 = column3.steel_w2;
 
       b["4"].title = column4.design_point_id;
       b["4"].steel_b = column4.steel_b;
       b["4"].steel_h = column4.steel_h;
       b["4"].steel_w = column4.steel_w;
+      b["4"].lib_b = column4.lib_b;
+      b["4"].lib_h = column4.lib_h;
+      b["4"].lib_w = column4.lib_w;
+      b["4"].lib_n = column4.lib_n;
       // b["4"].steel_w2 = column4.steel_w2;
 
       b["5"].title = column5.design_point_id;
       b["5"].steel_b = column5.steel_b;
       b["5"].steel_h = column5.steel_h;
       b["5"].steel_w = column5.steel_w;
+      b["5"].lib_b = column5.lib_b;
+      b["5"].lib_h = column5.lib_h;
+      b["5"].lib_w = column5.lib_w;
+      b["5"].lib_n = column5.lib_n;
       // b["5"].steel_w2 = column5.steel_w2;
 
       this.steel_list.push(b);
