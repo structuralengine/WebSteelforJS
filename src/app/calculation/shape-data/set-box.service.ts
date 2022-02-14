@@ -868,20 +868,22 @@ export class SetBoxService {
       element["steel_w2"] == 0
         ? 0
         : Math.atan(
-            (element["steel_h2"] - element["steel_h3"]) / element["steel_w2"]
+            (element["steel_h3"] - element["steel_h2"]) / element["steel_w2"]
           );
     let φ1 =
       element["steel_w2"] - element["steel_w3"] == 0
         ? 0
         : Math.atan(
-            (element["steel_h2"] / 0.5) *
+            element["steel_h2"] /
+              0.5 /
               (element["steel_w2"] - element["steel_w3"])
           );
     let φ2 =
       element["steel_w2"] - element["steel_w3"] == 0
         ? 0
         : Math.atan(
-            (element["steel_h3"] / 0.5) *
+            element["steel_h3"] /
+              0.5 /
               (element["steel_w2"] - element["steel_w3"])
           );
     // }
@@ -1383,15 +1385,18 @@ export class SetBoxService {
         break;
       case 2:
         x =
-          0.5 * element["steel_h1"] * Math.sin(θ) +
-          element["steel_w1"] -
+          // 0.5 * element["steel_h1"] * Math.sin(θ) +
+          // element["steel_w1"] -
+          // 0.5 * element["steel_b2"] * Math.cos(θ);
+          element["steel_w1"] +
+          0.5 * element["steel_h1"] * Math.sin(θ) -
           0.5 * element["steel_b2"] * Math.cos(θ);
         y =
           Math.tan(θ) *
             (element["steel_w1"] -
-              (3 / 2) * element["steel_h1"] * Math.sin(θ)) -
-          element["steel_h1"] * Math.cos(θ) -
-          0.5 * element["steel_b2"] * Math.sin(θ);
+              0.5 * element["steel_h1"] * Math.sin(θ) -
+              0.5 * element["steel_b2"] * Math.cos(θ)) -
+          element["steel_h1"] * Math.cos(θ);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
@@ -1420,17 +1425,21 @@ export class SetBoxService {
         break;
       case 3:
         x =
-          0.5 * element["steel_h1"] * Math.sin(θ) +
+          // 0.5 * element["steel_h1"] * Math.sin(θ) +
+          // element["steel_w1"] +
+          // element["steel_w2"] -
+          // 0.5 * element["steel_b3"] * Math.cos(θ);
           element["steel_w1"] +
           element["steel_w2"] -
+          0.5 * element["steel_h1"] * Math.sin(θ) -
           0.5 * element["steel_b3"] * Math.cos(θ);
         y =
           Math.tan(θ) *
             (element["steel_w1"] +
               element["steel_w2"] -
-              (3 / 2) * element["steel_h1"] * Math.sin(θ)) -
-          element["steel_h1"] * Math.cos(θ) -
-          0.5 * element["steel_b3"] * Math.sin(θ);
+              (3 / 2) * element["steel_h1"] * Math.sin(θ) -
+              0.5 * element["steel_b3"] * Math.cos(θ)) -
+          element["steel_h1"] * Math.cos(θ);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
@@ -1455,6 +1464,8 @@ export class SetBoxService {
             0
           )
         );
+        list.position = new THREE.Vector3(x, y, z);
+
         break;
       case 4:
         x =
@@ -1476,6 +1487,8 @@ export class SetBoxService {
           new THREE.Vector3(element["steel_b4"], -element["steel_h4"], 0)
         );
         list.vertice.push(new THREE.Vector3(0, -element["steel_h4"], 0));
+        list.position = new THREE.Vector3(x, y, z);
+
         break;
     }
     // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
