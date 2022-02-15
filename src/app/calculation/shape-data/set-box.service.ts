@@ -889,9 +889,9 @@ export class SetBoxService {
     // }
 
     vertices.push(this.steel_vertice(element, 1, θ, φ1, φ2));
+    vertices.push(this.steel_vertice(element, 4, θ, φ1, φ2));
     vertices.push(this.steel_vertice(element, 2, θ, φ1, φ2));
     vertices.push(this.steel_vertice(element, 3, θ, φ1, φ2));
-    vertices.push(this.steel_vertice(element, 4, θ, φ1, φ2));
 
     return vertices;
 
@@ -1385,9 +1385,6 @@ export class SetBoxService {
         break;
       case 2:
         x =
-          // 0.5 * element["steel_h1"] * Math.sin(θ) +
-          // element["steel_w1"] -
-          // 0.5 * element["steel_b2"] * Math.cos(θ);
           element["steel_w1"] +
           0.5 * element["steel_h1"] * Math.sin(θ) -
           0.5 * element["steel_b2"] * Math.cos(θ);
@@ -1425,19 +1422,15 @@ export class SetBoxService {
         break;
       case 3:
         x =
-          // 0.5 * element["steel_h1"] * Math.sin(θ) +
-          // element["steel_w1"] +
-          // element["steel_w2"] -
-          // 0.5 * element["steel_b3"] * Math.cos(θ);
           element["steel_w1"] +
-          element["steel_w2"] -
+          element["steel_w2"] +
           0.5 * element["steel_h1"] * Math.sin(θ) -
           0.5 * element["steel_b3"] * Math.cos(θ);
         y =
           Math.tan(θ) *
             (element["steel_w1"] +
               element["steel_w2"] -
-              (3 / 2) * element["steel_h1"] * Math.sin(θ) -
+              0.5 * element["steel_h1"] * Math.sin(θ) -
               0.5 * element["steel_b3"] * Math.cos(θ)) -
           element["steel_h1"] * Math.cos(θ);
         z = 0;
@@ -1477,10 +1470,13 @@ export class SetBoxService {
         y =
           Math.tan(θ) *
             (element["steel_w1"] -
-              (3 / 2) * element["steel_h1"] * Math.sin(θ)) -
+              0.5 * element["steel_h1"] * Math.sin(θ) -
+              0.5 * element["steel_b2"] * Math.cos(θ)) -
           element["steel_h1"] * Math.cos(θ) -
-          element["steel_h2"];
+          element["steel_h2"] +
+          0.5 * element["steel_b2"] * Math.sin(θ);
         z = 0;
+
         list.vertice.push(new THREE.Vector3(0, 0, 0));
         list.vertice.push(new THREE.Vector3(element["steel_b4"], 0, 0));
         list.vertice.push(
