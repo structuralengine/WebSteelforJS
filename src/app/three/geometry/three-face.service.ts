@@ -170,6 +170,7 @@ export class ThreePanelService {
         break;
       case "箱形/π形":
         vertices = this.box.getVertices_box(element);
+        const param = this.box.getSectionParam(vertices);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;

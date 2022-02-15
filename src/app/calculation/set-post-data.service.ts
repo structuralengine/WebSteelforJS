@@ -424,9 +424,21 @@ export class SetPostDataService {
 
       }
 
+    } else if (member.shape.indexOf('I形') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'I';
+
+    } else if (member.shape.indexOf('H形') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'H';
+
     } else if (member.shape.indexOf('箱形/π形') >= 0) {
       // この辺りで修正。memberから情報を拾うのでは
       result = 'Box';
+
+    } else if (member.shape.indexOf('鋼管') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'Pipe';
 
     } else {
       throw ("断面形状：" + member.shape + " は適切ではありません。");

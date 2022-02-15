@@ -224,6 +224,12 @@ export class ResultDataService {
     let section: any;
     switch (shapeName) {
 
+      case 'I':
+        break;
+
+      case 'H':
+        break;
+  
       case 'Box':
         section = this.box.getBoxShape(member, target, index, side, safety, {});
         for (const num of Object.keys(section.steel)) {
@@ -233,6 +239,9 @@ export class ResultDataService {
             result.steels[num] = section.steel[num];
           // }
         }
+        break;
+
+      case 'Pipe':
         break;
 
       default:

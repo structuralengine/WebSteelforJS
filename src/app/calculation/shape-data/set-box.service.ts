@@ -156,11 +156,11 @@ export class SetBoxService {
 
   public getSection(member: any, target: string, index: number) {
     const result = {
-      H: null,
-      B: null,
-      Bt: null,
-      t: null,
-      tan: null,
+      // H: null,
+      // B: null,
+      // Bt: null,
+      // t: null,
+      // tan: null,
       member: null,
     };
 
@@ -172,12 +172,12 @@ export class SetBoxService {
 
     let bf = this.helper.toNumber(member.Bt);
     let hf = this.helper.toNumber(member.t);
-    if (bf === null) {
-      bf = result.B;
-    }
-    if (hf === null) {
-      hf = result.H;
-    }
+    // if (bf === null) {
+    //   bf = result.B;
+    // }
+    // if (hf === null) {
+    //   hf = result.H;
+    // }
     result["Bt"] = bf;
     result["t"] = hf;
 
@@ -203,8 +203,11 @@ export class SetBoxService {
     // steel
     const steel = {
       A: null,
+      Ix: null, 
+      Iy: null,
       rs: null,
     };
+    const element = {};
     for (const num of Object.keys(stl)) {
       const n = this.helper.toNumber(num);
       if (n !== null) {
@@ -213,6 +216,10 @@ export class SetBoxService {
           steel_b: null,
           steel_h: null,
           steel_w: null,
+          lib_b: null,
+          lib_h: null,
+          lib_w: null,
+          lib_n: null,
           fsy: null,
         };
       }
@@ -224,20 +231,25 @@ export class SetBoxService {
       let A: number = 0;
       // 1~5を入手
       for (const num of Object.keys(steel)) {
-        if (num === "rs" || num === "A") continue;
+        if (num === "rs" || num === "A" || num === "Ix" || num === "Iy" ) continue;
         const steel0 = steel[num];
         for (const key of ["steel_b", "steel_h", "steel_w"]) {
           steel0[key] = stl[num][key];
         }
         // 断面積を算出し, 加算する
-        A += steel0["steel_b"] * steel0["steel_h"];
+        if (steel0["steel_b"] === 0 || steel0["steel_h"] === 0 || steel0["steel_b"] == null || steel0["steel_h"] == null) {
+          A += 0
+        } else {
+          A += steel0["steel_b"] * steel0["steel_h"];
+        }
         // 鉄骨強度を入手し, fsyに入れる
         // steel0['fsy'] = this.helper.getFsyk2(stl[num]upper_thickness, safety.material_steel);
         steel0["fsy"] = 235; // 鉄骨幅は部材ナンバーごとに異なるため、一旦保留
       }
-      // 断面積を代入
+      
+      // 断面積を関数によって算出し, 代入する
+      // A = this.getArea_box(element);
       steel.A = A;
-      console.log("break");
     }
 
     result["steel"] = steel;
@@ -1233,21 +1245,16 @@ export class SetBoxService {
       const vertice = vertices[num].vertice;
       const position = vertices[num].position;
       // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
-      const ab = new THREE.Vector3(
-        vertice[1].x - vertice[0].x,
-        vertice[1].y - vertice[0].y,
-        vertice[1].z - vertice[0].z
-      );
-      const ac = new THREE.Vector3(
-        vertice[2].x - vertice[0].x,
-        vertice[2].y - vertice[0].y,
-        vertice[2].z - vertice[0].z
-      );
-      const ad = new THREE.Vector3(
-        vertice[3].x - vertice[0].x,
-        vertice[3].y - vertice[0].y,
-        vertice[3].z - vertice[0].z
-      );
+      const abacad = this.getAbAcAd(vertice);
+      const ab = abacad.ab;
+      const ac = abacad.ac;
+      const ad = abacad.ad;
+      // 面積が0になるのでreturn
+      if ((ab.x === 0 && ab.y === 0 && ab.z === 0) && 
+          (ac.x === 0 && ac.y === 0 && ac.z === 0) && 
+          (ad.x === 0 && ad.y === 0 && ad.z === 0)   ) {
+        return new THREE.Vector3(0, 0, 0)
+      }
       // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
       const centroid1 = new THREE.Vector3(
         (0 + ab.x + ac.x) / 3 + vertice[0].x,
@@ -1290,13 +1297,100 @@ export class SetBoxService {
     return centroid;
   }
 
-  // 断面二次モーメントの算出
-  private getMomentOfInertia(vertices: any[], key: string = "x"): number {
-    let I: number = 1000;
-    if (key === "x") {
-    } else if (key === "y") {
+  // 断面情報の算出(A, Ix, Iy)
+  public getSectionParam(vertices) {
+    const centroid = this.getCentroid_box(vertices);
+    let A: number = 0;
+    let Ix: number = 0;
+    let Iy: number = 0;
+    for (const steel of vertices) {
+      const vertice = steel.vertice;
+      const position = steel.position;
+      const abacad = this.getAbAcAd(vertice);
+      const ab = abacad.ab;
+      const ac = abacad.ac;
+      const ad = abacad.ad;
+      // 面積が0になるのでreturn
+      if ((ab.x === 0 && ab.y === 0 && ab.z === 0) && 
+          (ac.x === 0 && ac.y === 0 && ac.z === 0) && 
+          (ad.x === 0 && ad.y === 0 && ad.z === 0)   ) {
+        return new THREE.Vector3(A, Ix, Iy)
+      }
+      // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
+      const centroid1 = new THREE.Vector3(
+        (0 + ab.x + ac.x) / 3 + vertice[0].x,
+        (0 + ab.y + ac.y) / 3 + vertice[0].y,
+        (0 + ab.z + ac.z) / 3 + vertice[0].z
+      );
+      const area1: number =
+        ((ab.y * ac.z - ab.z * ac.y) ** 2 +
+          (ab.z * ac.x - ab.x * ac.z) ** 2 +
+          (ab.x * ac.y - ab.y * ac.x) ** 2) **
+          0.5 /
+        2;
+      const delta1Ix = this.getTriangleI(ab, ac, centroid1);
+      const delta1Iy = 0;
+      const InertiaX1: number = delta1Ix
+                              + area1 * Math.abs(centroid.x - (position.x + centroid1.x)) ** 2;
+      const InertiaY1: number = delta1Iy
+                              + area1 * Math.abs(centroid.y - (position.y + centroid1.y)) ** 2;
+      // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
+      const centroid2 = new THREE.Vector3(
+        (0 + ac.x + ad.x) / 3 + vertice[0].x,
+        (0 + ac.y + ad.y) / 3 + vertice[0].y,
+        (0 + ac.z + ad.z) / 3 + vertice[0].z
+      );
+      const area2: number =
+        ((ac.y * ad.z - ac.z * ad.y) ** 2 +
+          (ac.z * ad.x - ac.x * ad.z) ** 2 +
+          (ac.x * ad.y - ac.y * ad.x) ** 2) **
+          0.5 /
+        2;
+      const InertiaX2: number = /*三角形の断面二次モーメント*/0
+                              + area2 * Math.abs(centroid.x - (position.x + centroid2.x)) ** 2;
+      const InertiaY2: number = /*三角形の断面二次モーメント*/0
+                              + area2 * Math.abs(centroid.y - (position.y + centroid2.y)) ** 2;
+      // 情報を加算する 
+      A += ( area1 + area2 );
+      Ix += ( InertiaX1 + InertiaX2 );
+      Iy += ( InertiaY1 + InertiaY2 );
     }
-    return I;
+    return {A, Ix, Iy}
+  }
+
+  // ベクトルAB（ab）とベクトルAC（ac）とベクトルAD（ad）
+  private getAbAcAd (vertice) {
+    const ab = new THREE.Vector3(
+      vertice[1].x - vertice[0].x,
+      vertice[1].y - vertice[0].y,
+      vertice[1].z - vertice[0].z
+    );
+    const ac = new THREE.Vector3(
+      vertice[2].x - vertice[0].x,
+      vertice[2].y - vertice[0].y,
+      vertice[2].z - vertice[0].z
+    );
+    const ad = new THREE.Vector3(
+      vertice[3].x - vertice[0].x,
+      vertice[3].y - vertice[0].y,
+      vertice[3].z - vertice[0].z
+    );
+    return {ab, ac, ad}
+  }
+
+  // 三角形の断面二次モーメント
+  private getTriangleI (OA, OB, centroid): number {
+    let I = 0;
+
+    // const J1 = [[OA.x*OA.x + OB.x*OB.x, OA.x*OA.y + OB.x*OB.y, OA.x*OA.z + OB.x*OB.z],
+    //             [OA.y*OA.x + OB.y*OB.x, OA.y*OA.y + OB.y*OB.y, OA.y*OA.z + OB.y*OB.z],
+    //             [OA.z*OA.x + OB.z*OB.x, OA.z*OA.y + OB.z*OB.y, OA.z*OA.z + OB.z*OB.z]]
+    // const J2 = [[centroid.x*centroid.x, centroid.x*centroid.y, centroid.x*centroid.z],
+    //             [centroid.y*centroid.x, centroid.y*centroid.y, centroid.y*centroid.z],
+    //             [centroid.z*centroid.x, centroid.z*centroid.y, centroid.z*centroid.z]]
+
+
+    return I
   }
 
   private lib_position(steel_w: number, lib_w: number, lib_n: number): number {
