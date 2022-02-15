@@ -29,19 +29,19 @@ export class SetBoxService {
 
     // 断面情報を集計
     const shape = this.getBoxShape(member, target, index, side, safety, option);
-    const h: number = shape.H;
-    const b: number = shape.B;
+    // const h: number = shape.H;
+    // const b: number = shape.B;
 
-    const section = {
-      Height: h, // 断面高さ
-      WTop: b, // 断面幅（上辺）
-      WBottom: b, // 断面幅（底辺）
-      ElasticID: "c", // 材料番号
-    };
-    result.Concretes.push(section);
+    // const section = {
+    //   Height: h, // 断面高さ
+    //   WTop: b, // 断面幅（上辺）
+    //   WBottom: b, // 断面幅（底辺）
+    //   ElasticID: "c", // 材料番号
+    // };
+    // result.Concretes.push(section);
     result["member"] = shape;
 
-    result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
+    // result.ConcreteElastic.push(this.helper.getConcreteElastic(safety));
 
     return result;
   }
@@ -198,7 +198,49 @@ export class SetBoxService {
   ): any {
     const result = this.getSection(member, target, index);
 
-    const stl: any = this.steel.getCalcData(index); // 鉄骨
+    // const stl: any = this.steel.getCalcData(index); // 鉄骨
+    let stl = {};
+    const steelData = this.steel.getSteelJson(member.g_no);
+    for ( let n = 0; n < steelData.length; n++ ) {
+      const row = steelData[n];
+      if (row.index === undefined) continue;
+      if (row.index === index) {
+        stl[1] = steelData[n + 0];
+        stl[2] = steelData[n + 1];
+        stl[3] = steelData[n + 2];
+        stl[4] = steelData[n + 3];
+        stl[5] = steelData[n + 4];
+        break;
+      }
+    }
+
+    // こっちでelementを独自に作る
+    let vertexlist = {};
+    for (const i of Object.keys(stl)) {
+      if (this.helper.toNumber(i) == null) continue;
+      const row = stl[i];
+      // const j = this.helper.toNumber(row["design_point_id"]);
+      // if (j === null) continue;
+      // for (let j = 0; j < data[i].length; j++) {
+      // vertexlist.push(data[i][j]);
+      // vertexlist["shape"] = row["shape"];
+      vertexlist["steel_b" + String(i)] =
+        row["steel_b"] == void 0 || null ? 0 : row["steel_b"];
+      vertexlist["steel_h" + String(i)] =
+        row["steel_h"] == void 0 || null ? 0 : row["steel_h"];
+      vertexlist["steel_w" + String(i)] =
+        row["steel_w"] == void 0 || null ? 0 : row["steel_w"];
+      vertexlist["lib_b" + String(i)] =
+        row["lib_b"] == void 0 || null ? 0 : row["lib_b"];
+      vertexlist["lib_h" + String(i)] =
+        row["lib_h"] == void 0 || null ? 0 : row["lib_h"];
+      vertexlist["lib_w" + String(i)] =
+        row["lib_w"] == void 0 || null ? 0 : row["lib_w"];
+      vertexlist["lib_n" + String(i)] =
+        row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
+    }
+    const vertices = this.getVertices_box(vertexlist);
+    const param = this.getSectionParam(vertices)
 
     // steel
     const steel = {
@@ -207,50 +249,42 @@ export class SetBoxService {
       Iy: null,
       rs: null,
     };
-    const element = {};
     for (const num of Object.keys(stl)) {
       const n = this.helper.toNumber(num);
       if (n !== null) {
         steel[n] = {
           title: stl[num].title,
-          steel_b: null,
-          steel_h: null,
-          steel_w: null,
-          lib_b: null,
-          lib_h: null,
-          lib_w: null,
-          lib_n: null,
-          fsy: null,
+          steel_b: vertexlist['steel_b' + String(n)],
+          steel_h: vertexlist['steel_h' + String(n)],
+          steel_w: vertexlist['steel_w' + String(n)],
+          lib_b: vertexlist['lib_b' + String(n)],
+          lib_h: vertexlist['lib_h' + String(n)],
+          lib_w: vertexlist['lib_w' + String(n)],
+          lib_n: vertexlist['lib_n' + String(n)],
+          fsy: 235,// 235ではなく厚さに応じた鉄骨強度
         };
       }
     }
 
-    if (stl !== null) {
-      steel.rs = safety.safety_factor.S_rs;
+    /* if (Object.keys(stl).length !== 0) {
+      // steel.rs = safety.safety_factor.S_rs;
 
-      let A: number = 0;
       // 1~5を入手
       for (const num of Object.keys(steel)) {
-        if (num === "rs" || num === "A" || num === "Ix" || num === "Iy" ) continue;
+        // if (num === "rs" || num === "A" || num === "Ix" || num === "Iy" ) continue;
         const steel0 = steel[num];
         for (const key of ["steel_b", "steel_h", "steel_w"]) {
           steel0[key] = stl[num][key];
-        }
-        // 断面積を算出し, 加算する
-        if (steel0["steel_b"] === 0 || steel0["steel_h"] === 0 || steel0["steel_b"] == null || steel0["steel_h"] == null) {
-          A += 0
-        } else {
-          A += steel0["steel_b"] * steel0["steel_h"];
         }
         // 鉄骨強度を入手し, fsyに入れる
         // steel0['fsy'] = this.helper.getFsyk2(stl[num]upper_thickness, safety.material_steel);
         steel0["fsy"] = 235; // 鉄骨幅は部材ナンバーごとに異なるため、一旦保留
       }
-      
-      // 断面積を関数によって算出し, 代入する
-      // A = this.getArea_box(element);
-      steel.A = A;
-    }
+    } */
+    steel['A']  = param.A; 
+    steel['Ix'] = param.Ix; 
+    steel['Iy'] = param.Iy;
+    steel['rs'] = safety.safety_factor.S_rs;
 
     result["steel"] = steel;
 
@@ -1347,7 +1381,7 @@ export class SetBoxService {
       if ((ab.x === 0 && ab.y === 0 && ab.z === 0) && 
           (ac.x === 0 && ac.y === 0 && ac.z === 0) && 
           (ad.x === 0 && ad.y === 0 && ad.z === 0)   ) {
-        return new THREE.Vector3(A, Ix, Iy)
+        return {A, Ix, Iy}
       }
       // meshの三角形Aの重心（centroid1）と、面積（area1）をベクトルから算出
       const centroid1 = new THREE.Vector3(
@@ -1387,6 +1421,9 @@ export class SetBoxService {
       A += ( area1 + area2 );
       Ix += ( InertiaX1 + InertiaX2 );
       Iy += ( InertiaY1 + InertiaY2 );
+    }
+    if (A === NaN || Ix === NaN || Iy === NaN) {
+      console.log('beeak');
     }
     return {A, Ix, Iy}
   }
