@@ -32,11 +32,11 @@ export class ThreeService {
 
   //////////////////////////////////////////////////////
   // データの変更通知を処理する
-  public changeData(mode: string = "", index: number = 0): void {
+  public changeData(mode: string = "", g_id, index: number = 0): void {
     switch (mode) {
       case "steels":
         this.face.max = 0;
-        this.face.changeData(index);
+        this.face.changeData(g_id);
         break;
 
       default:
@@ -50,11 +50,11 @@ export class ThreeService {
     this.currentIndex = index;
   }
 
-  public selectChange(mode: string = "", row: number = 0): void {
+  public selectChange(mode: string = "", g_id: string, row: number = 0): void {
     switch (mode) {
       case "steels":
         this.face.select = Math.floor(row / 5);
-        this.face.changeData(this.currentIndex);
+        this.face.changeData(g_id);
         break;
 
       default:

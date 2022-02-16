@@ -240,6 +240,7 @@ export class SetBoxService {
         row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
     }
     const vertices = this.getVertices_box(vertexlist);
+    const vertices_aaa = this.getVertices_box(vertexlist);
     const param = this.getSectionParam(vertices)
 
     // steel
@@ -1395,12 +1396,6 @@ export class SetBoxService {
           (ab.x * ac.y - ab.y * ac.x) ** 2) **
           0.5 /
         2;
-      const delta1Ix = this.getTriangleI(ab, ac, centroid1);
-      const delta1Iy = 0;
-      const InertiaX1: number = delta1Ix
-                              + area1 * Math.abs(centroid.x - (position.x + centroid1.x)) ** 2;
-      const InertiaY1: number = delta1Iy
-                              + area1 * Math.abs(centroid.y - (position.y + centroid1.y)) ** 2;
       // meshの三角形Bの重心（centroid2）と、面積（area2）をベクトルから算出
       const centroid2 = new THREE.Vector3(
         (0 + ac.x + ad.x) / 3 + vertice[0].x,
@@ -1413,17 +1408,21 @@ export class SetBoxService {
           (ac.x * ad.y - ac.y * ad.x) ** 2) **
           0.5 /
         2;
-      const InertiaX2: number = /*三角形の断面二次モーメント*/0
-                              + area2 * Math.abs(centroid.x - (position.x + centroid2.x)) ** 2;
-      const InertiaY2: number = /*三角形の断面二次モーメント*/0
-                              + area2 * Math.abs(centroid.y - (position.y + centroid2.y)) ** 2;
+      // 断面二次モーメント(Ix0, Iy0, Ax^2, Ay^2)を算出
+      const nodes = [new THREE.Vector3(0, 0, 0), ab, ac, ad];
+      const Ix0 = this.getI0(nodes, 'x');
+      const Iy0 = this.getI0(nodes, 'y');
+      const Centroid_rect = new THREE.Vector3(
+        (area1 * centroid1.x + area2 * centroid2.x) / (area1 + area2),
+        (area1 * centroid1.y + area2 * centroid2.y) / (area1 + area2),
+        (area1 * centroid1.z + area2 * centroid2.z) / (area1 + area2)
+      )
+      const Ax2 = (area1 + area2) * (centroid.y - (position.y + Centroid_rect.y)) ** 2
+      const Ay2 = (area1 + area2) * (centroid.x - (position.x + Centroid_rect.x)) ** 2
       // 情報を加算する 
       A += ( area1 + area2 );
-      Ix += ( InertiaX1 + InertiaX2 );
-      Iy += ( InertiaY1 + InertiaY2 );
-    }
-    if (A === NaN || Ix === NaN || Iy === NaN) {
-      console.log('beeak');
+      Ix += ( Ix0 + Ax2 );
+      Iy += ( Iy0 + Ay2 );
     }
     return {A, Ix, Iy}
   }
@@ -1449,18 +1448,62 @@ export class SetBoxService {
   }
 
   // 三角形の断面二次モーメント
-  private getTriangleI (OA, OB, centroid): number {
+  private getI0 (nodes, key: string = 'x'): number {
     let I = 0;
+    // 最初に、全ての点を第一象限に格納する
+    const min_x = Math.min(nodes[0].x, nodes[1].x, nodes[2].x, nodes[3].x);
+    const min_y = Math.min(nodes[0].y, nodes[1].y, nodes[2].y, nodes[3].y);
+    // x, yはここで分岐
+    const newNodes = []
+    if (key === 'x') {
+      newNodes.push(new THREE.Vector3(nodes[0].x - min_x, nodes[0].y - min_y, nodes[0].z));
+      newNodes.push(new THREE.Vector3(nodes[1].x - min_x, nodes[1].y - min_y, nodes[1].z));
+      newNodes.push(new THREE.Vector3(nodes[2].x - min_x, nodes[2].y - min_y, nodes[2].z));
+      newNodes.push(new THREE.Vector3(nodes[3].x - min_x, nodes[3].y - min_y, nodes[3].z));
+      newNodes.push(new THREE.Vector3(nodes[0].x - min_x, nodes[0].y - min_y, nodes[0].z));
+    } else {
+      newNodes.push(new THREE.Vector3(nodes[0].y - min_y, nodes[0].x - min_x, nodes[0].z));
+      newNodes.push(new THREE.Vector3(nodes[1].y - min_y, nodes[1].x - min_x, nodes[1].z));
+      newNodes.push(new THREE.Vector3(nodes[2].y - min_y, nodes[2].x - min_x, nodes[2].z));
+      newNodes.push(new THREE.Vector3(nodes[3].y - min_y, nodes[3].x - min_x, nodes[3].z));
+      newNodes.push(new THREE.Vector3(nodes[0].y - min_y, nodes[0].x - min_x, nodes[0].z));
+    }
+    const X1X2X0ab = []
+    for (let n = 0; n < newNodes.length - 1; n++) {
+      X1X2X0ab[n] = {}
+      X1X2X0ab[n]['x1'] = newNodes[n].x;
+      X1X2X0ab[n]['x2'] = newNodes[n + 1].x;
+      // 2点が軸に垂直
+      if (newNodes[n].x - newNodes[n + 1].x === 0) {
+        X1X2X0ab[n]['a'] = 0;
+        X1X2X0ab[n]['b'] = 0;
+        X1X2X0ab[n]['x0'] = 0;
+      // 2点が軸に垂直でなく、傾きを持つ
+      } else {
+        const a = (newNodes[n].y - newNodes[n + 1].y) / (newNodes[n].x - newNodes[n + 1].x);
+        const b = newNodes[n].y - a * newNodes[n].x;
+        X1X2X0ab[n]['a'] = a;
+        X1X2X0ab[n]['b'] = b;
+        X1X2X0ab[n]['x0'] = (a === 0) ? 0: (-1) * b / a;
+      }
 
-    // const J1 = [[OA.x*OA.x + OB.x*OB.x, OA.x*OA.y + OB.x*OB.y, OA.x*OA.z + OB.x*OB.z],
-    //             [OA.y*OA.x + OB.y*OB.x, OA.y*OA.y + OB.y*OB.y, OA.y*OA.z + OB.y*OB.z],
-    //             [OA.z*OA.x + OB.z*OB.x, OA.z*OA.y + OB.z*OB.y, OA.z*OA.z + OB.z*OB.z]]
-    // const J2 = [[centroid.x*centroid.x, centroid.x*centroid.y, centroid.x*centroid.z],
-    //             [centroid.y*centroid.x, centroid.y*centroid.y, centroid.y*centroid.z],
-    //             [centroid.z*centroid.x, centroid.z*centroid.y, centroid.z*centroid.z]]
+    }
+    for (const line of X1X2X0ab) {
+      const x1 = line.x1;
+      const x2 = line.x2;
+      const x0 = line.x0;
+      const a  = line.a;
+      const b  = line.b;
+
+      if (a === 0) {
+        I = (b ** 3) * (x2 - x1) / 12;
+      } else {
+        I += ((x2 - x0) * (a*x2+b) ** 3 - (x1 - x0) * (a*x1+b) ** 3) / 36;
+      }
+    }
 
 
-    return I
+    return Math.abs(I)
   }
 
   private steel_vertice(

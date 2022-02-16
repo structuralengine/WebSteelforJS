@@ -60,13 +60,17 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
         dataModel: { data: this.table_datas[i] },
         freezeCols: isManual ? 3 : 4,
         beforeTableView: (evt, ui) => {
-          this.three.selectChange("steels", this.row);
+          const tb = this.table_datas[i];
+          const g_id = tb[0].g_id;
+          this.three.selectChange("steels", g_id, this.row);
           this.three.changeData("steels", this.three.currentIndex);
         },
         selectEnd: (evt, ui) => {
           const range = ui.selection.iCells.ranges;
           this.row = range[0].r1;
-          this.three.selectChange("steels", this.row);
+          const tb = this.table_datas[i];
+          const g_id = tb[0].g_id;
+          this.three.selectChange("steels", g_id, this.row);
         },
         change: (evt, ui) => {
           this.three.changeData("steels", i);
