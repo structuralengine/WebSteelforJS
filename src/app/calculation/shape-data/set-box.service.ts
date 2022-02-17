@@ -1075,7 +1075,7 @@ export class SetBoxService {
     return { ab, ac, ad };
   }
 
-  // 三角形の断面二次モーメント
+  // 任意四角形の断面二次モーメント
   private getI0(nodes, key: string = "x"): number {
     let I = 0;
     // 最初に、全ての点を第一象限に格納する
@@ -1145,7 +1145,7 @@ export class SetBoxService {
       const b = line.b;
 
       if (a === 0) {
-        I = (b ** 3 * (x2 - x1)) / 12;
+        I += (b ** 3 * (x2 - x1)) / 12;
       } else {
         I +=
           ((x2 - x0) * (a * x2 + b) ** 3 - (x1 - x0) * (a * x1 + b) ** 3) / 36;

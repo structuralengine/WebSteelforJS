@@ -149,43 +149,18 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
             column['A'] = this.result.alien(sectionM.steels.A);
             column['Ix'] = this.result.alien(Math.round(sectionM.steels.Ix));
             column['Iy'] = this.result.alien(Math.round(sectionM.steels.Iy));
-            ///////////////// 形状 /////////////////
-            column['B'] = this.result.alien(null);
-            column['H'] = this.result.alien(null);
             ///////////////// 鉄骨情報 /////////////////
-            column['steel_I_tension'] = this.result.alien(null);
-            column['steel_I_web'] = this.result.alien(null);
-            column['steel_I_compress'] = this.result.alien(null);
-            column['steel_H_tension'] = this.result.alien(null);
-            column['steel_H_web'] = this.result.alien(null);
-            /////////////// 引張鉄筋 ///////////////
-            column['tan'] = this.result.alien(null);
-            column['Ast'] = this.result.alien(null);
-            column['AstString'] = this.result.alien(null);
-            column['dst'] = this.result.alien(null);
-            column['tcos'] = this.result.alien(null);
-            /////////////// 圧縮鉄筋 ///////////////
-            column['Asc'] = this.result.alien(null);
-            column['AscString'] = this.result.alien(null);
-            column['dsc'] = this.result.alien(null);
-            column['ccos'] = this.result.alien(null);
-            /////////////// 側面鉄筋 ///////////////
-            column['AseString'] = this.result.alien(null);
-            column['dse'] = this.result.alien(null);
-            /////////////// コンクリート情報 ///////////////
-            column['fck'] = this.result.alien(null);
-            column['rc'] = this.result.alien(null);
-            column['fcd'] = this.result.alien(null);
-            /////////////// 鉄筋強度情報 ///////////////
-            column['fsy'] = this.result.alien(null);
-            column['rs'] = this.result.alien(null);
-            column['fsd'] = this.result.alien(null);
-            /////////////// 鉄骨情報 ///////////////
-            column['fsy_steel'] = this.result.alien(null);
-            column['fsd_steel'] = this.result.alien(null);
-            column['fsy_steel'] = this.result.alien(null);
-            column['fsd_steel'] = this.result.alien(null);
-            column['rs_steel'] = this.result.alien(null);
+            column['Afgu'] = this.result.alien(null);
+            column['Afnu'] = this.result.alien(null);
+            column['Afgl'] = this.result.alien(null);
+            column['Afnl'] = this.result.alien(null);
+            column['Aw'] = this.result.alien(null);
+            column['Yu'] = this.result.alien(null);
+            column['Yl'] = this.result.alien(null);
+            column['Xr'] = this.result.alien(null);
+            column['Xl'] = this.result.alien(null);
+            /////////////// 鉄骨強度 ///////////////
+            column['fsyk'] = this.result.alien(null);
             /////////////// 鉄骨情報 ///////////////
             column['fwyd3'] = this.result.alien(null);
             /////////////// 総括表用 ///////////////
@@ -316,6 +291,8 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
 
   public getResultString(re: any): any {
     const result = {
+      empty: { alien: "center", value: "-" },
+
       fck: { alien: "center", value: "-" },
       fcd: { alien: "center", value: "-" },
       fsyk: { alien: "center", value: "-" },
@@ -328,28 +305,54 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       ipu_cu: { alien: "center", value: "-" },
       ipu_s: { alien: "center", value: "-" },
       x: { alien: "center", value: "-" },
+      
+      bt: { alien: "center", value: "-" },
+      bto: { alien: "center", value: "-" },
+      chi_wt_bto: { alien: "center", value: "-" },
+      chi_wt: { alien: "center", value: "-" },
+      Rcr: { alien: "center", value: "-" },
+      ko: { alien: "center", value: "-" },
+      rho_bl: { alien: "center", value: "-" },
+      bt_ratio: { alien: "center", value: "-" },
+      bt_chi_wt_bt_ratio: { alien: "center", value: "-" },
 
+      bsts: { alien: "center", value: "-" },
+      Is: { alien: "center", value: "-" },
+      bstso: { alien: "center", value: "-" },
+      I: { alien: "center", value: "-" },
+      bsts_ratio: { alien: "center", value: "-" },
+      Is_I_ratio: { alien: "center", value: "-" },
+
+      Mxd: { alien: "center", value: "-" },
+      Myd: { alien: "center", value: "-" },
+      // Nd: { alien: "center", value: "-" },
+      Mucxd: { alien: "center", value: "-" },
+      Mutxd: { alien: "center", value: "-" },
+      Mucyd: { alien: "center", value: "-" },
+      Mutyd: { alien: "center", value: "-" },
+      Nud: { alien: "center", value: "-" },
+      An: { alien: "center", value: "-" },
+      rho_bg_culc: { alien: "center", value: "-" },
+      lambda_e: { alien: "center", value: "-" },
+      rho_bl_culc: { alien: "center", value: "-" },
+      gamma_b1: { alien: "center", value: "-" },
+      gamma_b2: { alien: "center", value: "-" },
+      gamma_i: { alien: "center", value: "-" },
+      upper_ratio: { alien: "center", value: "-" },
+      lower_ratio: { alien: "center", value: "-" },
+
+      // Vd: { alien: "center", value: "-" },
+      Mtd: { alien: "center", value: "-" },
+      Vyd: { alien: "center", value: "-" },
+      Mtud: { alien: "center", value: "-" },
       Aw: { alien: "center", value: "-" },
-      AwString: { alien: "center", value: "-" },
-      Atw: { alien: "center", value: "-" },
-      Atl: { alien: "center", value: "-" },
+      At: { alien: "center", value: "-" },
+      // gamma_b1: { alien: "center", value: "-" },
+      // gamma_i: { alien: "center", value: "-" },
+      VandT_ratio: { alien: "center", value: "-" },
 
-
-      Ab: { alien: "center", value: "-" },
-      fwyd: { alien: "center", value: "-" },
-      deg: { alien: "center", value: "-" },
-      Ss: { alien: "center", value: "-" },
-
-      s: { alien: "center", value: "-" },
-      u: { alien: "center", value: "-" },
-
-
-      Asb: { alien: "center", value: "-" },
-      AsbString: { alien: "center", value: "-" },
-      fwyd2: { alien: "center", value: "-" },
-      deg2: { alien: "center", value: "-" },
-      Ss2: { alien: "center", value: "-" },
-      fbyd: { alien: "center", value: "-" },
+      webupper_ratio: { alien: "center", value: "-" },
+      weblower_ratio: { alien: "center", value: "-" },
 
       deg_b: { alien: "center", value: "-" },
       Sb: { alien: "center", value: "-" },
@@ -375,7 +378,7 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       V_rbs: { alien: "center", value: "-" },
       T_rbt: {alien:"center",value:"-"},
       Mu: { alien: "center", value: "-" },
-      Vyd: { alien: "center", value: "-" },
+      // Vyd: { alien: "center", value: "-" },
       fwcd: { alien: "center", value: "-" },
       Vwcd: { alien: "center", value: "-" },
       Vwcd_ratio: { alien: "center", value: "-" },
@@ -435,42 +438,6 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("Mt" in re) {
       result.Mt = { alien: "right", value: (Math.round(re.Mt * 10) / 10).toFixed(1) };
-    }
-
-
-
-    // 帯鉄筋
-    if ("Aw" in re) {
-      result.Aw = { alien: "right", value: re.Aw.toFixed(1) };
-    }
-    if ("AwString" in re) {
-      result.AwString = { alien: "right", value: re.AwString };
-    }
-    if ("fwyd" in re) {
-      result.fwyd = { alien: "right", value: re.fwyd.toFixed(0) };
-    }
-    if ("deg" in re) {
-      result.deg = { alien: "right", value: re.deg.toFixed(0) };
-    }
-    if ("Ss" in re) {
-      result.Ss = { alien: "right", value: re.Ss.toFixed(0) };
-    }
-
-    //折り曲げ鉄筋
-    if ("Asb" in re) {
-      result.Asb = { alien: "right", value: re.Asb.toFixed(1) };
-    }
-    if ("AsbString" in re) {
-      result.AsbString = { alien: "right", value: re.AsbString };
-    }
-    if ("fwyd2" in re) {
-      result.fwyd2 = { alien: "right", value: re.fwyd2.toFixed(0) };
-    }
-    if ("deg2" in re) {
-      result.deg2 = { alien: "right", value: re.deg2.toFixed(0) };
-    }
-    if ("Ss2" in re) {
-      result.Ss2 = { alien: "right", value: re.Ss2.toFixed(0) };
     }
 
     // 計算結果   
@@ -567,15 +534,6 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("Am" in re) {
       result.Am = { alien: "right", value: re.Am.toFixed(0) };
-    }
-    if ("Atw" in re) {
-      result.Atw = { alien: "right", value: re.Atw.toFixed(1) };
-    }
-    if ("Atl" in re) {
-      result.Atl = { alien: "right", value: re.Atl.toFixed(0) };
-    }
-    if ("u" in re) {
-      result.u = { alien: "right", value: re.u.toFixed(0) };
     }
     if ("qw" in re) {
       result.qw = { alien: "right", value: re.qw.toFixed(1) };
