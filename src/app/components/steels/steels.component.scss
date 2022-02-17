@@ -1,5 +1,4 @@
-.steel-contents {
-    display: flex;
+#steel-contents {
     .left-contents {
         // width: 100px;
         margin-right: 15px;
@@ -20,11 +19,5 @@
                 padding-left: 0.8em;
             }
         }
-    }
-}
-
-@media screen and (max-width: 1250px) {
-    .steel-contents {
-        display: block;
     }
 }

@@ -36,9 +36,11 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.w = window.innerWidth - 819;
-    if (window.innerWidth < 1250) {
+    this.w = window.innerWidth - 1250;
+    document.getElementById("steel-contents").style.display = "flex";
+    if (window.innerWidth < 1500) {
       this.w = window.innerWidth - 219;
+      document.getElementById("steel-contents").style.display = "block";
     }
     // let h = (w * 9) / 16;
     this.h = window.innerHeight - 120;
@@ -82,9 +84,12 @@ export class ThreeComponent implements AfterViewInit, OnDestroy {
   // ウインドウがリサイズした時のイベント処理
   @HostListener("window:resize", ["$event"])
   public onResize(event: Event) {
-    this.w = window.innerWidth - 819;
-    if (window.innerWidth < 1250) {
+    this.w = window.innerWidth - 1250;
+    document.getElementById("steel-contents").style.display = "flex";
+
+    if (window.innerWidth < 1500) {
       this.w = window.innerWidth - 219;
+      document.getElementById("steel-contents").style.display = "block";
     }
     this.h = window.innerHeight - 120;
     this.scene.onResize(this.getAspectRatio(), this.w, this.h);

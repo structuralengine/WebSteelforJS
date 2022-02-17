@@ -51,9 +51,10 @@ export class ThreePanelService {
   }
 
   public changeData(g_id: string): void {
-    const data = this.steel.getSteelJson(/* index */g_id);
+    // this.steel.clear();
+    const data = this.steel.getSteelJson(/* index */ g_id);
     if (data === undefined) {
-      return
+      return;
     }
     //対象のnodeDataを入手
     this.ClearData();

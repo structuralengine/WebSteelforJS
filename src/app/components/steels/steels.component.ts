@@ -73,6 +73,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
           this.three.selectChange("steels", g_id, this.row);
         },
         change: (evt, ui) => {
+          this.saveData();
           this.three.changeData("steels", i);
         },
       };
@@ -275,7 +276,7 @@ export class SteelsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.grid.refreshDataAndView();
 
     this.row = 0;
-    this.three.currentIndex = id;
+    this.three.currentIndex = id + 1;
   }
 
   // アクティブになっているボタンを全て非アクティブにする
