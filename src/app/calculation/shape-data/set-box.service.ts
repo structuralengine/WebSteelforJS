@@ -812,58 +812,6 @@ export class SetBoxService {
       element["steel_w2"] > element["steel_b4"] ||
       element["steel_w3"] > element["steel_b4"];
 
-    // 空白セルがあったときの処理
-    if (PIflag) {
-      if (element["steel_b5"] === 0) {
-        element["steel_b5"] = element["steel_b4"];
-      }
-      if (element["steel_h5"] === 0) {
-        element["steel_h5"] = element["steel_h4"];
-      }
-      if (element["steel_w4"] === 0) {
-        element["steel_w4"] = element["steel_b4"] / 2;
-      }
-      if (element["steel_w5"] === 0) {
-        element["steel_w5"] = element["steel_b5"] / 2;
-      }
-    } else {
-      if (element["steel_w4"] === 0) {
-        element["steel_w4"] = (element["steel_b4"] - element["steel_w3"]) / 2;
-      }
-    }
-
-    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    const liner =
-      (element["steel_h3"] - element["steel_h2"]) / element["steel_w2"];
-
-    const lib1_posi = this.lib_position(
-      element["steel_w2"],
-      element["lib_w1"],
-      element["lib_n1"]
-    );
-
-    const lib2_posi = this.lib_position(
-      element["steel_h2"],
-      element["lib_w2"],
-      element["lib_n2"]
-    );
-
-    const lib3_posi = this.lib_position(
-      element["steel_h3"],
-      element["lib_w3"],
-      element["lib_n3"]
-    );
-
-    if (!PIflag) {
-      const lib4_posi = this.lib_position(
-        element["steel_w3"],
-        element["lib_w4"],
-        element["lib_n4"]
-      );
-    }
-
-    // if (PIflag) {
-    // } else {
     let θ =
       element["steel_w2"] == 0
         ? 0
@@ -886,375 +834,37 @@ export class SetBoxService {
               0.5 /
               (element["steel_w2"] - element["steel_w3"])
           );
-    // }
 
-    vertices.push(this.steel_vertice(element, 1, θ, φ1, φ2));
-    vertices.push(this.steel_vertice(element, 4, θ, φ1, φ2));
-    vertices.push(this.steel_vertice(element, 2, θ, φ1, φ2));
-    vertices.push(this.steel_vertice(element, 3, θ, φ1, φ2));
+    // 空白セルがあったときの処理
+    if (PIflag) {
+      if (element["steel_b5"] === 0) {
+        element["steel_b5"] = element["steel_b4"];
+      }
+      if (element["steel_h5"] === 0) {
+        element["steel_h5"] = element["steel_h4"];
+      }
+      if (element["steel_w4"] === 0) {
+        element["steel_w4"] = element["steel_b4"] / 2;
+      }
+      if (element["steel_w5"] === 0) {
+        element["steel_w5"] = element["steel_b5"] / 2;
+      }
+
+      θ = 0;
+      for (let i = 1; i <= 5; i++) {
+        vertices.push(this.steel_vertice(element, i, θ, φ1, φ2));
+      }
+    } else {
+      if (element["steel_w4"] === 0) {
+        element["steel_w4"] = (element["steel_b4"] - element["steel_w3"]) / 2;
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        vertices.push(this.steel_vertice(element, i, θ, φ1, φ2));
+      }
+    }
 
     return vertices;
-
-    // ////////// 1部材について //////////
-    // // h2 !== h3 && PIflag === falseの時、右肩上がり(下がり)になる
-    // // if (h2 === h3 || PIflag === true) {
-    // if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //   list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //   list.vertice.push(new THREE.Vector3(element["steel_b1"], 0, 0));
-    //   list.vertice.push(
-    //     new THREE.Vector3(element["steel_b1"], -element["steel_h1"], 0)
-    //   );
-    //   list.vertice.push(new THREE.Vector3(0, -element["steel_h1"], 0));
-    //   list.position = new THREE.Vector3(0, 0, 0);
-    //   vertices.push(list); // 頂点情報を追加
-
-    //   // リブ
-    //   for (let i = 0; i < element["lib_n1"]; i++) {
-    //     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["lib_b1"], 0, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(element["lib_b1"], -element["lib_h1"], 0)
-    //     );
-    //     list.vertice.push(new THREE.Vector3(0, -element["lib_h1"], 0));
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] +
-    //         lib1_posi -
-    //         element["lib_b1"] / 2 +
-    //         element["lib_w1"] * i,
-    //       -element["steel_h1"],
-    //       0
-    //     );
-    //     vertices.push(list); // 頂点情報を追加
-    //   }
-    // } else if (!PIflag) {
-    //   // ななめ
-    //   let y = liner * element["steel_b1"];
-    //   list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //   list.vertice.push(new THREE.Vector3(element["steel_b1"], y, 0));
-    //   list.vertice.push(
-    //     new THREE.Vector3(element["steel_b1"], y - element["steel_h1"], 0)
-    //   );
-    //   list.vertice.push(new THREE.Vector3(0, -element["steel_h1"], 0));
-
-    //   list.position = new THREE.Vector3(0, 0, 0);
-    //   vertices.push(list); // 頂点情報を追加
-
-    //   // リブ未設定
-    // }
-
-    // ////////// 2部材について //////////
-    // list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    // // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
-    // if (element["steel_w2"] === element["steel_w3"]) {
-    //   if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b2"], 0, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(element["steel_b2"], -element["steel_h2"], 0)
-    //     );
-    //     list.vertice.push(new THREE.Vector3(0, -element["steel_h2"], 0));
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] - element["steel_b2"] / 2,
-    //       -element["steel_h1"],
-    //       0
-    //     );
-    //     // リブ
-    //     for (let i = 0; i < element["lib_n2"]; i++) {
-    //       let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    //       list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //       list.vertice.push(new THREE.Vector3(element["lib_b2"], 0, 0));
-    //       list.vertice.push(
-    //         new THREE.Vector3(element["lib_b2"], -element["lib_h2"], 0)
-    //       );
-    //       list.vertice.push(new THREE.Vector3(0, -element["lib_h2"], 0));
-    //       list.position = new THREE.Vector3(
-    //         element["steel_w1"] +
-    //           element["lib_b2"] / 2 -
-    //           element["steel_b1"] -
-    //           lib2_posi +
-    //           element["steel_h2"] -
-    //           element["lib_w2"] * i,
-    //         0
-    //       );
-    //       vertices.push(list); // 頂点情報を追加
-    //     }
-    //   } else if (!PIflag) {
-    //     let y = liner * element["steel_b2"];
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b2"], y, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b2"],
-    //         -element["steel_h2"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(0, -element["steel_h2"] + y / 2, 0)
-    //     );
-    //     y = liner * (element["steel_w1"] - element["steel_b2"] / 2);
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] - element["steel_b2"] / 2,
-    //       y - element["steel_h1"],
-    //       0
-    //     );
-    //   }
-
-    //   // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
-    //   // 分岐を追加したら、コメントを削除
-    //   // if (h2 === h3) {
-    //   // } else {
-    //   // }
-    // } else {
-    //   // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
-    //   // 分岐を追加したら、コメントを削除
-    //   if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b2"], 0, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b2"] +
-    //           (element["steel_w2"] - element["steel_w3"]) / 2,
-    //         -element["steel_h2"],
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         (element["steel_w2"] - element["steel_w3"]) / 2,
-    //         -element["steel_h2"],
-    //         0
-    //       )
-    //     );
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] - element["steel_b2"] / 2,
-    //       -element["steel_h1"],
-    //       0
-    //     );
-    //   } else if (!PIflag) {
-    //     let y = liner * element["steel_b2"];
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b2"], y, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b2"] +
-    //           (element["steel_w2"] - element["steel_w3"]) / 2,
-    //         -element["steel_h2"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         (element["steel_w2"] - element["steel_w3"]) / 2,
-    //         -element["steel_h2"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     y = liner * (element["steel_w1"] - element["steel_b2"] / 2);
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] - element["steel_b2"] / 2,
-    //       y - element["steel_h1"],
-    //       0
-    //     );
-    //   }
-    // }
-    // // } else {
-    // //   // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
-    // //   // 分岐を追加したら、コメントを削除
-    // //   if (h2 === h3) {
-    // //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b2, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b2 + (w2 - w3) / 2, -h2, 0));
-    // //     list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2, 0));
-    // //     list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
-    // //   } else {
-    // //     let y = ((h3 - h2) / w2) * b2;
-    // //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b2, y, 0));
-    // //     list.vertice.push(
-    // //       new THREE.Vector3(b2 + (w2 - w3) / 2, -h2 + y / 2, 0)
-    // //     );
-    // //     list.vertice.push(new THREE.Vector3((w2 - w3) / 2, -h2 + y / 2, 0));
-    // //     y = ((h3 - h2) / w2) * (w1 - b2 / 2) - h1;
-    // //     list.position = new THREE.Vector3(w1 - b2 / 2, y, 0);
-    // //   }
-    // // }
-    // vertices.push(list); // 頂点情報を追加
-
-    // ////////// 3部材について //////////
-    // list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    // // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
-    // if (element["steel_w2"] === element["steel_w3"]) {
-    //   if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b3"], 0, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(element["steel_b3"], -element["steel_h3"], 0)
-    //     );
-    //     list.vertice.push(new THREE.Vector3(0, -element["steel_h3"], 0));
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2,
-    //       -element["steel_h1"],
-    //       0
-    //     );
-    //   } else if (!PIflag) {
-    //     let y = liner * element["steel_b3"];
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b2"], y, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b2"],
-    //         -element["steel_h3"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(0, -element["steel_h3"] + y / 2, 0)
-    //     );
-    //     y =
-    //       liner *
-    //       (element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2);
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2,
-    //       y - element["steel_h1"],
-    //       0
-    //     );
-    //   }
-    // } else {
-    //   // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
-    //   // 分岐を追加したら、コメントを削除
-    //   if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b3"], 0, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b3"] +
-    //           (element["steel_w3"] - element["steel_w2"]) / 2,
-    //         -element["steel_h3"],
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         (element["steel_w3"] - element["steel_w2"]) / 2,
-    //         -element["steel_h3"],
-    //         0
-    //       )
-    //     );
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2,
-    //       -element["steel_h1"],
-    //       0
-    //     );
-    //   } else if (!PIflag) {
-    //     let y = liner * element["steel_b3"];
-    //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //     list.vertice.push(new THREE.Vector3(element["steel_b3"], y, 0));
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         element["steel_b3"] +
-    //           (element["steel_w3"] - element["steel_w2"]) / 2,
-    //         -element["steel_h3"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     list.vertice.push(
-    //       new THREE.Vector3(
-    //         (element["steel_w3"] - element["steel_w2"]) / 2,
-    //         -element["steel_h3"] + y / 2,
-    //         0
-    //       )
-    //     );
-    //     y =
-    //       liner *
-    //       (element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2);
-    //     list.position = new THREE.Vector3(
-    //       element["steel_w1"] + element["steel_w2"] - element["steel_b3"] / 2,
-    //       y - element["steel_h1"],
-    //       0
-    //     );
-    //   }
-    // }
-    // //  else {
-    // //   // 1部材の形状によって分岐するため、変数化したい. 下記のコードは1部材は水平のとき
-    // //   // 分岐を追加したら、コメントを削除
-    // //   if (h2 === h3) {
-    // //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b3, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b3 - (w2 - w3) / 2, -h3, 0));
-    // //     list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3, 0));
-    // //     list.position = new THREE.Vector3(w1 + w2 - b3 / 2, -h1, 0);
-    // //   } else {
-    // //     let y = ((h3 - h2) / w2) * b3;
-    // //     list.vertice.push(new THREE.Vector3(0, 0, 0));
-    // //     list.vertice.push(new THREE.Vector3(b3, y, 0));
-    // //     list.vertice.push(
-    // //       new THREE.Vector3(b3 - (w2 - w3) / 2, -h3 + y / 2, 0)
-    // //     );
-    // //     list.vertice.push(new THREE.Vector3(-(w2 - w3) / 2, -h3 + y / 2, 0));
-    // //     y = ((h3 - h2) / w2) * (w1 + w2 - b3 / 2) - h1;
-    // //     list.position = new THREE.Vector3(w1 + w2 - b3 / 2, y, 0);
-    // //   }
-    // // }
-    // vertices.push(list); // 頂点情報を追加
-
-    // ////////// 4部材について //////////
-    // list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    // // positionのみ分岐. 1, 2, 3部材の位置によって分岐する
-    // list.vertice.push(new THREE.Vector3(0, 0, 0));
-    // list.vertice.push(new THREE.Vector3(element["steel_b4"], 0, 0));
-    // list.vertice.push(
-    //   new THREE.Vector3(element["steel_b4"], -element["steel_h4"], 0)
-    // );
-    // list.vertice.push(new THREE.Vector3(0, -element["steel_h4"], 0));
-    // // box型であれば
-    // if (element["steel_h2"] === element["steel_h3"] || PIflag) {
-    //   list.position = new THREE.Vector3(
-    //     element["steel_w1"] +
-    //       (element["steel_w2"] - element["steel_w3"]) / 2 -
-    //       element["steel_w4"],
-    //     -element["steel_h1"] - element["steel_h2"],
-    //     0
-    //   ); // パターンA
-    // } else if (!PIflag) {
-    //   // 未計算状態. 計算後にコメントを削除
-    //   let y = liner * element["steel_w1"];
-    //   list.position = new THREE.Vector3(
-    //     element["steel_w1"] +
-    //       (element["steel_w2"] - element["steel_w3"]) / 2 -
-    //       element["steel_w4"],
-    //     y - element["steel_h1"] - element["steel_h2"],
-    //     0
-    //   ); // パターンC
-    // }
-    // //  else {
-    // //   // PI型であれば
-    // //   list.position = new THREE.Vector3(w1 + (w2 - w3) / 2 - w4, -h1 - h2, 0); // パターンA
-    // // }
-    // vertices.push(list); // 頂点情報を追加
-
-    // if (PIflag) {
-    //   // PI型であれは5部材を設定する
-    //   ////////// 5部材について //////////
-    //   list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    //   // w2 === w3の条件で形状が分岐する. 計算式が同じためpositionの分岐は無し.
-    //   list.vertice.push(new THREE.Vector3(0, 0, 0));
-    //   list.vertice.push(new THREE.Vector3(element["steel_b5"], 0, 0));
-    //   list.vertice.push(
-    //     new THREE.Vector3(element["steel_b5"], -element["steel_h5"], 0)
-    //   );
-    //   list.vertice.push(new THREE.Vector3(0, -element["steel_h5"], 0));
-    //   list.position = new THREE.Vector3(
-    //     element["steel_w1"] +
-    //       (element["steel_w2"] + element["steel_w3"]) / 2 -
-    //       element["steel_w5"],
-    //     -(element["steel_h1"] + element["steel_h3"]),
-    //     0
-    //   );
-    //   vertices.push(list); // 頂点情報を追加
-    // }
-    // return vertices;
   }
 
   public getCentroid_box(vertices): THREE.Vector3 {
@@ -1483,6 +1093,33 @@ export class SetBoxService {
           new THREE.Vector3(element["steel_b4"], -element["steel_h4"], 0)
         );
         list.vertice.push(new THREE.Vector3(0, -element["steel_h4"], 0));
+        list.position = new THREE.Vector3(x, y, z);
+
+        break;
+      case 5:
+        x =
+          0.5 * element["steel_h1"] * Math.sin(θ) +
+          element["steel_w1"] +
+          element["steel_w2"] -
+          0.5 * element["steel_b3"] * Math.cos(θ) +
+          (element["steel_b3"] + 2 * tan2) / 2 -
+          element["steel_w5"];
+        y =
+          Math.tan(θ) *
+            (element["steel_w1"] -
+              0.5 * element["steel_h1"] * Math.sin(θ) -
+              0.5 * element["steel_b3"] * Math.cos(θ)) -
+          element["steel_h1"] * Math.cos(θ) -
+          element["steel_h3"] +
+          0.5 * element["steel_b3"] * Math.sin(θ);
+        z = 0;
+
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(new THREE.Vector3(element["steel_b5"], 0, 0));
+        list.vertice.push(
+          new THREE.Vector3(element["steel_b5"], -element["steel_h5"], 0)
+        );
+        list.vertice.push(new THREE.Vector3(0, -element["steel_h5"], 0));
         list.position = new THREE.Vector3(x, y, z);
 
         break;
