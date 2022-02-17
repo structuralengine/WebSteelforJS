@@ -147,8 +147,8 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
             column['title3'] = { alien: "center", value: titleColumn.title3 };
             ///////////////// 鉄骨断面情報 /////////////////
             column['A'] = this.result.alien(sectionM.steels.A);
-            column['Ix'] = this.result.alien(null);
-            column['Iy'] = this.result.alien(null);
+            column['Ix'] = this.result.alien(Math.round(sectionM.steels.Ix));
+            column['Iy'] = this.result.alien(Math.round(sectionM.steels.Iy));
             ///////////////// 形状 /////////////////
             column['B'] = this.result.alien(null);
             column['H'] = this.result.alien(null);

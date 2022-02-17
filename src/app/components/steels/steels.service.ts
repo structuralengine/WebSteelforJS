@@ -9,7 +9,7 @@ import { InputDesignPointsService } from "../design-points/design-points.service
 export class InputSteelsService {
   // 鉄筋情報
   private steel_list: any[];
-  private table_datas: any[];
+  // private table_datas: any[];
 
   constructor(
     private points: InputDesignPointsService,
@@ -42,8 +42,9 @@ export class InputSteelsService {
       title: title,
       steel_b: null,
       steel_h: null,
-      steel_w1: null,
-      steel_w2: null,
+      steel_w: null,
+      // steel_w1: null,
+      // steel_w2: null,
       lib_b: null,
       lib_h: null,
       lib_w: null,
@@ -79,7 +80,7 @@ export class InputSteelsService {
   public getTableColumns(): any[] {
     // 一旦teble_datasをprivateでおいてみる
     //const table_datas: any[] = new Array();
-    this.table_datas = new Array();
+    const table_datas = new Array();
 
     const groupe_list = this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
@@ -97,6 +98,7 @@ export class InputSteelsService {
           // const bar: any = this.bars.getTableColumn(pos.index);
           data.m_no = member.m_no;
           data.shape = member.shape;
+          data['g_id'] = member.g_id;
           data.position = pos.position;
 
           // データを2行に分ける
@@ -112,6 +114,7 @@ export class InputSteelsService {
           const a: number = this.helper.toNumber(data.position);
           column1["position"] = a === null ? "" : a.toFixed(3);
           column1["p_name"] = data["p_name"];
+          column1["g_id"] = data["g_id"];
           column1["design_point_id"] = data["1"].title;
           column1["steel_b"] = data["1"].steel_b;
           column1["steel_h"] = data["1"].steel_h;
@@ -175,9 +178,9 @@ export class InputSteelsService {
           count++;
         }
       }
-      this.table_datas.push(table_groupe);
+      table_datas.push(table_groupe);
     }
-    return this.table_datas;
+    return table_datas;
   }
 
   public getTableColumn(index: any): any {
@@ -330,7 +333,63 @@ export class InputSteelsService {
     return this.points.getGroupeName(i);
   }
 
+  // 入力情報を得る関数, pegeが一致するのを全部回収
   public getSteelJson(index) {
-    return this.table_datas[index];
+    
+    const grouping_datas = this.getTableColumns();
+    let memory = {};
+    // 入力が省略されていたら上の行
+    let count = 5;
+    for (const page of Object.keys(grouping_datas)) {
+      const data_list = grouping_datas[page];
+      for(let i = 0; i < data_list.length; i++){
+        if ( !('index' in data_list[i]) ) continue;
+        // いずれ、ここで分岐する
+        if (data_list[i]['shape'] === '箱形/π形') {
+          count = 5;
+        } else if (data_list[i]['shape'] === '鋼管') {
+          count = 5;
+        }
+        const steelKeys = [ 'steel_b', 'steel_h', 'steel_w',
+                            'lib_b', 'lib_h', 'lib_w', 'lib_n'];
+        let flag: boolean = true;
+        Loops: for (let n = 0; n < count; n++) {
+          const row = data_list[i + n];
+          for (const key of steelKeys) {
+            if ( row[key] != undefined ) {
+              flag = false;
+              break Loops;
+            }
+          }
+        }
+        // 該当のデータが無ければtrue, あればfalse
+        if (flag) {
+          // 上の行(memory)を代入
+          if ( Object.keys(memory).length === 0 ) continue;
+          for (const nKey of Object.keys(memory)) {
+            const n = this.helper.toNumber(nKey);
+            const steelKeys = [ 'steel_b', 'steel_h', 'steel_w',
+                                'lib_b', 'lib_h', 'lib_w', 'lib_n'];
+            for (const key of steelKeys) {
+              data_list[i + n][key] = memory[n][key];
+            }
+          }
+        } else {
+          // memory（上の行）に保存
+          for (let n = 0; n < count; n++) {
+            memory[n] = data_list[i + n]
+          }
+        }
+      }
+    }
+    let result: any[];
+    for (const datas of grouping_datas) {
+      const g_id = datas[0]['g_id'];
+      if (g_id == index) {
+        result = datas;
+        break
+      }
+    }
+    return result;
   }
 }

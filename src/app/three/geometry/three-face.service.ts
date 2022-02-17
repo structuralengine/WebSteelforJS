@@ -50,8 +50,11 @@ export class ThreePanelService {
     this.gui = null;
   }
 
-  public changeData(index: number): void {
-    const data = this.steel.getSteelJson(index);
+  public changeData(g_id: string): void {
+    const data = this.steel.getSteelJson(/* index */g_id);
+    if (data === undefined) {
+      return
+    }
     //対象のnodeDataを入手
     this.ClearData();
 
@@ -171,6 +174,7 @@ export class ThreePanelService {
         break;
       case "箱形/π形":
         vertices = this.box.getVertices_box(element);
+        const param = this.box.getSectionParam(vertices);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
