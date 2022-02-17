@@ -1,29 +1,22 @@
 <div class="c-subNavArea">
-  <nav>
-    <ul class="c-subNavArea__nav">
-      <li
-        class="c-subNavArea__navItem"
-        *ngFor="let groupe of table_datas; index as i"
-      >
-        <a
-          (click)="activePageChenge(i)"
-          id="stl{{ i }}"
-          class="c-subNavArea__navItemTitle"
-        >
-          <span>{{ getGroupeName(i) }}</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
+    <nav>
+        <ul class="c-subNavArea__nav">
+            <li class="c-subNavArea__navItem" *ngFor="let groupe of table_datas; index as i">
+                <a (click)="activePageChenge(i)" id="stl{{ i }}" class="c-subNavArea__navItemTitle">
+                    <span>{{ getGroupeName(i) }}</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
-<div class="steel-contents">
-  <div class="right-contents">
-    <div class="three-container" id="three-container-id">
-      <app-three></app-three>
+<div id="steel-contents">
+    <div class="right-contents">
+        <div class="three-container" id="three-container-id">
+            <app-three></app-three>
+        </div>
     </div>
-  </div>
-  <div class="left-contents">
-    <app-sheet #grid [options]="options"></app-sheet>
-  </div>
+    <div class="left-contents">
+        <app-sheet #grid [options]="options"></app-sheet>
+    </div>
 </div>
