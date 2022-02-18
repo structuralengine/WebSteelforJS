@@ -9,6 +9,9 @@ import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { DataTexture3D } from "three";
 import { SetBoxService } from "src/app/calculation/shape-data/set-box.service";
 import { SetCircleService } from "src/app/calculation/shape-data/set-circle.service";
+import { SetIService } from "src/app/calculation/shape-data/set-I.service";
+import { ResultDataService } from "src/app/calculation/result-data.service";
+import { SetParamService } from "src/app/calculation/shape-data/set-param.service";
 
 @Injectable({
   providedIn: "root",
@@ -36,8 +39,10 @@ export class ThreePanelService {
     private scene: SceneService,
     private http: HttpClient,
     private steel: InputSteelsService,
+    private I: SetIService,
     private box: SetBoxService,
     private circle: SetCircleService,
+    private param: SetParamService,
     private helper: DataHelperModule
   ) {
     this.panel_List = new Array();
@@ -164,8 +169,8 @@ export class ThreePanelService {
     // if (flag) {
     switch (shape) {
       case "I形":
-        vertices = this.box.getVertices_I(element);
-        centroid = this.box.getCentroid_box(vertices);
+        vertices = this.I.getVertices(element);
+        centroid = this.param.getCentroid(vertices);
         child = this.createPlane(vertices);
         break;
       case "H形":
@@ -175,8 +180,7 @@ export class ThreePanelService {
         break;
       case "箱形/π形":
         vertices = this.box.getVertices_box(element);
-        const param = this.box.getSectionParam(vertices);
-        centroid = this.box.getCentroid_box(vertices);
+        centroid = this.param.getCentroid(vertices);
         child = this.createPlane(vertices);
         break;
       case "鋼管":

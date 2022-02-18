@@ -161,19 +161,19 @@ export class DataHelperModule {
 
     if (thickness !== null) {
       if (thickness <= material_steel[0].separate) {
-        result[key] = (key === 'fsy') ? this.toNumber(material_steel[0].fsyk) :
-                      (key === 'fvy') ? this.toNumber(material_steel[0].fsvyk) :
-                      null;
+        result['fsyk']  = this.toNumber(material_steel[0].fsyk);
+        result['fsvyk'] = this.toNumber(material_steel[0].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[0].fsvyk);
         result.id = "1";
       } else if (thickness <= material_steel[1].separate) {
-        result[key] = (key === 'fsy') ? this.toNumber(material_steel[1].fsyk) :
-                      (key === 'fvy') ? this.toNumber(material_steel[1].fsvyk) :
-                      null;
+        result['fsyk']  = this.toNumber(material_steel[1].fsyk);
+        result['fsvyk'] = this.toNumber(material_steel[1].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[1].fsvyk);
         result.id = "2";
       } else {
-        result[key] = (key === 'fsy') ? this.toNumber(material_steel[2].fsyk) :
-                      (key === 'fvy') ? this.toNumber(material_steel[1].fsvyk) :
-                      null;
+        result['fsyk']  = this.toNumber(material_steel[2].fsyk);
+        result['fsvyk'] = this.toNumber(material_steel[2].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[2].fsvyk);
         result.id = "3";
       }
     } else {
