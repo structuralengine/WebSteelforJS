@@ -828,30 +828,50 @@ export class SetBoxService {
       element["lib_h3"] = element["lib_h2"];
     }
 
-    if (element["lib_w1"] === 0) {
-      element["lib_w1"] = element["lib_w4"];
-    }
-    if (element["lib_w4"] === 0) {
-      element["lib_w4"] = element["lib_w1"];
-    }
-    if (element["lib_w2"] === 0) {
-      element["lib_w2"] = element["lib_w3"];
-    }
-    if (element["lib_w3"] === 0) {
-      element["lib_w3"] = element["lib_w2"];
-    }
-
     if (element["lib_n1"] === 0) {
       element["lib_n1"] = element["lib_n4"];
+      element["lib_w1"] = 0;
     }
     if (element["lib_n4"] === 0) {
-      element["lib_n4"] = element["lib_n1"];
+      element["lib_n4"] = 0;
+      element["lib_w4"] = 0;
     }
     if (element["lib_n2"] === 0) {
       element["lib_n2"] = element["lib_n3"];
+      element["lib_w2"] = 0;
     }
     if (element["lib_n3"] === 0) {
-      element["lib_n3"] = element["lib_n2"];
+      element["lib_n3"] = 0;
+      element["lib_w3"] = 0;
+    }
+
+    if (element["lib_w1"] === 0) {
+      if (element["lib_n1"] === 1) {
+        element["lib_w1"] = 0;
+      } else {
+        element["lib_w1"] = element["steel_w2"] / (element["lib_n1"] + 1);
+      }
+    }
+    if (element["lib_w4"] === 0) {
+      if (element["lib_n4"] === 1) {
+        element["lib_w4"] = 0;
+      } else {
+        element["lib_w4"] = element["steel_w3"] / (element["lib_n4"] + 1);
+      }
+    }
+    if (element["lib_w2"] === 0) {
+      if (element["lib_n2"] === 1) {
+        element["lib_w2"] = 0;
+      } else {
+        element["lib_w2"] = element["steel_h2"] / (element["lib_n2"] + 1);
+      }
+    }
+    if (element["lib_w3"] === 0) {
+      if (element["lib_n3"] === 1) {
+        element["lib_w3"] = 0;
+      } else {
+        element["lib_w3"] = element["steel_h3"] / (element["lib_n3"] + 1);
+      }
     }
 
     // パターンごとに分岐
@@ -859,27 +879,25 @@ export class SetBoxService {
       element["steel_w2"] > element["steel_b4"] ||
       element["steel_w3"] > element["steel_b4"];
 
-    let θ =
+    let theta =
       element["steel_w2"] == 0
         ? 0
         : Math.atan(
             (element["steel_h3"] - element["steel_h2"]) / element["steel_w2"]
           );
-    let φ1 =
+    let fai_1 =
       element["steel_w2"] - element["steel_w3"] == 0
         ? 0
         : Math.atan(
             element["steel_h2"] /
-              0.5 /
-              (element["steel_w2"] - element["steel_w3"])
+              (0.5 * (element["steel_w2"] - element["steel_w3"]))
           );
-    let φ2 =
+    let fai_2 =
       element["steel_w2"] - element["steel_w3"] == 0
         ? 0
         : Math.atan(
             element["steel_h3"] /
-              0.5 /
-              (element["steel_w2"] - element["steel_w3"])
+              (0.5 * (element["steel_w2"] - element["steel_w3"]))
           );
 
     // 空白セルがあったときの処理
@@ -897,9 +915,9 @@ export class SetBoxService {
         element["steel_w5"] = element["steel_b5"] / 2;
       }
 
-      θ = 0;
+      theta = 0;
       for (let i = 1; i <= 5; i++) {
-        vertices.push(this.box_vertice(element, i, θ, φ1, φ2));
+        vertices.push(this.box_vertice(element, i, theta, fai_1, fai_2));
       }
     } else {
       if (element["steel_w4"] === 0) {
@@ -907,7 +925,20 @@ export class SetBoxService {
       }
 
       for (let i = 1; i <= 4; i++) {
-        vertices.push(this.box_vertice(element, i, θ, φ1, φ2));
+        vertices.push(this.box_vertice(element, i, theta, fai_1, fai_2));
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        for (let j = 0; j < element["lib_n" + String(i)]; j++) {
+          if (element["lib_n" + String(i)] !== 0) {
+            vertices.push(
+              this.box_lib_vertice(element, i, j, theta, fai_1, fai_2)
+            );
+            // if (v !== null) {
+            //   vertices.push(v);
+            // }
+          }
+        }
       }
     }
 
@@ -1158,22 +1189,22 @@ export class SetBoxService {
   private box_vertice(
     element: number,
     no: number,
-    θ: number = 0,
-    φ1: number = 0,
-    φ2: number = 0
+    theta: number = 0,
+    fai_1: number = 0,
+    fai_2: number = 0
   ) {
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
     let x, y, z;
     let tan1 =
-      φ1 == 0
+      fai_1 == 0
         ? 0
-        : (element["steel_h2"] - 0.5 * element["steel_b2"] * Math.sin(θ)) /
-          Math.tan(φ1);
+        : (element["steel_h2"] - 0.5 * element["steel_b2"] * Math.sin(theta)) /
+          Math.tan(fai_1);
     let tan2 =
-      φ2 == 0
+      fai_2 == 0
         ? 0
-        : -(element["steel_h3"] - 0.5 * element["steel_b3"] * Math.sin(θ)) /
-          Math.tan(φ2);
+        : -(element["steel_h3"] - 0.5 * element["steel_b3"] * Math.sin(theta)) /
+          Math.tan(fai_2);
 
     switch (no) {
       case 1:
@@ -1185,22 +1216,22 @@ export class SetBoxService {
         list.vertice.push(
           new THREE.Vector3(
             element["steel_b1"],
-            element["steel_b1"] * Math.tan(θ),
+            element["steel_b1"] * Math.tan(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
-            element["steel_b1"] + element["steel_h1"] * Math.sin(θ),
-            element["steel_b1"] * Math.tan(θ) -
-              element["steel_h1"] * Math.cos(θ),
+            element["steel_b1"] + element["steel_h1"] * Math.sin(theta),
+            element["steel_b1"] * Math.tan(theta) -
+              element["steel_h1"] * Math.cos(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
-            element["steel_h1"] * Math.sin(θ),
-            -element["steel_h1"] * Math.cos(θ),
+            element["steel_h1"] * Math.sin(theta),
+            -element["steel_h1"] * Math.cos(theta),
             0
           )
         );
@@ -1209,35 +1240,35 @@ export class SetBoxService {
       case 2:
         x =
           element["steel_w1"] +
-          0.5 * element["steel_h1"] * Math.sin(θ) -
-          0.5 * element["steel_b2"] * Math.cos(θ);
+          0.5 * element["steel_h1"] * Math.sin(theta) -
+          0.5 * element["steel_b2"] * Math.cos(theta);
         y =
-          Math.tan(θ) *
+          Math.tan(theta) *
             (element["steel_w1"] -
-              0.5 * element["steel_h1"] * Math.sin(θ) -
-              0.5 * element["steel_b2"] * Math.cos(θ)) -
-          element["steel_h1"] * Math.cos(θ);
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["steel_b2"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
         list.vertice.push(
           new THREE.Vector3(
-            element["steel_b2"] * Math.cos(θ),
-            element["steel_b2"] * Math.sin(θ),
+            element["steel_b2"] * Math.cos(theta),
+            element["steel_b2"] * Math.sin(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
             element["steel_b2"] + tan1,
-            -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(θ),
+            -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
             tan1,
-            -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(θ),
+            -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(theta),
             0
           )
         );
@@ -1247,36 +1278,36 @@ export class SetBoxService {
         x =
           element["steel_w1"] +
           element["steel_w2"] +
-          0.5 * element["steel_h1"] * Math.sin(θ) -
-          0.5 * element["steel_b3"] * Math.cos(θ);
+          0.5 * element["steel_h1"] * Math.sin(theta) -
+          0.5 * element["steel_b3"] * Math.cos(theta);
         y =
-          Math.tan(θ) *
+          Math.tan(theta) *
             (element["steel_w1"] +
               element["steel_w2"] -
-              0.5 * element["steel_h1"] * Math.sin(θ) -
-              0.5 * element["steel_b3"] * Math.cos(θ)) -
-          element["steel_h1"] * Math.cos(θ);
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["steel_b3"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
         list.vertice.push(
           new THREE.Vector3(
-            element["steel_b3"] * Math.cos(θ),
-            element["steel_b3"] * Math.sin(θ),
+            element["steel_b3"] * Math.cos(theta),
+            element["steel_b3"] * Math.sin(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
             element["steel_b3"] + tan2,
-            -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(θ),
+            -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(theta),
             0
           )
         );
         list.vertice.push(
           new THREE.Vector3(
             tan2,
-            -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(θ),
+            -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(theta),
             0
           )
         );
@@ -1285,19 +1316,19 @@ export class SetBoxService {
         break;
       case 4:
         x =
-          0.5 * element["steel_h1"] * Math.sin(θ) +
+          0.5 * element["steel_h1"] * Math.sin(theta) +
           element["steel_w1"] -
-          0.5 * element["steel_b2"] * Math.cos(θ) +
+          0.5 * element["steel_b2"] * Math.cos(theta) +
           (element["steel_b2"] + 2 * tan1) / 2 -
           element["steel_w4"];
         y =
-          Math.tan(θ) *
+          Math.tan(theta) *
             (element["steel_w1"] -
-              0.5 * element["steel_h1"] * Math.sin(θ) -
-              0.5 * element["steel_b2"] * Math.cos(θ)) -
-          element["steel_h1"] * Math.cos(θ) -
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["steel_b2"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta) -
           element["steel_h2"] +
-          0.5 * element["steel_b2"] * Math.sin(θ);
+          0.5 * element["steel_b2"] * Math.sin(theta);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
@@ -1311,20 +1342,20 @@ export class SetBoxService {
         break;
       case 5:
         x =
-          0.5 * element["steel_h1"] * Math.sin(θ) +
+          0.5 * element["steel_h1"] * Math.sin(theta) +
           element["steel_w1"] +
           element["steel_w2"] -
-          0.5 * element["steel_b3"] * Math.cos(θ) +
+          0.5 * element["steel_b3"] * Math.cos(theta) +
           (element["steel_b3"] + 2 * tan2) / 2 -
           element["steel_w5"];
         y =
-          Math.tan(θ) *
+          Math.tan(theta) *
             (element["steel_w1"] -
-              0.5 * element["steel_h1"] * Math.sin(θ) -
-              0.5 * element["steel_b3"] * Math.cos(θ)) -
-          element["steel_h1"] * Math.cos(θ) -
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["steel_b3"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta) -
           element["steel_h3"] +
-          0.5 * element["steel_b3"] * Math.sin(θ);
+          0.5 * element["steel_b3"] * Math.sin(theta);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
@@ -1339,6 +1370,408 @@ export class SetBoxService {
     }
     // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
     return list;
+  }
+
+  private box_lib_vertice(
+    element: number,
+    no: number,
+    co: number,
+    theta: number = 0,
+    fai_1: number = 0,
+    fai_2: number = 0
+  ) {
+    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
+    let x = 0,
+      y = 0,
+      z = 0;
+
+    switch (no) {
+      case 1:
+        // x = this.positionX(
+        //   1,
+        //   element["steel_w1"],
+        //   0.5 *
+        //     (element["steel_w2"] - element["lib_w1"] * (element["lib_n1"] - 1)),
+        //   element["lib_w1"],
+        //   element["steel_h1"],
+        //   0.5 * element["lib_b1"],
+        //   theta,
+        //   fai_1,
+        //   fai_2,
+        //   co
+        // );
+        x =
+          element["steel_w1"] +
+          0.5 *
+            (element["steel_w2"] -
+              element["lib_w1"] * (element["lib_n1"] - 1)) +
+          element["lib_w1"] * co +
+          0.5 * element["steel_h1"] * Math.sin(theta) -
+          0.5 * element["lib_b1"] * Math.cos(theta);
+        // y = this.positionY(
+        //   Math.tan(theta),
+        //   element["steel_w1"],
+        //   0.5 *
+        //     (element["steel_w2"] - element["lib_w1"] * (element["lib_n1"] - 1)),
+        //   element["lib_w1"],
+        //   element["steel_h1"],
+        //   0.5 * element["lib_b1"],
+        //   theta,
+        //   fai_1,
+        //   fai_2,
+        //   co
+        // );
+
+        y =
+          Math.tan(theta) *
+            (element["steel_w1"] +
+              0.5 *
+                (element["steel_w2"] -
+                  element["lib_w1"] * (element["lib_n1"] - 1)) +
+              element["lib_w1"] * co -
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["lib_b1"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta);
+        z = 0;
+
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_b1"] * Math.cos(theta),
+            element["lib_b1"] * Math.sin(theta),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_b1"] * Math.cos(theta) +
+              element["lib_h1"] * Math.sin(theta),
+            element["lib_b1"] * Math.sin(theta) -
+              element["lib_h1"] * Math.cos(theta),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_h1"] * Math.sin(theta),
+            -element["lib_h1"] * Math.cos(theta),
+            0
+          )
+        );
+        list.position = new THREE.Vector3(x, y, z);
+
+        break;
+
+      case 2:
+        let tan1 =
+          fai_1 == 0
+            ? 0
+            : (0.5 *
+                (element["steel_h2"] -
+                  element["lib_w2"] * (element["lib_n2"] - 1)) +
+                element["lib_w2"] * co) /
+              Math.tan(fai_1);
+
+        let x_remain, y_remain;
+
+        let coss = 1;
+        let lib_deg = 0.5 * Math.PI - fai_1;
+        if (fai_1 === 0) {
+          lib_deg = 0;
+          fai_1 = 0.5 * Math.PI;
+          x_remain = 0;
+          y_remain = 0.5 * element["lib_b2"];
+        } else if (fai_1 < 0) {
+          coss = -1;
+          lib_deg = -(0.5 * Math.PI + fai_1);
+          x_remain = 0.5 * element["lib_b2"] * Math.sin(lib_deg) * coss;
+          y_remain = 0.5 * element["lib_b2"] * Math.cos(lib_deg);
+        } else {
+          x_remain = 0.5 * element["lib_b2"] * Math.sin(lib_deg) * coss;
+          y_remain = 0.5 * element["lib_b2"] * Math.cos(lib_deg);
+        }
+
+        x =
+          element["steel_w1"] +
+          0.5 * element["steel_h1"] * Math.sin(theta) +
+          0.5 * element["steel_b2"] * Math.cos(theta) +
+          tan1 -
+          x_remain;
+        y =
+          Math.tan(theta) *
+            (element["steel_w1"] -
+              0.5 * element["steel_h1"] * Math.sin(theta) +
+              0.5 * element["steel_b2"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta) -
+          0.5 *
+            (element["steel_h2"] -
+              element["lib_w2"] * (element["lib_n2"] - 1)) -
+          element["lib_w2"] * co +
+          y_remain;
+        z = 0;
+
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_h2"] * Math.cos(lib_deg),
+            element["lib_h2"] * Math.sin(lib_deg),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_h2"] * Math.cos(lib_deg) +
+              element["lib_b2"] * Math.sin(lib_deg),
+            element["lib_h2"] * Math.sin(lib_deg) -
+              element["lib_b2"] * Math.cos(lib_deg),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_b2"] * Math.sin(lib_deg),
+            -element["lib_b2"] * Math.cos(lib_deg),
+            0
+          )
+        );
+        list.position = new THREE.Vector3(x, y, z);
+        break;
+
+      // x = this.positionX(
+      //   1,
+      //   element["steel_w1"],
+      //   0,
+      //   element["steel_h1"],
+      //   element["steel_b2"],
+      //   theta
+      // );
+      //   x=  element["steel_w1"] +
+      //     0.5 * element["steel_h1"] * Math.sin(theta) -
+      //     0.5 * element["steel_b2"] * Math.cos(theta);
+      //   y =
+      //     Math.tan(theta) *
+      //       (element["steel_w1"] -
+      //         0.5 * element["steel_h1"] * Math.sin(theta) -
+      //         0.5 * element["steel_b2"] * Math.cos(theta)) -
+      //     element["steel_h1"] * Math.cos(theta);
+      //   z = 0;
+
+      //   list.vertice.push(new THREE.Vector3(0, 0, 0));
+      //   list.vertice.push(
+      //     new THREE.Vector3(
+      //       element["steel_b2"] * Math.cos(theta),
+      //       element["steel_b2"] * Math.sin(theta),
+      //       0
+      //     )
+      //   );
+      //   list.vertice.push(
+      //     new THREE.Vector3(
+      //       element["steel_b2"] + tan1,
+      //       -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(theta),
+      //       0
+      //     )
+      //   );
+      //   list.vertice.push(
+      //     new THREE.Vector3(
+      //       tan1,
+      //       -element["steel_h2"] + 0.5 * element["steel_b2"] * Math.sin(theta),
+      //       0
+      //     )
+      //   );
+      //   list.position = new THREE.Vector3(x, y, z);
+      //   break;
+      case 3:
+        let tan2 =
+          fai_2 == 0
+            ? 0
+            : (0.5 *
+                (element["steel_h3"] -
+                  element["lib_w3"] * (element["lib_n3"] - 1)) +
+                element["lib_w3"] * co) /
+              Math.tan(fai_2);
+
+        let coss2 = 1;
+        let lib_deg2 = 0.5 * Math.PI - fai_2;
+        let x_remain2, y_remain2;
+
+        if (fai_2 == 0) {
+          fai_2 = 0.5 * Math.PI;
+          lib_deg2 = 0;
+          x_remain2 = -element["lib_h3"] * Math.cos(-lib_deg2);
+          y_remain2 = 0.5 * element["lib_b3"];
+        } else if (fai_2 < 0) {
+          lib_deg2 = -(0.5 * Math.PI + fai_2);
+
+          x_remain2 =
+            0.5 * element["lib_b3"] * Math.sin(-lib_deg2) * coss2 -
+            element["lib_h3"] * Math.cos(-lib_deg2);
+          y_remain2 =
+            0.5 * element["lib_b3"] * Math.cos(-lib_deg2) -
+            element["lib_h3"] * Math.sin(-lib_deg2);
+        } else {
+          coss2 = -1;
+          x_remain2 =
+            0.5 * element["lib_b3"] * Math.sin(-lib_deg2) * coss2 -
+            element["lib_h3"] * Math.cos(-lib_deg2);
+          y_remain2 =
+            0.5 * element["lib_b3"] * Math.cos(-lib_deg2) -
+            element["lib_h3"] * Math.sin(-lib_deg2);
+        }
+
+        x =
+          element["steel_w1"] +
+          element["steel_w2"] +
+          0.5 * element["steel_h1"] * Math.sin(theta) -
+          0.5 * element["steel_b3"] * Math.cos(theta) -
+          tan2 +
+          x_remain2;
+
+        y =
+          Math.tan(theta) *
+            (element["steel_w1"] +
+              element["steel_w2"] -
+              0.5 * element["steel_h1"] * Math.sin(theta) -
+              0.5 * element["steel_b3"] * Math.cos(theta)) -
+          element["steel_h1"] * Math.cos(theta) -
+          0.5 *
+            (element["steel_h3"] -
+              element["lib_w3"] * (element["lib_n3"] - 1)) -
+          element["lib_w3"] * co +
+          y_remain2;
+
+        z = 0;
+
+        list.vertice.push(new THREE.Vector3(0, 0, 0));
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_h3"] * Math.cos(-lib_deg2),
+            element["lib_h3"] * Math.sin(-lib_deg2),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_h3"] * Math.cos(-lib_deg2) +
+              element["lib_b3"] * Math.sin(-lib_deg2),
+            element["lib_h3"] * Math.sin(-lib_deg2) -
+              element["lib_b3"] * Math.cos(-lib_deg2),
+            0
+          )
+        );
+        list.vertice.push(
+          new THREE.Vector3(
+            element["lib_b3"] * Math.sin(-lib_deg2),
+            -element["lib_b3"] * Math.cos(-lib_deg2),
+            0
+          )
+        );
+        list.position = new THREE.Vector3(x, y, z);
+        break;
+
+      // list.vertice.push(new THREE.Vector3(0, 0, 0));
+      // list.vertice.push(
+      //   new THREE.Vector3(
+      //     element["steel_b3"] * Math.cos(theta),
+      //     element["steel_b3"] * Math.sin(theta),
+      //     0
+      //   )
+      // );
+      // list.vertice.push(
+      //   new THREE.Vector3(
+      //     element["steel_b3"] + tan2,
+      //     -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(theta),
+      //     0
+      //   )
+      // );
+      // list.vertice.push(
+      //   new THREE.Vector3(
+      //     tan2,
+      //     -element["steel_h3"] + 0.5 * element["steel_b3"] * Math.sin(theta),
+      //     0
+      //   )
+      // );
+      // list.position = new THREE.Vector3(x, y, z);
+
+      // case 4:
+      //   x =
+      //     0.5 * element["steel_h1"] * Math.sin(theta) +
+      //     element["steel_w1"] -
+      //     0.5 * element["steel_b2"] * Math.cos(theta) +
+      //     (element["steel_b2"] + 2 * tan1) / 2 -
+      //     element["steel_w4"];
+      //   y =
+      //     Math.tan(theta) *
+      //       (element["steel_w1"] -
+      //         0.5 * element["steel_h1"] * Math.sin(theta) -
+      //         0.5 * element["steel_b2"] * Math.cos(theta)) -
+      //     element["steel_h1"] * Math.cos(theta) -
+      //     element["steel_h2"] +
+      //     0.5 * element["steel_b2"] * Math.sin(theta);
+      //   z = 0;
+
+      //   list.vertice.push(new THREE.Vector3(0, 0, 0));
+      //   list.vertice.push(new THREE.Vector3(element["steel_b4"], 0, 0));
+      //   list.vertice.push(
+      //     new THREE.Vector3(element["steel_b4"], -element["steel_h4"], 0)
+      //   );
+      //   list.vertice.push(new THREE.Vector3(0, -element["steel_h4"], 0));
+      //   list.position = new THREE.Vector3(x, y, z);
+
+      //   break;
+      // case 5:
+      //   x =
+      //     0.5 * element["steel_h1"] * Math.sin(theta) +
+      //     element["steel_w1"] +
+      //     element["steel_w2"] -
+      //     0.5 * element["steel_b3"] * Math.cos(theta) +
+      //     (element["steel_b3"] + 2 * tan2) / 2 -
+      //     element["steel_w5"];
+      //   y =
+      //     Math.tan(theta) *
+      //       (element["steel_w1"] -
+      //         0.5 * element["steel_h1"] * Math.sin(theta) -
+      //         0.5 * element["steel_b3"] * Math.cos(theta)) -
+      //     element["steel_h1"] * Math.cos(theta) -
+      //     element["steel_h3"] +
+      //     0.5 * element["steel_b3"] * Math.sin(theta);
+      //   z = 0;
+
+      //   list.vertice.push(new THREE.Vector3(0, 0, 0));
+      //   list.vertice.push(new THREE.Vector3(element["steel_b5"], 0, 0));
+      //   list.vertice.push(
+      //     new THREE.Vector3(element["steel_b5"], -element["steel_h5"], 0)
+      //   );
+      //   list.vertice.push(new THREE.Vector3(0, -element["steel_h5"], 0));
+      //   list.position = new THREE.Vector3(x, y, z);
+
+      //   break;
+
+      // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+    }
+    return list;
+  }
+
+  private positionX(Mt, w1, w2, w3, h, b, theta, fai_1, fai_2, co = 0): number {
+    const result =
+      Mt *
+      (w1 +
+        w2 +
+        w3 * co +
+        0.5 * h * Math.sin(theta) -
+        0.5 * b * Math.cos(theta));
+    return result;
+  }
+
+  private positionY(Mt, w1, w2, w3, h, b, theta, fai_1, fai_2, co = 0): number {
+    const result =
+      Mt *
+        (w1 +
+          w2 +
+          w3 * co -
+          0.5 * h * Math.sin(theta) -
+          0.5 * b * Math.cos(theta)) -
+      h * Math.cos(theta);
+    return result;
   }
 
   private lib_position(steel_w: number, lib_w: number, lib_n: number): number {
