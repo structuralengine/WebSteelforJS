@@ -95,9 +95,9 @@ export class SetPostDataService {
     option: any, ...DesignForceList: any[] ): any {
 
     const post_keys = [ 
-      'index', 'side', 'Nd','Md',
-      'ConcreteElastic', 'Concretes',
-      'SteelElastic', 'Bars', 'Steels','shape'
+      'index', 'side', 'Nd', 'Vd', 'Md', 'Mt',
+      // 'ConcreteElastic', 'Concretes',
+      'SteelElastic',/*  'Bars', */ 'Steels','shape'
     ];
 
     // 基本となる DesignForceList[0] の集計 ---------------------------------------------------------
@@ -118,7 +118,9 @@ export class SetPostDataService {
           Nd: force.Nd
         };
         if(type === "応力度") {
+          data['Vd'] = Math.abs(force.Vd);
           data['Md'] = Math.abs(force.Md);
+          data['Mt'] = Math.abs(force.Mt);
         }
         data['force'] = force; // 一時的に登録
         try {
@@ -126,8 +128,8 @@ export class SetPostDataService {
           data['shape'] = shape; // 一時的に登録
 
           // 断面形状
-          data['Concretes'] = shape.Concretes;
-          data['ConcreteElastic'] = shape.ConcreteElastic;
+          // data['Concretes'] = shape.Concretes;
+          // data['ConcreteElastic'] = shape.ConcreteElastic;
 
           // 鉄筋・鉄骨の本数
           // if('Bars' in shape){

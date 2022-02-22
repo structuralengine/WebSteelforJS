@@ -108,12 +108,11 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
               SRCFlag = false;
             }
             /////////////// まず計算 ///////////////
-            let section: any = null;
-            // try {
-              section = this.result.getSteelStruct("Vd", res[0], safety);
-            // } catch (e) {
-              // continue;
-            // }
+            // res[0]
+            // res[1]
+            // res[2] = 疲労限の断面力に対する解析結果
+            // let section: any = this.result.getSteelStruct("Vd", res[0], safety);
+            let section: any = this.result.getSection("Vd", res[0], safety);
             const member = section.member;
             const shape = section.shape;
             const Ast = section.Ast;
@@ -131,9 +130,9 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
             column['A'] = this.result.alien(section.steels.A);
             column['Ix'] = this.result.alien(section.steels.Ix);
             ///////////////// 鉄骨情報 /////////////////
-            column['Afgu'] = this.result.alien(null);
-            column['Afgl'] = this.result.alien(null);
-            column['Aw'] = this.result.alien(null);
+            column['Afgu'] = this.result.alien(section.steels.dim.Afgu);
+            column['Afgl'] = this.result.alien(section.steels.dim.Afgl);
+            column['Aw'] = this.result.alien(section.steels.dim.Aw);
             column['Yu'] = this.result.alien(null);
             column['Yl'] = this.result.alien(null);
             column['t'] = this.result.alien(null);
@@ -282,12 +281,17 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
 
       sigma_max: { alien: "center", value: "-" },
       sigma_min: { alien: "center", value: "-" },
-      delta_fud: { alien: "center", value: "-" },
-      delta_cod: { alien: "center", value: "-" },
-      CR: { alien: "center", value: "-" },
-      Ct: { alien: "center", value: "-" },
-      delta_cod2: { alien: "center", value: "-" },
+      tau_max: { alien: "center", value: "-" },
+      tau_min: { alien: "center", value: "-" },
+      sigma_Pmax: { alien: "center", value: "-" },
+      sigma_Pmin: { alien: "center", value: "-" },
       gamma_a: { alien: "center", value: "-" },
+      delta_sigma_fud: { alien: "center", value: "-" },
+      delta_sigma_cod: { alien: "center", value: "-" },
+      delta_sigma_cod2: { alien: "center", value: "-" },
+      fai: { alien: "center", value: "-" },
+      CR: { alien: "center", value: "-" },
+      CT: { alien: "center", value: "-" },
       gamma_i: { alien: "center", value: "-" },
       ratio: { alien: "center", value: "-" },
       result: { alien: "center", value: "-" },
@@ -335,21 +339,64 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
       result.kr = { alien: "right", value: re.kr.toFixed(1) };
     }
 
+    if ("sigma_max" in re) {
+      result.sigma_max = { alien: "right", value: re.sigma_max.toFixed(1) };
+    }
     if ("sigma_min" in re) {
+      result.sigma_min = { alien: "right", value: re.sigma_min.toFixed(1) };
+    }
+    if ("tau_max" in re) {
+      result.tau_max = { alien: "right", value: re.tau_max.toFixed(1) };
+    }
+    if ("tau_min" in re) {
+      result.tau_min = { alien: "right", value: re.tau_min.toFixed(1) };
+    }
+    if ("sigma_Pmax" in re) {
+      result.sigma_Pmax = { alien: "right", value: re.sigma_Pmax.toFixed(1) };
+    }
+    if ("sigma_Pmin" in re) {
+      result.sigma_Pmin = { alien: "right", value: re.sigma_Pmin.toFixed(1) };
+    }
+    if ("gamma_a" in re) {
+      result.gamma_a = { alien: "right", value: re.gamma_a.toFixed(1) };
+    }
+    if ("delta_sigma_fud" in re) {
+      result.delta_sigma_fud = { alien: "right", value: re.delta_sigma_fud.toFixed(1) };
+    }
+    if ("delta_sigma_cod" in re) {
+      result.delta_sigma_cod = { alien: "right", value: re.delta_sigma_cod.toFixed(1) };
+    }
+    if ("delta_sigma_cod2" in re) {
+      result.delta_sigma_cod2 = { alien: "right", value: re.delta_sigma_cod2.toFixed(1) };
+    }
+    if ("fai" in re) {
+      result.fai = { alien: "right", value: re.fai.toFixed(1) };
+    }
+    if ("CR" in re) {
+      result.CR = { alien: "right", value: re.CR.toFixed(1) };
+    }
+    if ("CT" in re) {
+      result.CT = { alien: "right", value: re.CT.toFixed(1) };
+    }
+    if ("gamma_i" in re) {
+      result.gamma_i = { alien: "right", value: re.gamma_i.toFixed(1) };
+    }
+
+    /* if ("sigma_min" in re) {
       result.sigma_min = { 
         alien: "right", 
         value: (re.sigma_min < 0) ? re.sigma_min.toFixed(2) + ' → 0' : re.sigma_min.toFixed(2) 
       };
-    }
+    } */
     let ratio = 0;
     if ("ratio" in re) {
       result.ratio.value = re.ratio.toFixed(3).toString() + ((re.ratio < 1) ? ' < 1.00' : ' > 1.00');
       ratio = re.ratio;
     }
     if (ratio < 1) {
-      result.result.value = "OK";
+      result.result.value = "省略可能";
     } else {
-      result.result.value = "NG";
+      result.result.value = "省略不可";
     }
     ratio = 0;
     if ("ratio2" in re) {
