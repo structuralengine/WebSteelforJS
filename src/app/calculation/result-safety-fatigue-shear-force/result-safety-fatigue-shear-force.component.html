@@ -301,8 +301,8 @@
         <th class="cell_name2">⊿σfud,⊿τfud</th>
         <th class="cell_name3">(N/mm<sup>2</sup>)</th>
         <ng-container *ngFor="let column of pages.columns; index as c">
-          <td colspan="2" class="{{column.delta_fud.alien}} g-left2">
-            {{column.delta_fud.value}}</td>
+          <td colspan="2" class="{{column.delta_sigma_fud.alien}} g-left2">
+            {{column.delta_sigma_fud.value}}</td>
         </ng-container>
       </tr>
       <!-- 一定振幅応力に対する応力範囲の打切り限界 -->
@@ -310,8 +310,8 @@
         <th class="cell_name2">⊿σcod,⊿τcod</th>
         <th class="cell_name3">(N/mm<sup>2</sup>)</th>
         <ng-container *ngFor="let column of pages.columns; index as c">
-          <td colspan="2" class="{{column.delta_cod.alien}} g-left2">
-            {{column.delta_cod.value}}</td>
+          <td colspan="2" class="{{column.delta_sigma_cod.alien}} g-left2">
+            {{column.delta_sigma_cod.value}}</td>
         </ng-container>
       </tr>
       <!-- 平均応力度に関する補正係数 -->
@@ -326,8 +326,8 @@
       <tr>
         <th colspan="2" class="cell_name1">Ct</th>
         <ng-container *ngFor="let column of pages.columns; index as c">
-          <td colspan="2" class="{{column.Ct.alien}} g-left2">
-            {{column.Ct.value}}</td>
+          <td colspan="2" class="{{column.CT.alien}} g-left2">
+            {{column.CT.value}}</td>
         </ng-container>
       </tr>
       <!-- 補正後の応力範囲の打切り限界 -->
@@ -335,8 +335,8 @@
         <th class="cell_name2">⊿σcod'</th>
         <th class="cell_name3">(N/mm<sup>2</sup>)</th>
         <ng-container *ngFor="let column of pages.columns; index as c">
-          <td colspan="2" class="{{column.delta_cod2.alien}} g-left2">
-            {{column.delta_cod2.value}}</td>
+          <td colspan="2" class="{{column.delta_sigma_cod.alien}} g-left2">
+            {{column.delta_sigma_cod.value}}</td>
         </ng-container>
       </tr>
       <!-- 構造解析係数 -->

@@ -302,7 +302,7 @@ export class SetDesignForceService {
           }
         }
       } else if (target === "Vd") {
-        for (const key of ["V_rc", "V_rs", "V_rbc", "V_rbs"]) {
+        for (const key of ["rs", "rb_T", "rb_C", "rb_S",]) {
           if (this.helper.toNumber(safety[key]) === null) {
             flg = true;
             break;
