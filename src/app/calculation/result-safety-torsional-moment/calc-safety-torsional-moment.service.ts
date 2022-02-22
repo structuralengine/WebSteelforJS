@@ -18,7 +18,7 @@ export class CalcSafetyTorsionalMomentService {
   // 安全性（破壊）ねじりモーメント
   public DesignForceList: any[];
   public isEnable: boolean;
-  public safetyID: number = 2;
+  public safetyID: number = 1;
 
   constructor(
     private safety: InputSafetyFactorsMaterialStrengthsService,
@@ -160,39 +160,68 @@ export class CalcSafetyTorsionalMomentService {
     if (!('Mt' in force)) {
       return result;
     }
-    const Mt = Math.abs(force.Mt);
+    let Mt: number = this.helper.toNumber(force.Vd);
+    if (Mt === null) {
+      Mt = 0;
+    }
+    Mt = Math.abs(Mt);
     result["Mt"] = Mt;
 
     // 部材係数
-    // const resultData1 = res1.Reactions[0];
-    // const resultData2 = res2.Reactions[0];
-    // const safetyM_factor = safetyM.safety_factor;
-    const safetyV_factor = safetyV.safety_factor;
-
-    // const M_rb: number = safetyM_factor.M_rb;
-    const V_rbc: number = safetyV_factor.V_rbc;
-    const V_rbs: number = safetyV_factor.V_rbs;
-    const T_rbt: number = safetyV_factor.T_rbt;
-    result["T_rbt"] = T_rbt;
-    result["V_rbc"] = V_rbc;
-    result["V_rbs"] = V_rbs;
+    const rb_T: number = safetyM.safety_factor.rb_T;
+    const rb_C: number = safetyM.safety_factor.rb_C;
+    const rb_S: number = safetyM.safety_factor.rb_S;
+    const rs: number = safetyM.safety_factor.rs;
+    const ri: number = safetyM.safety_factor.ri;
+    // result["rb_T"] = rb_T;
+    // result["rb_C"] = rb_C;
+    // result["rb_S"] = rb_S;
+    result['gamma_b1'] = rb_T;
+    result['gamma_b2'] = rb_C;
+    result["gamma_i"] = ri;
+    result["rs"] = rs;
 
     let Nd: number = this.helper.toNumber(force.Nd);
     if (Nd === null) {
       Nd = 0;
     }
+    Nd = Math.abs(Nd);
+    result['Nd'] = Nd;
 
     let Md: number = this.helper.toNumber(force.Md);
     if (Md === null) {
       Md = 0;
     }
     Md = Math.abs(Md);
+    const Mxd = Md;
+    const Myd = 0;
+    result['Mxd'] = Mxd;
+    result['Myd'] = Myd;
 
     let Vd: number = this.helper.toNumber(force.Vd);
     if (Vd === null) {
       Vd = 0;
     }
     Vd = Math.abs(Vd);
+    result['Vd'] = Vd;
+
+    let tension: any;
+    let compress: any;
+    let shear: any;
+    // 部材の整理 I型のみの対応
+    if (force.side.includes('下側')) {
+      tension = sectionM.steels['3'];
+      compress = sectionM.steels['1'];
+      shear   = sectionM.steels['2'];
+    } else {
+      tension = sectionM.steels['1'];
+      compress = sectionM.steels['3'];
+      shear   = sectionM.steels['2'];
+    }
+    const A = sectionM.steels.A;
+    const Ix = sectionM.steels.Ix;
+    const Iy = sectionM.steels.Iy;
+    const dim = sectionM.steels.dim;
 
     // 5.4.1 板要素の耐荷性の照査
     // (1) 上フランジ
@@ -202,46 +231,66 @@ export class CalcSafetyTorsionalMomentService {
     // (3) 腹板
 
     // 5.4.2 設計限界値の算定
-    // (1)
+    // (1) 圧縮側
     const rho_bg: number = 1.0;
+    result['rho_bg_culc'] = rho_bg;
     const rho_bl: number = 1.0;
-    const fsyk_upper = sectionM.steels['1']['fsy']['fsyk'];
-    const fsyd_upper: number = fsyk_upper / /* safetyM.safety_factor.M_rs */1.05;
+    result['rho_bl_culc'] = rho_bl;
+
+    const fsyk_compress = compress['fsy']['fsyk'];
+    const fsyd_compress: number = fsyk_compress / rs;
+    result['fsyk_compress'] = fsyk_compress;
     ////////// AfnとAfgが区別できていない //////////
     const Mucd1 = rho_bg
-                * ( sectionM.steels['Ix'] / sectionM.steels['dim']['yc'] )
-                * fsyd_upper
-                * ( sectionM.steels['dim']['Afnu'] / sectionM.steels['dim']['Afgu'] )
-                / /* safetyM.safety_factor.M_rb */1.1 / 1000 / 1000;
+                * ( Ix / dim['yc'] )
+                * fsyd_compress
+                * ( dim['Afnu'] / dim['Afgu'] )
+                / rb_C / 1000 / 1000;
     const Mucd2 = rho_bl
-                * ( sectionM.steels['Ix'] / sectionM.steels['dim']['yc'] )
-                * fsyd_upper
-                * ( sectionM.steels['dim']['Afnu'] / sectionM.steels['dim']['Afgu'] )
-                / /* safetyM.safety_factor.M_rb */1.1 / 1000 / 1000;
-    // (2)
-    const fsyk_lower = sectionM.steels['3']['fsy']['fsyk'];
-    const fsyd_lower: number = fsyk_lower / /* safetyM.safety_factor.M_rs */1.05;
-    const Mutd1: number = ( sectionM.steels['Ix'] / sectionM.steels['dim']['yt'] )
-                        * fsyd_lower 
-                        * ( sectionM.steels['dim']['Afnl'] / sectionM.steels['dim']['Afgl'] )
-                        / /* safetyM.safety_factor.M_rb */1.05 / 1000 / 1000;
-    const Mutd2: number = ( sectionM.steels['Ix'] / ( sectionM.steels['dim']['yt'] - sectionM.steels['3']['steel_h'] ) )
-                        * fsyd_lower 
-                        * ( sectionM.steels['dim']['Afnl'] / sectionM.steels['dim']['Afgl'] )
-                        / /*safetyM.safety_factor.M_rb */1.05 / 1000 / 1000;
+                * ( Ix / dim['yc'] )
+                * fsyd_compress
+                * ( dim['Afnu'] / dim['Afgu'] )
+                / rb_C / 1000 / 1000;
+    result['Mucxd'] = Mucd1;
+    result['Mucyd'] = 0;
+    // (2) 引張側
+    const fsyk_tension = tension['fsy']['fsyk'];
+    const fsyd_tension: number = fsyk_tension / rs;
+    result['fsyk_tension'] = fsyk_tension;
+    const Mutd1: number = ( Ix / dim['yt'] )
+                        * fsyd_tension 
+                        * ( dim['Afnl'] / dim['Afgl'] )
+                        / rb_T / 1000 / 1000;
+    const Mutd2: number = ( Ix / ( dim['yt'] - tension['steel_h'] ) )
+                        * fsyd_tension
+                        * ( dim['Afnl'] / dim['Afgl'] )
+                        / rb_T / 1000 / 1000;
+    result['Mutxd'] = Mutd1;
+    result['Mutyd'] = 0;
     // (3) 設計曲げ耐力
     const Mud: number = Math.min(Mucd1, Mucd2, Mutd1, Mutd2);
+    // const Mud: number = Mutd2;
 
     // (4) 設計せん断力
-    const Aw: number = sectionM.steels['dim']['Aw'];
-    const fsvyd: number = sectionM.steels['2']['fsy']['fsvyk'] / /* safetyM.safety_factor.S_rb */1.05;
-    const Vyd: number = Aw * fsvyd / /* safetyM.safety_factor.S_rs */1.05 / 1000;
+    const Aw: number = dim['Aw'];
+    result['An'] = dim['Aw'] + dim['Afgu'] + dim['Afgl'];
+    const fsvyk_web: number = shear['fsy']['fsvyk'];
+    const fsvyd = fsvyk_web / rb_S;
+    result['fsvyk_web'] = fsvyk_web;
+    const Vyd: number = Aw * fsvyd / rs / 1000;
+    result['Vyd'] = Vyd;
     
     // 照査
-    const ri = /* safetyM.safety_factor.ri */1.2;
-    const M_lower_ratio = ri * Md / Mutd1;
-    const Vyd_Ratio = ri * Vd / Vyd;
-    const M_V_ratio = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd)**2 );
+    const ratio_M_compress = ri * Mxd / Mutd1;
+    const ratio_M_tension = ri * Mxd / Mutd1;
+    result['ratio_M_compress'] = ratio_M_compress;
+    result['ratio_M_tension'] = ratio_M_tension;
+    const ratio_VT_web = ri * Vd / Vyd;
+    result['ratio_VT_web'] = ratio_VT_web;
+    const ratio_MV_web_u = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd)**2 );
+    const ratio_MV_web_l = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd)**2 );
+    result['ratio_MV_web_u'] = ratio_MV_web_u;
+    result['ratio_MV_web_l'] = ratio_MV_web_l;
 
     return result;
   }

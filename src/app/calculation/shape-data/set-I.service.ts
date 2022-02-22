@@ -110,10 +110,10 @@ export class SetIService {
       vertexlist["lib_n" + String(i)] =
         row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
     }
-    // 腐食しろがあるとき
-    if (true) {
+    // 腐食しろがあるときはここで処理する
+    /* if (true) {
       vertexlist["steel_h1"] -= 1
-    }
+    } */
     const vertices = this.getVertices(vertexlist);
     const centroid = this.param.getCentroid(vertices);
     const param = this.param.getSectionParam(vertices, centroid);
