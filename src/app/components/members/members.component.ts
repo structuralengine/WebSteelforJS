@@ -37,6 +37,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
     const isManual = this.save.isManual();
 
     this.setTitle(isManual);
+    
 
     // グリッドの基本的な オプションを登録する
     this.options = {
