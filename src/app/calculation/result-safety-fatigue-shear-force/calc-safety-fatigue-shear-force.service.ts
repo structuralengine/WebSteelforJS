@@ -284,7 +284,7 @@ export class CalcSafetyFatigueShearForceService {
     result['CT'] = CT;
     result['delta_sigma_cod2'] = delta_sigma_cod2;
 
-    // 4) 疲労減による照査
+    // 4) 疲労限による照査
     const gamma_i: number = 1.0;
     const ratio: number = gamma_i * delta_sigma_fud / delta_sigma_cod2;
     result['gamma_i'] = gamma_i;
