@@ -10,6 +10,7 @@ import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetRectService } from "./shape-data/set-rect.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
+import { SetIService } from "./shape-data/set-I.service";
 import { SetBoxService } from "./shape-data/set-box.service";
 import { environment } from "src/environments/environment";
 
@@ -30,6 +31,7 @@ export class SetPostDataService {
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
     private vOval: SetVerticalOvalService,
+    private I: SetIService,
     private box: SetBoxService,) { }
 
   // 計算(POST)するときのヘルパー ///////////////////////////////////////////////////////////////////////////
@@ -489,6 +491,9 @@ export class SetPostDataService {
         break;
       case 'VerticalOval':      // 鉛直方向小判形
         result = this.vOval.getVerticalOval(member, index, force.side, safety, option);
+        break;
+      case 'I':      // 鉛直方向小判形
+        result = this.I.getI(target, member, index, force.side, safety, option);
         break;
       case 'Box':      // 鉛直方向小判形
         result = this.box.getBox(target, member, index, force.side, safety, option);

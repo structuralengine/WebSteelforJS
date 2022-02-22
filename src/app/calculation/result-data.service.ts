@@ -10,6 +10,9 @@ import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
 import { SetBoxService } from "./shape-data/set-box.service";
+import { Vector3 } from "three";
+import { SetIService } from "./shape-data/set-I.service";
+
 
 @Injectable({
   providedIn: "root",
@@ -26,6 +29,7 @@ export class ResultDataService {
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
     private vOval: SetVerticalOvalService,
+    private I: SetIService,
     private box: SetBoxService,) { }
 
   // 表題の共通した行
@@ -225,6 +229,10 @@ export class ResultDataService {
     switch (shapeName) {
 
       case 'I':
+        section = this.I.getShape(member, target, index, side, safety, {});
+        for (const num of Object.keys(section.steel)) {
+          result.steels[num] = section.steel[num];
+        }
         break;
 
       case 'H':
@@ -850,8 +858,5 @@ export class ResultDataService {
 
     return result;
   }
-
-
-
 
 }

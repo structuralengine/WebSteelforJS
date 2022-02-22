@@ -39,14 +39,14 @@ export class InputSafetyFactorsMaterialStrengthsService {
       case 1: // 土木学会
 
         result = [
-          {
+          /* {
             id: 0, title: '耐久性, 使用性',
             M_rc: 1.00, M_rs: 1.00, M_rbs: 1.00,
             V_rc: 1.00, V_rs: 1.00, V_rbc: 1.00, V_rbs: 1.00, V_rbv: null,
             T_rbt:1.00,
             ri: 1.00, range: 1,
             S_rs: 1.0, S_rb: 1.0
-          },
+          }, */
           {
             id: 2, title: '安全性 （疲労破壊）',
             M_rc: 1.30, M_rs: 1.05, M_rbs: 1.00,
@@ -64,13 +64,21 @@ export class InputSafetyFactorsMaterialStrengthsService {
             S_rs: 1.05, S_rb: 1.1
           },
           {
+            id: 6, title: '安全性 （破壊）下',
+            M_rc: 1.30, M_rs: 1.0, M_rbs: 1.10,
+            V_rc: 1.30, V_rs: 1.0, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
+            T_rbt:1.00,
+            ri: 1.20, range: 2,
+            S_rs: 1.05, S_rb: 1.1
+          },
+          /* {
             id: 6, title: '復旧性 （損傷）地震時以外',
             M_rc: 1.30, M_rs: 1.00, M_rbs: 1.0,
             V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
             T_rbt:1.00,
             ri: 1.20, range: 3,
             S_rs: 1.05, S_rb: 1.1
-          },
+          }, */
           {
             id: 7, title: '復旧性 （損傷）地震時',
             M_rc: 1.30, M_rs: 1.00, M_rbs: 1.00,

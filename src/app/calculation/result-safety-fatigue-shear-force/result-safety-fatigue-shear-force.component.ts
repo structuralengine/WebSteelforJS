@@ -129,35 +129,14 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
             column['title3'] = { alien: "center", value: titleColumn.title3 };
             ///////////////// 鉄骨断面情報 /////////////////
             column['A'] = this.result.alien(section.steels.A);
-            column['Ix'] = this.result.alien(null);
-            column['Iy'] = this.result.alien(null);
-            ///////////////// 形状 /////////////////
-            column['B'] = this.result.alien(null);
-            column['H'] = this.result.alien(null);
+            column['Ix'] = this.result.alien(section.steels.Ix);
             ///////////////// 鉄骨情報 /////////////////
-            column['steel_I_tension'] = this.result.alien(null);
-            column['steel_I_web'] = this.result.alien(null);
-            column['steel_I_compress'] = this.result.alien(null);
-            column['steel_H_tension'] = this.result.alien(null);
-            column['steel_H_web'] = this.result.alien(null);
-            /////////////// 引張鉄筋 ///////////////
-            column['tan'] = this.result.alien(null);
-            column['Ast'] = this.result.alien(null);
-            column['AstString'] = this.result.alien(null);
-            column['dst'] = this.result.alien(null);
-            column['tcos'] = this.result.alien(null);
-            /////////////// 圧縮鉄筋 ///////////////
-            column['Asc'] = this.result.alien(null);
-            column['AscString'] = this.result.alien(null);
-            column['dsc'] = this.result.alien(null);
-            column['ccos'] = this.result.alien(null);
-            /////////////// 側面鉄筋 ///////////////
-            column['AseString'] = this.result.alien(null);
-            column['dse'] = this.result.alien(null);
-            /////////////// コンクリート情報 ///////////////
-            column['fck'] = this.result.alien(null);
-            column['rc'] = this.result.alien(null);
-            column['fcd'] = this.result.alien(null);
+            column['Afgu'] = this.result.alien(null);
+            column['Afgl'] = this.result.alien(null);
+            column['Aw'] = this.result.alien(null);
+            column['Yu'] = this.result.alien(null);
+            column['Yl'] = this.result.alien(null);
+            column['t'] = this.result.alien(null);
             /////////////// 鉄筋強度情報 ///////////////
             column['fsy'] = this.result.alien(null);
             column['rs'] = this.result.alien(null);
@@ -285,21 +264,7 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
 
   private getResultString(re: any): any {
     const result = {
-
-      Aw: { alien: "center", value: "-" },
-      AwString: { alien: "center", value: "-" },
-      fwyd: { alien: "center", value: "-" },
-      deg: { alien: "center", value: "-" },
-      Ss: { alien: "center", value: "-" },
-
-      Asb: { alien: "center", value: "-" },
-      AsbString: { alien: "center", value: "-" },
-      fwyd2: { alien: "center", value: "-" },
-      deg2: { alien: "center", value: "-" },
-      Ss2: { alien: "center", value: "-" },
-
-      Zs: { alien: "center", value: "-" },
-      ar_steel: { alien: "center", value: "-" },
+      empty: { alien: "center", value: "-" },
 
       Vpd: { alien: "center", value: "-" },
       Mpd: { alien: "center", value: "-" },
@@ -315,42 +280,18 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
 
       kr: { alien: "center", value: "-" },
 
+      sigma_max: { alien: "center", value: "-" },
       sigma_min: { alien: "center", value: "-" },
-      sigma_rd: { alien: "center", value: "-" },
-
-      fsr200: { alien: "center", value: "-" },
-      ratio200: { alien: "center", value: "-" },
-      
-      sigma_min2: { alien: "center", value: "-" },
-      sigma_rd2: { alien: "center", value: "-" },
-
-      fsr2002: { alien: "center", value: "-" },
-      ratio2002: { alien: "center", value: "-" },
-
-      k: { alien: "center", value: "-" },
-      ar: { alien: "center", value: "-" },
-      ar2: { alien: "center", value: "-" },
-      N: { alien: "center", value: "-" },
-
-      NA: { alien: "center", value: "-" },
-      NB: { alien: "center", value: "-" },
-
-      SASC: { alien: "center", value: "-" },
-      SBSC: { alien: "center", value: "-" },
-
-      r1: { alien: "center", value: "-" },
-      r12: { alien: "center", value: "-" },
-      r2: { alien: "center", value: "-" },
-
-      rs: { alien: "center", value: "-" },
-      rs2: { alien: "center", value: "-" }, // 追加
-      frd: { alien: "center", value: "-" },
-      frd2: { alien: "center", value: "-" },
-
-      rbs: { alien: "center", value: "-" },
-      ri: { alien: "center", value: "-" },
+      delta_fud: { alien: "center", value: "-" },
+      delta_cod: { alien: "center", value: "-" },
+      CR: { alien: "center", value: "-" },
+      Ct: { alien: "center", value: "-" },
+      delta_cod2: { alien: "center", value: "-" },
+      gamma_a: { alien: "center", value: "-" },
+      gamma_i: { alien: "center", value: "-" },
       ratio: { alien: "center", value: "-" },
       result: { alien: "center", value: "-" },
+
       ratio2: { alien: "center", value: "-" },
       result2: { alien: "center", value: "-" },
     };
@@ -359,45 +300,6 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
       return result;
     }
 
-    // 帯鉄筋
-    if ("Aw" in re) {
-      result.Aw = { alien: "right", value: re.Aw.toFixed(1) };
-    }
-    if ("AwString" in re) {
-      result.AwString = { alien: "right", value: re.AwString };
-    }
-    if ("fwyd" in re) {
-      result.fwyd = { alien: "right", value: re.fwyd.toFixed(0) };
-    }
-    if ("deg" in re) {
-      result.deg = { alien: "right", value: re.deg.toFixed(0) };
-    }
-    if ("Ss" in re) {
-      result.Ss = { alien: "right", value: re.Ss.toFixed(0) };
-    }
-    //折り曲げ鉄筋
-    if ("Asb" in re) {
-      result.Asb = { alien: "right", value: re.Asb.toFixed(1) };
-    }
-    if ("AsbString" in re) {
-      result.AsbString = { alien: "right", value: re.AsbString };
-    }
-    if ("fwyd2" in re) {
-      result.fwyd2 = { alien: "right", value: re.fwyd2.toFixed(0) };
-    }
-    if ("deg2" in re) {
-      result.deg2 = { alien: "right", value: re.deg2.toFixed(0) };
-    }
-    if ("Ss2" in re) {
-      result.Ss2 = { alien: "right", value: re.Ss2.toFixed(0) };
-    }
-    // 鉄骨がある時の係数
-    if ("Zs" in re) {
-      result.Zs = { alien: "right", value: re.Zs.toFixed(0) };
-    }
-    if ("ar_steel" in re) {
-      result.ar_steel = { alien: "right", value: re.ar_steel.toFixed(4) };
-    }
     // 断面力
     if ("Vpd" in re) {
       result.Vpd = { alien: "right", value: (Math.round(re.Vpd*10)/10).toFixed(1) };
@@ -438,83 +340,6 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
         alien: "right", 
         value: (re.sigma_min < 0) ? re.sigma_min.toFixed(2) + ' → 0' : re.sigma_min.toFixed(2) 
       };
-    }
-    if ("sigma_rd" in re) {
-      result.sigma_rd = { 
-        alien: "right", 
-        value: (re.sigma_rd < 0) ? re.sigma_rd.toFixed(2) + ' → 0' : re.sigma_rd.toFixed(2) 
-      };
-    }
-
-    if ("fsr200" in re) {
-      result.fsr200 = { alien: "right", value: re.fsr200.toFixed(2) };
-    }
-    if ("ratio200" in re) {
-      result.ratio200.value = re.ratio200.toFixed(3).toString() + ((re.ratio200 < 1) ? ' < 1.00' : ' > 1.00')
-    }
-
-    if ("sigma_min2" in re) {
-      result.sigma_min2 = { alien: "right", value: re.sigma_min2.toFixed(2) };
-    }
-    if ("sigma_rd2" in re) {
-      result.sigma_rd2 = { alien: "right", value: re.sigma_rd2.toFixed(2) };
-    }
-    
-    if ("fsr2002" in re) {
-      result.fsr2002 = { alien: "right", value: re.fsr2002.toFixed(2) };
-    }
-    if ("ratio2002" in re) {
-      result.ratio2002.value = re.ratio2002.toFixed(3).toString() + ((re.ratio2002 < 1) ? ' < 1.00' : ' > 1.00')
-    }
-
-    if ("k" in re) {
-      result.k = { alien: "right", value: re.k.toFixed(2) };
-    }
-    if ("ar" in re) {
-      result.ar = { alien: "right", value: re.ar.toFixed(3) };
-    }
-    if ("ar2" in re) {
-      result.ar2 = { alien: "right", value: re.ar2.toFixed(3) };
-    }
-    if ("N" in re) {
-      result.N = { alien: "right", value: re.N.toFixed(0) };
-    }
-
-    if ("NA" in re) {
-      result.NA = { alien: "right", value: re.NA.toFixed(2) };
-    }
-    if ("NB" in re) {
-      result.NB = { alien: "right", value: re.NB.toFixed(2) };
-    }
-    if ("SASC" in re) {
-      result.SASC = { alien: "right", value: re.SASC.toFixed(3) };
-    }
-    if ("SBSC" in re) {
-      result.SBSC = { alien: "right", value: re.SBSC.toFixed(3) };
-    }
-    if ("r1" in re) {
-      result.r1 = { alien: "right", value: re.r1.toFixed(2) };
-    }
-    if ("r12" in re) {
-      result.r12 = { alien: "right", value: re.r12.toFixed(2) };
-    }
-    if ("r2" in re) {
-      result.r2 = { alien: "right", value: re.r2.toFixed(3) };
-    }
-    if ("rs" in re) {
-      result.rs = { alien: "right", value: re.rs.toFixed(2) };
-    }
-    if ("frd" in re) {
-      result.frd = { alien: "right", value: re.frd.toFixed(2) };
-    }
-    if ("frd2" in re) {
-      result.frd2 = { alien: "right", value: re.frd2.toFixed(2) };
-    }
-    if ("rbs" in re) {
-      result.rbs = { alien: "right", value: re.rbs.toFixed(2) };
-    }
-    if ("ri" in re) {
-      result.ri = { alien: "right", value: re.ri.toFixed(2) };
     }
     let ratio = 0;
     if ("ratio" in re) {
