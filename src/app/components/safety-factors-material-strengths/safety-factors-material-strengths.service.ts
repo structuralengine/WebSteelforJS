@@ -49,27 +49,19 @@ export class InputSafetyFactorsMaterialStrengthsService {
           }, */
           {
             id: 2, title: '安全性 （疲労破壊）',
-            M_rc: 1.30, M_rs: 1.05, M_rbs: 1.00,
-            V_rc: 1.30, V_rs: 1.05, V_rbc: 1.30, V_rbs: 1.0, V_rbv: null,
-            T_rbt:1.00,
-            ri: 1.10, range: 2,
-            S_rs: 1.0, S_rb: 1.1
+            ri: 1.20,  // 安全係数
+            rb_T: 1.00, // 引張側鉄骨の材料係数
+            rb_C: 1.00, // 圧縮側鉄骨の材料係数
+            rb_S: 1.00, // せん断鉄骨の材料係数
+            rs: 1.1 // 部材係数
           },
           {
             id: 5, title: '安全性 （破壊）',
-            M_rc: 1.30, M_rs: 1.0, M_rbs: 1.10,
-            V_rc: 1.30, V_rs: 1.0, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
-            T_rbt:1.00,
-            ri: 1.20, range: 2,
-            S_rs: 1.05, S_rb: 1.1
-          },
-          {
-            id: 6, title: '安全性 （破壊）下',
-            M_rc: 1.30, M_rs: 1.0, M_rbs: 1.10,
-            V_rc: 1.30, V_rs: 1.0, V_rbc: 1.30, V_rbs: 1.10, V_rbv: 1.20,
-            T_rbt:1.00,
-            ri: 1.20, range: 2,
-            S_rs: 1.05, S_rb: 1.1
+            ri: 1.20,  // 安全係数
+            rb_T: 1.05, // 引張側鉄骨の材料係数
+            rb_C: 1.05, // 圧縮側鉄骨の材料係数
+            rb_S: 1.05, // せん断鉄骨の材料係数
+            rs: 1.1 // 部材係数
           },
           /* {
             id: 6, title: '復旧性 （損傷）地震時以外',
@@ -81,19 +73,19 @@ export class InputSafetyFactorsMaterialStrengthsService {
           }, */
           {
             id: 7, title: '復旧性 （損傷）地震時',
-            M_rc: 1.30, M_rs: 1.00, M_rbs: 1.00,
-            V_rc: 1.30, V_rs: 1.00, V_rbc: 1.30, V_rbs: 1.00, V_rbv: 1.20,
-            T_rbt:1.00,
-            ri: 1.00, range: 3,
-            S_rs: 1.05, S_rb: 1.1
+            ri: 1.00,  // 安全係数
+            rb_T: 1.05, // 引張側鉄骨の材料係数
+            rb_C: 1.05, // 圧縮側鉄骨の材料係数
+            rb_S: 1.05, // せん断鉄骨の材料係数
+            rs: 1.1 // 部材係数
           },
           {
             id: 8, title: '最小鉄筋量',
-            M_rc: 1.30, M_rs: 1.00, M_rbs: 1.00,
-            V_rc: null, V_rs: null, V_rbc: null, V_rbs: null, V_rbv: null,
-            T_rbt:null,
-            ri: 1.00, range: 3,
-            S_rs: 1.05, S_rb: 1.1
+            ri: 1.00,  // 安全係数
+            rb_T: 1.05, // 引張側鉄骨の材料係数
+            rb_C: 1.05, // 圧縮側鉄骨の材料係数
+            rb_S: 1.05, // せん断鉄骨の材料係数
+            rs: 1.1 // 部材係数
           }
         ]
 
@@ -478,7 +470,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
     }
 
     const result = {};
-    if(target === 'Md') {
+    /* if(target === 'Md') {
       // 曲げモーメントの照査の;合
       result['M_rc'] = current.M_rc;
       result['M_rs'] = current.M_rs;
@@ -504,10 +496,12 @@ export class InputSafetyFactorsMaterialStrengthsService {
       result['V_rbs'] = current.V_rbs;
       result['V_rbd'] = current.V_rbv;
       result['T_rbt'] = current.T_rbt;
-    }
+    } */
 
-    result['S_rb'] = current.S_rb;
-    result['S_rs'] = current.S_rs;
+    result['rb_T'] = current.rb_T;
+    result['rb_C'] = current.rb_C;
+    result['rb_S'] = current.rb_S;
+    result['rs'] = current.rs;
     result['ri'] = current.ri;
     result['range'] = current.range;
 

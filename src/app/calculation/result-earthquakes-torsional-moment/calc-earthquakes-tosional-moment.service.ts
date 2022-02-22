@@ -14,7 +14,7 @@ export class CalcEarthquakesTosionalMomentService {
  // 復旧性（地震時）せん断力
  public DesignForceList: any[];
  public isEnable: boolean;
- public safetyID: number = 4;
+ public safetyID: number = 2;
 
  constructor(
    private save: SaveDataService,

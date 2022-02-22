@@ -311,14 +311,10 @@ export class SetDesignForceService {
       } else {
         // Mt
         for (const key of [
-          "M_rc",
-          "M_rs",
-          "M_rb",
-          "V_rc",
-          "V_rs",
-          "V_rbc",
-          "V_rbs",
-          "T_rbt"
+          "rs",
+          "rb_T",
+          "rb_C",
+          "rb_S",
         ]) {
           if (this.helper.toNumber(safety[key]) === null) {
             flg = true;

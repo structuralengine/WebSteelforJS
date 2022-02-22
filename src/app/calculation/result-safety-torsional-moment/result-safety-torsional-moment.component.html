@@ -598,7 +598,7 @@
         </tr>
         <!-- 局部座屈の影響を考慮する係数 -->
         <tr>
-          <th colspan="2" class="cell_name1">rho_bl</th>
+          <th colspan="2" class="cell_name1">ρbl</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
               {{column.rho_bl.value}}</td>
@@ -609,8 +609,8 @@
           <th class="cell_name2">fsyk</th>
           <th class="cell_name3">(N/mm<sup>2</sup>)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
-              {{column.rho_bl.value}}</td>
+            <td colspan="2" class="{{column.fsyk_compress.alien}} g-left2">
+              {{column.fsyk_compress.value}}</td>
           </ng-container>
         </tr>
         <!-- (b/t)<=(b/t)o -->
@@ -706,7 +706,7 @@
         </tr>
         <!-- 局部座屈の影響を考慮する係数 -->
         <tr>
-          <th colspan="2" class="cell_name1">rho_bl</th>
+          <th colspan="2" class="cell_name1">ρbl</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
               {{column.rho_bl.value}}</td>
@@ -717,8 +717,8 @@
           <th class="cell_name2">fsyk</th>
           <th class="cell_name3">(N/mm<sup>2</sup>)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
-              {{column.rho_bl.value}}</td>
+            <td colspan="2" class="{{column.fsyk_compress.alien}} g-left2">
+              {{column.fsyk_compress.value}}</td>
           </ng-container>
         </tr>
         <!-- (b/t)<=(b/t)o -->
@@ -800,8 +800,8 @@
         <tr>
           <th colspan="2" class="cell_name1">kb</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.ko.alien}} g-left2">
-              {{column.ko.value}}</td>
+            <td colspan="2" class="{{column.kb.alien}} g-left2">
+              {{column.kb.value}}</td>
           </ng-container>
         </tr>
         <!-- 鋼材の降伏強度の特性値 -->
@@ -809,8 +809,8 @@
           <th class="cell_name2">fsyk</th>
           <th class="cell_name3">(N/mm<sup>2</sup>)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
-              {{column.rho_bl.value}}</td>
+            <td colspan="2" class="{{column.fsvyk_web.alien}} g-left2">
+              {{column.fsvyk_web.value}}</td>
           </ng-container>
         </tr>
         <!-- (Dw/tw)<=(Dw/tw)o -->
@@ -954,7 +954,7 @@
           </tr>
           <!-- 局部座屈の影響を考慮する係数 -->
           <tr>
-            <th colspan="2" class="cell_name1">rho_bl</th>
+            <th colspan="2" class="cell_name1">ρbl</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
               <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
                 {{column.rho_bl.value}}</td>
@@ -965,8 +965,8 @@
             <th class="cell_name2">fsyk</th>
             <th class="cell_name3">(N/mm<sup>2</sup>)</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
-                {{column.rho_bl.value}}</td>
+              <td colspan="2" class="{{column.fsyk_tension.alien}} g-left2">
+                {{column.fsyk_tension.value}}</td>
             </ng-container>
           </tr>
           <!-- (b/t)<=(b/t)o -->
@@ -1062,7 +1062,7 @@
         </tr>
         <!-- 局部座屈の影響を考慮する係数 -->
         <tr>
-          <th colspan="2" class="cell_name1">rho_bl</th>
+          <th colspan="2" class="cell_name1">ρbl</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
               {{column.rho_bl.value}}</td>
@@ -1073,8 +1073,8 @@
           <th class="cell_name2">fsyk</th>
           <th class="cell_name3">(N/mm<sup>2</sup>)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.rho_bl.alien}} g-left2">
-              {{column.rho_bl.value}}</td>
+            <td colspan="2" class="{{column.fsyk_tension.alien}} g-left2">
+              {{column.fsyk_tension.value}}</td>
           </ng-container>
         </tr>
         <!-- (b/t)<=(b/t)o -->
@@ -1436,8 +1436,8 @@
         <tr>
           <th colspan="2" class="cell_name1 g-bottom2">照査結果</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.upper_ratio.alien}} g-bottom2 g-left2">
-              {{column.upper_ratio.value}}</td>
+            <td colspan="2" class="{{column.ratio_M_compress.alien}} g-bottom2 g-left2">
+              {{column.ratio_M_compress.value}}</td>
           </ng-container>
         </tr>
         <!-- 下フランジ下縁、ratio -->
@@ -1451,8 +1451,8 @@
         <tr>
           <th colspan="2" class="cell_name1 g-bottom2">照査結果</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.lower_ratio.alien}} g-bottom2 g-left2">
-              {{column.lower_ratio.value}}</td>
+            <td colspan="2" class="{{column.ratio_M_tension.alien}} g-bottom2 g-left2">
+              {{column.ratio_M_tension.value}}</td>
           </ng-container>
         </tr>
         </ng-container>
@@ -1547,8 +1547,8 @@
         <tr>
           <th colspan="2" class="cell_name1 g-bottom2">照査結果</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.VandT_ratio.alien}} g-bottom2 g-left2">
-              {{column.VandT_ratio.value}}</td>
+            <td colspan="2" class="{{column.ratio_VT_web.alien}} g-bottom2 g-left2">
+              {{column.ratio_VT_web.value}}</td>
           </ng-container>
         </tr>
         </ng-container>
@@ -1788,8 +1788,8 @@
           <tr>
             <th colspan="2" class="cell_name1 g-bottom2">照査結果</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.webupper_ratio.alien}} g-bottom2 g-left2">
-                {{column.webupper_ratio.value}}</td>
+              <td colspan="2" class="{{column.ratio_MV_web_u.alien}} g-bottom2 g-left2">
+                {{column.ratio_MV_web_u.value}}</td>
             </ng-container>
           </tr>
           <!-- 下フランジ下縁、ratio -->
@@ -1803,8 +1803,8 @@
           <tr>
             <th colspan="2" class="cell_name1 g-bottom2">照査結果</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.weblower_ratio.alien}} g-bottom2 g-left2">
-                {{column.weblower_ratio.value}}</td>
+              <td colspan="2" class="{{column.ratio_MV_web_l.alien}} g-bottom2 g-left2">
+                {{column.ratio_MV_web_l.value}}</td>
             </ng-container>
           </tr>
         </ng-container>

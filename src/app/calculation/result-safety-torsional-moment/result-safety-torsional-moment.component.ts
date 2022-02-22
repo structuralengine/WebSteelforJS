@@ -150,11 +150,11 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
             column['Ix'] = this.result.alien(Math.round(sectionM.steels.Ix));
             column['Iy'] = this.result.alien(Math.round(sectionM.steels.Iy));
             ///////////////// 鉄骨情報 /////////////////
-            column['Afgu'] = this.result.alien(null);
-            column['Afnu'] = this.result.alien(null);
-            column['Afgl'] = this.result.alien(null);
-            column['Afnl'] = this.result.alien(null);
-            column['Aw'] = this.result.alien(null);
+            column['Afgu'] = this.result.alien(Math.round(sectionM.steels.dim.Afgu));
+            column['Afnu'] = this.result.alien(Math.round(sectionM.steels.dim.Afnu));
+            column['Afgl'] = this.result.alien(Math.round(sectionM.steels.dim.Afgl));
+            column['Afnl'] = this.result.alien(Math.round(sectionM.steels.dim.Afnl));
+            column['Aw'] = this.result.alien(Math.round(sectionM.steels.dim.Aw));
             column['Yu'] = this.result.alien(null);
             column['Yl'] = this.result.alien(null);
             column['Xr'] = this.result.alien(null);
@@ -295,16 +295,18 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
 
       fck: { alien: "center", value: "-" },
       fcd: { alien: "center", value: "-" },
-      fsyk: { alien: "center", value: "-" },
+      fsyk_tension: { alien: "center", value: "-" },
+      fsyk_compress: { alien: "center", value: "-" },
+      fsvyk_web: { alien: "center", value: "-" },
 
       Md: { alien: "center", value: "-" },
       Nd: { alien: "center", value: "-" },
       Vd: { alien: "center", value: "-" },
       Mt: { alien: "center", value: "-" },
 
-      ipu_cu: { alien: "center", value: "-" },
-      ipu_s: { alien: "center", value: "-" },
-      x: { alien: "center", value: "-" },
+      // ipu_cu: { alien: "center", value: "-" },
+      // ipu_s: { alien: "center", value: "-" },
+      // x: { alien: "center", value: "-" },
       
       bt: { alien: "center", value: "-" },
       bto: { alien: "center", value: "-" },
@@ -312,6 +314,7 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       chi_wt: { alien: "center", value: "-" },
       Rcr: { alien: "center", value: "-" },
       ko: { alien: "center", value: "-" },
+      kb: { alien: "center", value: "-" },
       rho_bl: { alien: "center", value: "-" },
       bt_ratio: { alien: "center", value: "-" },
       bt_chi_wt_bt_ratio: { alien: "center", value: "-" },
@@ -338,23 +341,23 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       gamma_b1: { alien: "center", value: "-" },
       gamma_b2: { alien: "center", value: "-" },
       gamma_i: { alien: "center", value: "-" },
-      upper_ratio: { alien: "center", value: "-" },
-      lower_ratio: { alien: "center", value: "-" },
+      ratio_M_compress: { alien: "center", value: "-" },
+      ratio_M_tension: { alien: "center", value: "-" },
 
       // Vd: { alien: "center", value: "-" },
       Mtd: { alien: "center", value: "-" },
       Vyd: { alien: "center", value: "-" },
       Mtud: { alien: "center", value: "-" },
-      Aw: { alien: "center", value: "-" },
+      // Aw: { alien: "center", value: "-" },
       At: { alien: "center", value: "-" },
       // gamma_b1: { alien: "center", value: "-" },
       // gamma_i: { alien: "center", value: "-" },
-      VandT_ratio: { alien: "center", value: "-" },
+      ratio_VT_web: { alien: "center", value: "-" },
 
-      webupper_ratio: { alien: "center", value: "-" },
-      weblower_ratio: { alien: "center", value: "-" },
+      ratio_MV_web_u: { alien: "center", value: "-" },
+      ratio_MV_web_l: { alien: "center", value: "-" },
 
-      deg_b: { alien: "center", value: "-" },
+      /* deg_b: { alien: "center", value: "-" },
       Sb: { alien: "center", value: "-" },
       fvcd: { alien: "center", value: "-" },
 
@@ -414,7 +417,7 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       Mtud3_Result: { alien: "center", value: "-" },
       Mtud4: { alien: "center", value: "-" },
       Mtud4_Ratio: { alien: "center", value: "-" },
-      Mtud4_Result: { alien: "center", value: "-" },
+      Mtud4_Result: { alien: "center", value: "-" }, */
 
 
       // Mtvd: { alien: "center", value: "-" },
@@ -424,6 +427,17 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
 
     if (re === null) {
       return result;
+    }
+
+    // 鉄骨強度
+    if ("fsyk_tension" in re) {
+      result.fsyk_tension = { alien: "right", value: re.fsyk_tension.toFixed(1) };
+    }
+    if ("fsyk_compress" in re) {
+      result.fsyk_compress = { alien: "right", value: re.fsyk_compress.toFixed(1) };
+    }
+    if ("fsvyk_web" in re) {
+      result.fsvyk_web = { alien: "right", value: re.fsvyk_web.toFixed(1) };
     }
 
     // 断面力
@@ -440,195 +454,134 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.Mt = { alien: "right", value: (Math.round(re.Mt * 10) / 10).toFixed(1) };
     }
 
-    // 計算結果   
-    if ("fvcd" in re) {
-      result.fvcd = { alien: "right", value: re.fvcd.toFixed(3) };
+    // 計算結果
+    if ("bt" in re) {
+      result.bt = { alien: "right", value: re.bt.toFixed(3) };
     }
-    if ("Bd" in re) {
-      result.Bd = { alien: "right", value: re.Bd.toFixed(3) };
+    if ("bto" in re) {
+      result.bto = { alien: "right", value: re.bto.toFixed(3) };
     }
-    if ("pc" in re) {
-      result.pc = { alien: "right", value: re.pc.toFixed(3) };
+    if ("chi_wt_bto" in re) {
+      result.chi_wt_bto = { alien: "right", value: re.chi_wt_bto.toFixed(3) };
     }
-    if ("Bp" in re) {
-      result.Bp = { alien: "right", value: re.Bp.toFixed(3) };
+    if ("chi_wt" in re) {
+      result.chi_wt = { alien: "right", value: re.chi_wt.toFixed(3) };
     }
-    if ("Mo" in re) {
-      result.Mo = { alien: "right", value: re.Mo.toFixed(1) };
+    if ("Rcr" in re) {
+      result.Rcr = { alien: "right", value: re.Rcr.toFixed(3) };
     }
-    if ("Bn" in re) {
-      result.Bn = { alien: "right", value: re.Bn.toFixed(3) };
+    if ("ko" in re) {
+      result.ko = { alien: "right", value: re.ko.toFixed(3) };
     }
-    if ("Vcd" in re) {
-      result.Vcd = { alien: "right", value: re.Vcd.toFixed(1) };
+    if ("rho_bl" in re) {
+      result.rho_bl = { alien: "right", value: re.rho_bl.toFixed(3) };
     }
-    if ("Vsd" in re) {
-      result.Vsd = { alien: "right", value: re.Vsd.toFixed(1) };
+    if ("bt_ratio" in re) {
+      result.bt_ratio = { alien: "right", value: re.bt_ratio.toFixed(3) };
     }
-    if ("Vsd2" in re) {
-      result.Vsd2 = { alien: "right", value: re.Vsd2.toFixed(1) };
-    }
-    if ("ri" in re) {
-      result.ri = { alien: "right", value: re.ri.toFixed(2) };
-    }
-    // if ("rbm" in re) {
-    //   result.rbm = { alien: "right", value: re.rbm.toFixed(2) };
-    // }
-    if ("M_rb" in re) {
-      result.M_rb = { alien: "right", value: re.M_rb.toFixed(2) };
-    }
-    // if ("rb" in re) {
-    //   result.rb = { alien: "right", value: re.rb.toFixed(2) };
-    // }
-    if ("Mud" in re) {
-      result.Mud = { alien: "right", value: re.Mud.toFixed(1) };
-    }
-    if ("Mudd" in re) {
-      result.Mudd = { alien: "right", value: re.Mudd.toFixed(1) };
-    }
-    // if ("rbc" in re) {
-    //   result.rbc = { alien: "right", value: re.rbc.toFixed(2) };
-    // }
-    // if ("rbs" in re) {
-    //   result.rbs = { alien: "right", value: re.rbs.toFixed(2) };
-    // }
-    if ("V_rbt" in re) {
-      result.V_rbt = { alien: "right", value: re.V_rbt.toFixed(2) };
-    }
-    if ("V_rbc" in re) {
-      result.V_rbc = { alien: "right", value: re.V_rbc.toFixed(2) };
-    }
-    if ("V_rbs" in re) {
-      result.V_rbs = { alien: "right", value: re.V_rbs.toFixed(2) };
-    }
-    if("T_rbt" in re){
-      result.T_rbt = {alien:"right",value:re.T_rbt.toFixed(2)};
+    if ("bt_chi_wt_bt_ratio" in re) {
+      result.bt_chi_wt_bt_ratio = { alien: "right", value: re.bt_chi_wt_bt_ratio.toFixed(3) };
     }
 
-    if ("Mu" in re) {
-      result.Mu = { alien: "right", value: re.Mu.toFixed(1) };
+    if ("bsts" in re) {
+      result.bsts = { alien: "right", value: re.bsts.toFixed(3) };
+    }
+    if ("Is" in re) {
+      result.Is = { alien: "right", value: re.Is.toFixed(3) };
+    }
+    if ("bstso" in re) {
+      result.bstso = { alien: "right", value: re.bstso.toFixed(3) };
+    }
+    if ("I" in re) {
+      result.I = { alien: "right", value: re.I.toFixed(3) };
+    }
+    if ("bsts_ratio" in re) {
+      result.bsts_ratio = { alien: "right", value: re.bsts_ratio.toFixed(3) };
+    }
+
+    if ("Mxd" in re) {
+      result.Mxd = { alien: "right", value: re.Mxd.toFixed(3) };
+    }
+    if ("Myd" in re) {
+      result.Myd = { alien: "right", value: re.Myd.toFixed(3) };
+    }
+    if ("Mucxd" in re) {
+      result.Mucxd = { alien: "right", value: re.Mucxd.toFixed(3) };
+    }
+    if ("Mutxd" in re) {
+      result.Mutxd = { alien: "right", value: re.Mutxd.toFixed(3) };
+    }
+    if ("Mucyd" in re) {
+      result.Mucyd = { alien: "right", value: re.Mucyd.toFixed(3) };
+    }
+    if ("Mutyd" in re) {
+      result.Mutyd = { alien: "right", value: re.Mutyd.toFixed(3) };
+    }
+    if ("Nud" in re) {
+      result.Nud = { alien: "right", value: re.Nud.toFixed(3) };
+    }
+    if ("An" in re) {
+      result.An = { alien: "right", value: re.An.toFixed(3) };
+    }
+    if ("rho_bg_culc" in re) {
+      result.rho_bg_culc = { alien: "right", value: re.rho_bg_culc.toFixed(3) };
+    }
+    if ("lambda_e" in re) {
+      result.lambda_e = { alien: "right", value: re.lambda_e.toFixed(3) };
+    }
+    if ("rho_bl_culc" in re) {
+      result.rho_bl_culc = { alien: "right", value: re.rho_bl_culc.toFixed(3) };
+    }
+    if ("gamma_b1" in re) {
+      result.gamma_b1 = { alien: "right", value: re.gamma_b1.toFixed(2) };
+    }
+    if ("gamma_b2" in re) {
+      result.gamma_b2 = { alien: "right", value: re.gamma_b2.toFixed(2) };
+    }
+    if ("gamma_i" in re) {
+      result.gamma_i = { alien: "right", value: re.gamma_i.toFixed(1) };
+    }
+    if ("ratio_M_compress" in re) {
+      result.ratio_M_compress = { alien: "right", value: re.ratio_M_compress.toFixed(3) };
+    }
+    if ("ratio_M_tension" in re) {
+      result.ratio_M_tension = { alien: "right", value: re.ratio_M_tension.toFixed(3) };
+    }
+
+    /*if ("Vd" in re) {
+      result.Vd = { alien: "right", value: re.Vd.toFixed(3) };
+    }*/
+    if ("Mtd" in re) {
+      result.Mtd = { alien: "right", value: re.Mtd.toFixed(3) };
     }
     if ("Vyd" in re) {
-      result.Vyd = { alien: "right", value: re.Vyd.toFixed(1) };
+      result.Vyd = { alien: "right", value: re.Vyd.toFixed(3) };
     }
-    if ("fwcd" in re) {
-      result.fwcd = { alien: "right", value: re.fwcd.toFixed(3) };
+    if ("Mtud" in re) {
+      result.Mtud = { alien: "right", value: re.Mtud.toFixed(3) };
     }
-    if ("Kt" in re) {
-      result.Kt = { alien: "right", value: re.Kt.toFixed(0) };
+    /*if ("Aw" in re) {
+      result.Aw = { alien: "right", value: re.Aw.toFixed(3) };
+    }*/
+    if ("At" in re) {
+      result.At = { alien: "right", value: re.At.toFixed(3) };
     }
-    if ("Mtcud" in re) {
-      result.Mtcud = { alien: "right", value: re.Mtcud.toFixed(1) };
-    }
-    if ("Mtcud_Ratio" in re) {
-      result.Mtcud_Ratio = {
-        alien: "center",
-        value: re.Mtcud_Ratio.toFixed(3).toString() + ((re.Mtcud_Ratio < 0.2) ? ' < 0.2' : ' > 0.2'),
-      }
-    }
-    if ("bo" in re) {
-      result.bo = { alien: "right", value: re.bo.toFixed(1) };
-    }
-    if ("do" in re) {
-      result.do = { alien: "right", value: re.do.toFixed(1) };
-    }
-    if ("Am" in re) {
-      result.Am = { alien: "right", value: re.Am.toFixed(0) };
-    }
-    if ("qw" in re) {
-      result.qw = { alien: "right", value: re.qw.toFixed(1) };
-    }
-    if ("ql" in re) {
-      result.ql = { alien: "right", value: re.ql.toFixed(1) };
-    }
-    if ("Mtyd" in re) {
-      result.Mtyd = { alien: "right", value: re.Mtyd.toFixed(1) };
-    }
-    if ("Mtu_min" in re) {
-      result.Mtu_min = { alien: "right", value: re.Mtu_min.toFixed(1) };
-    }
-    if ("sigma_nd" in re) {
-      result.sigma_nd = { alien: "right", value: re.sigma_nd.toFixed(1) };
-    }
-    if ("ftd" in re) {
-      result.ftd = { alien: "right", value: re.ftd.toFixed(1) };
-    }
-    if ("Bnt" in re) {
-      result.Bnt = { alien: "right", value: re.Bnt.toFixed(3) };
-    }
-    if ("Mtcd" in re) {
-      result.Mtcd = { alien: "right", value: re.Mtcd.toFixed(1) };
-    }
-    if ("Mtcd_Ratio" in re) {
-      result.Mtcd_Ratio = { alien: "right", value: re.Mtcd_Ratio.toFixed(3) };
-    }
-    if ("Mtcd_Result" in re) {
-      result.Mtcd_Result = { alien: "center", value: re.Mtcd_Result };
+    /*if ("gamma_b1" in re) {
+      result.gamma_b1 = { alien: "right", value: re.gamma_b1.toFixed(3) };
+    }*/
+    /*if ("gamma_i" in re) {
+      result.gamma_i = { alien: "right", value: re.gamma_i.toFixed(3) };
+    }*/
+    if ("ratio_VT_web" in re) {
+      result.ratio_VT_web = { alien: "right", value: re.ratio_VT_web.toFixed(3) };
     }
 
-
-    if ("Mtud1" in re) {
-      result.Mtud1 = { alien: "right", value: re.Mtud1.toFixed(1) };
+    if ("ratio_MV_web_u" in re) {
+      result.ratio_MV_web_u = { alien: "right", value: re.ratio_MV_web_u.toFixed(3) };
     }
-    if ("Mtud1_Ratio" in re) {
-      result.Mtud1_Ratio = {
-        alien: "center",
-        value: re.Mtud1_Ratio.toFixed(3).toString() + ((re.Mtud1_Ratio <= 0.5) ? ' <= 0.5' : ' > 0.5'),
-      }
+    if ("ratio_MV_web_l" in re) {
+      result.ratio_MV_web_l = { alien: "right", value: re.ratio_MV_web_l.toFixed(3) };
     }
-    if ("Mtud1_Result" in re) {
-      result.Mtud1_Result = { alien: "center", value: re.Mtud1_Result };
-    }
-
-    if ("Mtud2" in re) {
-      result.Mtud2 = { alien: "right", value: re.Mtud2.toFixed(1) };
-    }
-    if ("Mtud2_Ratio" in re) {
-      result.Mtud2_Ratio = {
-        alien: "center",
-        value: re.Mtud2_Ratio.toFixed(3).toString() + ((re.Mtud2_Ratio <= 0.5) ? ' <= 0.5' : ' > 0.5'),
-      }
-    }
-    if ("Mtud2_Result" in re) {
-      result.Mtud2_Result = { alien: "center", value: re.Mtud2_Result };
-    }
-    if ("Mtud3" in re) {
-      result.Mtud3 = { alien: "right", value: re.Mtud3.toFixed(1) };
-    }
-    if ("Mtud3_Ratio" in re) {
-      result.Mtud3_Ratio = {
-        alien: "center",
-        value: re.Mtud3_Ratio.toFixed(3).toString() + ((re.Mtud3_Ratio <= 1) ? ' < 1.00' : ' > 1.00'),
-      }
-    }
-    if ("Mtud3_Result" in re) {
-      result.Mtud3_Result = { alien: "center", value: re.Mtud3_Result };
-    }
-    if ("Mtud4" in re) {
-      result.Mtud4 = { alien: "right", value: re.Mtud4.toFixed(1) };
-    }
-    if ("Mtud4_Ratio" in re) {
-      result.Mtud4_Ratio = {
-        alien: "center",
-        value: re.Mtud4_Ratio.toFixed(3).toString() + ((re.Mtud4_Ratio < 1) ? ' < 1.00' : ' > 1.00'),
-      }
-    }
-    if ("Mtud4_Result" in re) {
-      result.Mtud4_Result = { alien: "center", value: re.Mtud4_Result };
-    }
-
-    // if ("Mtvd" in re) {
-    //   result.Mtvd = { alien: "right", value: re.Mtvd.toFixed(1) };
-    // }
-    // if ("Mtvd_Ratio" in re) {
-    //   result.Mtvd_Ratio = {
-    //     alien: "center",
-    //     value: re.Mtvd_Ratio.toFixed(3).toString() + ((re.Mtvd_Ratio < 1) ? ' < 1.00' : ' > 1.00'),
-    //   }
-    // }
-    // if ("Result" in re) {
-    //   result.Result = { alien: "center", value: re.Result };
-    // }
 
     return result;
   }

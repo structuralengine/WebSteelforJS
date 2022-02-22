@@ -101,7 +101,10 @@ export class SafetyFactorsMaterialStrengthsComponent
         });
         steel.push({
           id: col.id, title: col.title,
-          S_rs: col.S_rs, S_rb: col.S_rb
+          rb_T: col.rb_T, 
+          rb_C: col.rb_C, 
+          rb_S: col.rb_S, 
+          rs: col.rs
         });
       }
       this.table1_datas.push(bar);
@@ -176,7 +179,7 @@ export class SafetyFactorsMaterialStrengthsComponent
         freezeCols: 1,
       });
       this.option4_list.push({
-        width: 410,
+        width: 550,
         height: 205,
         showTop: false,
         reactive: true,
@@ -218,7 +221,7 @@ export class SafetyFactorsMaterialStrengthsComponent
 
   private setTitle(): void {
     this.columnHeaders1 = [
-      { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
+      /* { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
       { title: '曲げ安全係数', align: 'center', colModel: [
         { title: 'γc',  dataType: 'float', 'format':'#.00', dataIndx: 'M_rc', sortable: false, width: 70 },
         { title: 'γs',  dataType: 'float', 'format':'#.00', dataIndx: 'M_rs', sortable: false, width: 70 },
@@ -235,12 +238,12 @@ export class SafetyFactorsMaterialStrengthsComponent
         {title:'γbt',dataType:'float', 'format':'#.00', dataIndx: 'T_rbt', sortable: false, width: 70 }
       ]},
       { title: '係数γi', dataType: 'float', 'format':'#.00', dataIndx: 'ri', sortable: false, width: 70 },
-      { title: '鉄筋配置', dataType: 'string'              , dataIndx: 'range', sortable: false, width: 100 },
+      { title: '鉄筋配置', dataType: 'string'              , dataIndx: 'range', sortable: false, width: 100 }, */
     ];
 
     // 鉄筋材料強度
     this.columnHeaders2 = [
-      { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
+      /* { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
       { title: '降伏強度', align: 'center', colModel: [
         { title: 'D25以下', dataType: 'float', dataIndx: 'fsy1', sortable: false, width: 70 },
         { title: 'D29以上', dataType: 'float', dataIndx: 'fsy2', sortable: false, width: 70 }
@@ -248,20 +251,22 @@ export class SafetyFactorsMaterialStrengthsComponent
       { title: '設計引張強度', align: 'center', colModel: [
         { title: 'D25以下', dataType: 'float', dataIndx: 'fsu1', sortable: false, width: 70 },
         { title: 'D29以上', dataType: 'float', dataIndx: 'fsu2', sortable: false, width: 70 }
-      ]},
+      ]}, */
     ];
 
     // コンクリート材料強度
     this.columnHeaders3 = [
-      { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, sortable: false, width: 390 },
-      { title: '', dataType: 'float', dataIndx: 'value', sortable: false, width: 140 },
+      /* { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, sortable: false, width: 390 },
+      { title: '', dataType: 'float', dataIndx: 'value', sortable: false, width: 140 }, */
     ];
 
     // 鉄骨 - 安全係数
     this.columnHeaders4 = [
       { title: '', align: 'left', dataType: 'string', dataIndx: 'title', editable: false, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
-      { title: 'γs', dataType: 'float', 'format':'#.00', dataIndx: 'S_rs', sortable: false, width: 70 },
-      { title: 'γb', dataType: 'float', 'format':'#.00', dataIndx: 'S_rb', sortable: false, width: 70 }
+      { title: 'γs', dataType: 'float', 'format':'#.00', dataIndx: 'rs', sortable: false, width: 70 },
+      { title: 'γb_T', dataType: 'float', 'format':'#.00', dataIndx: 'rb_T', sortable: false, width: 70 },
+      { title: 'γb_C', dataType: 'float', 'format':'#.00', dataIndx: 'rb_C', sortable: false, width: 70 },
+      { title: 'γb_S', dataType: 'float', 'format':'#.00', dataIndx: 'rb_S', sortable: false, width: 70 },
     ];
 
     // 鉄骨材料強度
@@ -294,14 +299,14 @@ export class SafetyFactorsMaterialStrengthsComponent
       const safety_steel = this.table4_datas[i];
       const factor = [];
       for(let j = 0; j < safety_bar.length; j++){
-        const bar = safety_bar[j], steel = safety_steel[j];
+        const steel = safety_steel[j];
         factor.push({
-          id: bar.id, title: bar.title,
-          M_rc: bar.M_rc, M_rs: bar.M_rs, M_rbs: bar.M_rbs,
-          V_rc: bar.V_rc, V_rs: bar.V_rs, V_rbc: bar.V_rbc, V_rbs: bar.V_rbs, V_rbv: bar.V_rbv,
-          T_rbt:bar.T_rbt,
-          ri: bar.ri, range: bar.range,
-          S_rs: steel.S_rs, S_rb: steel.S_rb
+          id: steel.id, title: steel.title,
+          ri: steel.ri, range: steel.range,
+          rs: steel.rs, 
+          rb_T: steel.rb_T, 
+          rb_C: steel.rb_C, 
+          rb_S: steel.rb_S,
         })
       }
       safety_factor[id] = factor;
