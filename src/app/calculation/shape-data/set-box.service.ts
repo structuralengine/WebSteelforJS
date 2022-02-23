@@ -241,8 +241,8 @@ export class SetBoxService {
         row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
     }
     const vertices = this.getVertices_box(vertexlist);
-    const vertices_aaa = this.getVertices_box(vertexlist);
-    const param = this.param.getSectionParam(vertices);
+    const centroid = this.param.getCentroid(vertices);
+    const param = this.param.getSectionParam(vertices, centroid);
 
     // steel
     const steel = {
@@ -263,8 +263,9 @@ export class SetBoxService {
           lib_h: vertexlist["lib_h" + String(n)],
           lib_w: vertexlist["lib_w" + String(n)],
           lib_n: vertexlist["lib_n" + String(n)],
-          fsy: 235, // 235ではなく厚さに応じた鉄骨強度
         };
+        const fsy_key = (n === 1 || n === 3) ? "steel_h" + String(n) : "steel_b" + String(n);
+        steel[n]['fsy'] = this.helper.getFsyk2( vertexlist[fsy_key], safety.material_steel);
       }
     }
 
@@ -283,9 +284,19 @@ export class SetBoxService {
         steel0["fsy"] = 235; // 鉄骨幅は部材ナンバーごとに異なるため、一旦保留
       }
     } */
+    const dim = {
+      Afgu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
+      Afnu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
+      Afgl: vertexlist["steel_b4"] * vertexlist["steel_h4"], 
+      Afnl: vertexlist["steel_b4"] * vertexlist["steel_h4"], 
+      Aw: vertexlist["steel_b2"] * vertexlist["steel_h2"] + vertexlist["steel_b3"] * vertexlist["steel_h3"], 
+      yc: 0 - centroid.y,
+      yt: vertexlist["steel_h1"] + vertexlist["steel_h2"] + vertexlist["steel_h4"] + centroid.y,
+    }
     steel["A"] = param.A;
     steel["Ix"] = param.Ix;
     steel["Iy"] = param.Iy;
+    steel["dim"] = dim;
     steel["rs"] = safety.safety_factor.S_rs;
 
     result["steel"] = steel;

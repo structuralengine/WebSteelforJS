@@ -10,11 +10,72 @@
   </nav>
 </div>
 
-<div>
-  <app-sheet #grid [options]="options"></app-sheet>
+<div class="crack">
+  <div #ht_container class="ht-container">
+    <app-sheet #grid [options]="options"></app-sheet>
+  </div>
+
+  <div class="guide">
+    <p>フランジの有効幅</p>
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="2"></th>
+          <th rowspan="2">区間<br>(箇所)</th>
+          <th colspan="3">片側有効幅λ<sub>i</sub></th>
+          <th rowspan="2">片側有効幅の分布</th>
+        </tr>
+        <tr>
+          <th>記号</th>
+          <th>適用式</th>
+          <th>等価支間長l<sub>i</sub></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>単純梁</td>
+          <td>1</td>
+          <td>λ①</td>
+          <td>式</td>
+          <td>LL</td>
+          <td><img src="../../assets/img/EffectiveWidth_SimpleBeam.png" /></td>
+        </tr>
+        <tr>
+          <td rowspan="5">連続梁</td>
+          <td>1</td>
+          <td>λ①</td>
+          <td>式</td>
+          <td>LL</td>
+          <td rowspan="5"><img src="../../assets/img/EffectiveWidth_ContinuousBeam.png" /></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>λ⑤</td>
+          <td>式</td>
+          <td>LL</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>λ③</td>
+          <td>式</td>
+          <td>LL</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>λ⑦</td>
+          <td>式</td>
+          <td>LL</td>
+        </tr>
+        <tr>
+          <td>2, 4,<br>6, 8</td>
+          <td colspan="3">両端の片側有効幅を用いて<br>直線変化させる</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<div class="footer">
+<!--<div class="footer">
   <div class="left-table">
     <p>環境条件</p>
     <table>
@@ -34,4 +95,4 @@
       </tbody>
     </table>
   </div>
-</div>
+</div>-->
