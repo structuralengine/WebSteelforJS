@@ -226,9 +226,15 @@ export class CalcSafetyTorsionalMomentService {
     // 5.4.1 板要素の耐荷性の照査
     // (1) 上フランジ
     // (2) 下フランジ
-    /* const bt_upper = (( sectionM.steels['3']['steel_b'] - sectionM.steels['2']['steel_b'] ) / 2)
-                   / sectionM.steels['3']['steel_h']; */
+    const bt_tension = ((tension.steel_b - shear.steel_b) / 2) / tension.steel_h;
+    const bto_tension = 16;
+    result['bt_tension'] = bt_tension;
+    result['bto_tension'] = bto_tension;
     // (3) 腹板
+    const dt_shear = shear.steel_h / shear.steel_b;
+    const dto_shear = 67.9;
+    result['dt_shear'] = dt_shear;
+    result['dto_shear'] = dto_shear;
 
     // 5.4.2 設計限界値の算定
     // (1) 圧縮側

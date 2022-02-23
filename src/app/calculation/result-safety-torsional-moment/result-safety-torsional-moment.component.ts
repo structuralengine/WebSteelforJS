@@ -307,6 +307,9 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       // ipu_cu: { alien: "center", value: "-" },
       // ipu_s: { alien: "center", value: "-" },
       // x: { alien: "center", value: "-" },
+      bt_tension: { alien: "center", value: "-" },
+      bto_tension: { alien: "center", value: "-" },
+      chi_wt_bto_tension: { alien: "center", value: "-" },
       
       bt: { alien: "center", value: "-" },
       bto: { alien: "center", value: "-" },
@@ -318,6 +321,10 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       rho_bl: { alien: "center", value: "-" },
       bt_ratio: { alien: "center", value: "-" },
       bt_chi_wt_bt_ratio: { alien: "center", value: "-" },
+      
+      dt_shear: { alien: "center", value: "-" },
+      dto_shear: { alien: "center", value: "-" },
+      chi_wt_dto_shear: { alien: "center", value: "-" },
 
       bsts: { alien: "center", value: "-" },
       Is: { alien: "center", value: "-" },
@@ -483,6 +490,26 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.bt_chi_wt_bt_ratio = { alien: "right", value: re.bt_chi_wt_bt_ratio.toFixed(3) };
     }
 
+    if ("dt_shear" in re) {
+      result.dt_shear = { alien: "right", value: re.dt_shear.toFixed(1) };
+    }
+    if ("dto_shear" in re) {
+      result.dto_shear = { alien: "right", value: re.dto_shear.toFixed(1) };
+    }
+    if ("chi_wt_dto_shear" in re) {
+      result.chi_wt_dto_shear = { alien: "right", value: re.chi_wt_dto_shear.toFixed(1) };
+    }
+
+    if ("bt_tension" in re) {
+      result.bt_tension = { alien: "right", value: re.bt_tension.toFixed(1) };
+    }
+    if ("bto_tension" in re) {
+      result.bto_tension = { alien: "right", value: re.bto_tension.toFixed(1) };
+    }
+    if ("chi_wt_bto_tension" in re) {
+      result.chi_wt_bto_tension = { alien: "right", value: re.chi_wt_bto_tension.toFixed(1) };
+    }
+
     if ("bsts" in re) {
       result.bsts = { alien: "right", value: re.bsts.toFixed(3) };
     }
@@ -500,37 +527,37 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
 
     if ("Mxd" in re) {
-      result.Mxd = { alien: "right", value: re.Mxd.toFixed(3) };
+      result.Mxd = { alien: "right", value: re.Mxd.toFixed(1) };
     }
     if ("Myd" in re) {
-      result.Myd = { alien: "right", value: re.Myd.toFixed(3) };
+      result.Myd = { alien: "right", value: re.Myd.toFixed(1) };
     }
     if ("Mucxd" in re) {
-      result.Mucxd = { alien: "right", value: re.Mucxd.toFixed(3) };
+      result.Mucxd = { alien: "right", value: re.Mucxd.toFixed(1) };
     }
     if ("Mutxd" in re) {
-      result.Mutxd = { alien: "right", value: re.Mutxd.toFixed(3) };
+      result.Mutxd = { alien: "right", value: re.Mutxd.toFixed(1) };
     }
     if ("Mucyd" in re) {
-      result.Mucyd = { alien: "right", value: re.Mucyd.toFixed(3) };
+      result.Mucyd = { alien: "right", value: re.Mucyd.toFixed(1) };
     }
     if ("Mutyd" in re) {
-      result.Mutyd = { alien: "right", value: re.Mutyd.toFixed(3) };
+      result.Mutyd = { alien: "right", value: re.Mutyd.toFixed(1) };
     }
     if ("Nud" in re) {
-      result.Nud = { alien: "right", value: re.Nud.toFixed(3) };
+      result.Nud = { alien: "right", value: re.Nud.toFixed(1) };
     }
     if ("An" in re) {
-      result.An = { alien: "right", value: re.An.toFixed(3) };
+      result.An = { alien: "right", value: re.An.toFixed(0) };
     }
     if ("rho_bg_culc" in re) {
-      result.rho_bg_culc = { alien: "right", value: re.rho_bg_culc.toFixed(3) };
+      result.rho_bg_culc = { alien: "right", value: re.rho_bg_culc.toFixed(2) };
     }
     if ("lambda_e" in re) {
-      result.lambda_e = { alien: "right", value: re.lambda_e.toFixed(3) };
+      result.lambda_e = { alien: "right", value: re.lambda_e.toFixed(2) };
     }
     if ("rho_bl_culc" in re) {
-      result.rho_bl_culc = { alien: "right", value: re.rho_bl_culc.toFixed(3) };
+      result.rho_bl_culc = { alien: "right", value: re.rho_bl_culc.toFixed(2) };
     }
     if ("gamma_b1" in re) {
       result.gamma_b1 = { alien: "right", value: re.gamma_b1.toFixed(2) };
@@ -552,19 +579,19 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.Vd = { alien: "right", value: re.Vd.toFixed(3) };
     }*/
     if ("Mtd" in re) {
-      result.Mtd = { alien: "right", value: re.Mtd.toFixed(3) };
+      result.Mtd = { alien: "right", value: re.Mtd.toFixed(1) };
     }
     if ("Vyd" in re) {
-      result.Vyd = { alien: "right", value: re.Vyd.toFixed(3) };
+      result.Vyd = { alien: "right", value: re.Vyd.toFixed(1) };
     }
     if ("Mtud" in re) {
-      result.Mtud = { alien: "right", value: re.Mtud.toFixed(3) };
+      result.Mtud = { alien: "right", value: re.Mtud.toFixed(1) };
     }
     /*if ("Aw" in re) {
       result.Aw = { alien: "right", value: re.Aw.toFixed(3) };
     }*/
     if ("At" in re) {
-      result.At = { alien: "right", value: re.At.toFixed(3) };
+      result.At = { alien: "right", value: re.At.toFixed(0) };
     }
     /*if ("gamma_b1" in re) {
       result.gamma_b1 = { alien: "right", value: re.gamma_b1.toFixed(3) };

@@ -29,6 +29,7 @@ export class InputMembersService  {
       g_id: '',
       g_name: '',
       shape: '',
+      eff_len: null,
       // B: null,
       // H: null,
       // Bt: null,

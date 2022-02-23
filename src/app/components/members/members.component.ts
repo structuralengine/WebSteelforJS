@@ -46,7 +46,7 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
       sortable: false,
       locale: "jp",
       height: this.tableHeight().toString(),
-      width: isManual ? 400 : 520,
+      width: isManual ? 500 : 620,
       numberCell: { show: isManual }, // 行番号
       colModel: this.columnHeaders,
       change: (evt, ui) => {
@@ -235,7 +235,15 @@ export class MembersComponent implements OnInit, AfterViewInit, OnDestroy {
         sortable: false,
         width: 80,
       },
-
+      {
+        title: "有効座屈長(m)",
+        align: "center",
+        dataType: "number",
+        format: "#.000",
+        dataIndx: "eff_len",
+        sortable: false,
+        width: 100,
+      },
       {
         title: "部材数",
         align: "center",
