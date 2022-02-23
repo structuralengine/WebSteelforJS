@@ -128,7 +128,7 @@ export class ResultSafetyFatigueShearForceComponent implements OnInit {
             column['title3'] = { alien: "center", value: titleColumn.title3 };
             ///////////////// 鉄骨断面情報 /////////////////
             column['A'] = this.result.alien(section.steels.A);
-            column['Ix'] = this.result.alien(section.steels.Ix);
+            column['Ix'] = this.result.alien(Math.round(section.steels.Ix));
             ///////////////// 鉄骨情報 /////////////////
             column['Afgu'] = this.result.alien(section.steels.dim.Afgu);
             column['Afgl'] = this.result.alien(section.steels.dim.Afgl);

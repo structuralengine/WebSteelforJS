@@ -30,7 +30,8 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
 
   ngOnInit() {
 
-    this.setTitle(this.save.isManual());
+    const isManual = this.save.isManual();
+    this.setTitle(isManual);
 
     this.table_datas = this.crack.getTableColumns();
 
@@ -43,6 +44,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         sortable: false,
         locale: "jp",
         height: this.tableHeight().toString(),
+        width: isManual ? 390 : 500,
         numberCell: { show: false }, // 行番号
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
@@ -80,7 +82,8 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     // 共通する項目
     this.columnHeaders.push(
       { title: '算出点名', dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
-      {
+      { title: '区間No', dataType: 'integer', dataIndx: 'section', sortable: false, width: 70 },
+      /* {
         title: '環境条件', align: 'center', colModel: [
           { title: '上側', dataType: 'integer', dataIndx: 'con_u', sortable: false, width: 60 },
           { title: '下側', dataType: 'integer', dataIndx: 'con_l', sortable: false, width: 60 },
@@ -100,7 +103,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
           { title: '上側', align: 'center', dataType: 'bool', dataIndx: 'vis_u', type: 'checkbox', sortable: false, width: 50 },
           { title: '下側', align: 'center', dataType: 'bool', dataIndx: 'vis_l', type: 'checkbox', sortable: false, width: 50 }
         ]
-      },
+      }, */
     );
   }
  

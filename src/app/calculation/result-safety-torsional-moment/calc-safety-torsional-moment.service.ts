@@ -10,6 +10,7 @@ import { InputSafetyFactorsMaterialStrengthsService } from "src/app/components/s
 // import { CalcSafetyShearForceService } from "../result-safety-shear-force/calc-safety-shear-force.service";
 import { absoluteFrom } from "@angular/compiler-cli/src/ngtsc/file_system";
 import { CalcVmuService } from "../result-calc-page/calc-vmu.service";
+import { InputCrackSettingsService } from "src/app/components/crack/crack-settings.service";
 
 @Injectable({
   providedIn: "root",
@@ -28,7 +29,8 @@ export class CalcSafetyTorsionalMomentService {
     private post: SetPostDataService,
     private calc: InputCalclationPrintService,
     private vmu: CalcVmuService,
-    private basic: InputBasicInformationService
+    private basic: InputBasicInformationService,
+    private crack: InputCrackSettingsService,
   ) {
     this.DesignForceList = null;
     this.isEnable = false;
@@ -207,28 +209,118 @@ export class CalcSafetyTorsionalMomentService {
 
     let tension: any;
     let compress: any;
-    let shear: any;
+    let shear1: any;
+    let shear2: any;
     // 部材の整理 I型のみの対応
-    if (force.side.includes('下側')) {
-      tension = sectionM.steels['3'];
-      compress = sectionM.steels['1'];
-      shear   = sectionM.steels['2'];
-    } else {
-      tension = sectionM.steels['1'];
-      compress = sectionM.steels['3'];
-      shear   = sectionM.steels['2'];
+    if (sectionM.shapeName === 'I')  {
+      if (force.side.includes('下側')) {
+        tension = sectionM.steels['3'];
+        compress = sectionM.steels['1'];
+        shear1   = sectionM.steels['2'];
+      } else {
+        tension = sectionM.steels['1'];
+        compress = sectionM.steels['3'];
+        shear1   = sectionM.steels['2'];
+      }
+    } else if (sectionM.shapeName === 'Box') {
+      if (force.side.includes('下側')) {
+        tension = sectionM.steels['4'];
+        compress = sectionM.steels['1'];
+        shear1   = sectionM.steels['2'];
+        shear1   = sectionM.steels['3'];
+      } else {
+        tension = sectionM.steels['1'];
+        compress = sectionM.steels['4'];
+        shear1   = sectionM.steels['2'];
+        shear1   = sectionM.steels['3'];
+      }
+
     }
     const A = sectionM.steels.A;
     const Ix = sectionM.steels.Ix;
     const Iy = sectionM.steels.Iy;
     const dim = sectionM.steels.dim;
 
+    const crackInfo = this.crack.getCalcData(res1.index);
+
+    // 緒元の計算
+    const Lz: number = this.helper.toNumber(sectionM.member.eff_len) * 1000;
+    const Ly: number = this.helper.toNumber(sectionM.member.eff_len) * 1000;
+
+    // memo: 左上の外内, 右上の外内, 左下の外内, 右下の外内
+    // memo: I型のときは内側がない
+    const b1Lz = tension.steel_w / Lz;
+    const b2Lz = (shear1.steel_w / 2) / Lz;// 本来は中立軸で分離(/2ではない)
+    const tf: number = tension.steel_h / 2 + compress.steel_h / 2
+    const b1Ly = ((shear1.steel_h + tf) / 2 ) / Ly;
+    let lambda1: number;
+    let lambda2: number;
+    let lambda3: number;
+    // 部材区間によってフランジの有効幅が変化するため分岐
+    if (crackInfo.section === 1 || crackInfo.section === 5) {
+      // 式(6.2.3)を使用する
+      if (b1Lz <= 0.05) {
+        lambda1 = tension.steel_w;
+      } else {
+        lambda1 = ( 1.1 - 2 * b1Lz ) * tension.steel_w;
+      }
+      if (b2Lz <= 0.05) {
+        lambda2 = tension.steel_w;
+      } else {
+        lambda2 = ( 1.1 - 2 * b2Lz ) * shear1.steel_w / 2;
+      }
+      if (b1Ly <= 0.05) {
+        lambda3 = tension.steel_w;
+      } else {
+        lambda3 = ( 1.1 - 2 * b1Ly ) * ((shear1.steel_h + tf) / 2 );
+      }
+    } else {
+      // 式(6.2.4)を使用する
+      if (b1Lz <= 0.02) {
+        lambda1 = tension.steel_w;
+      } else {
+        lambda1 = (1.06 - 3.2 * b1Lz + 4.5 * b1Lz ** 2) * tension.steel_w;
+      }
+      if (b2Lz <= 0.02) {
+        lambda2 = tension.steel_w;
+      } else {
+        lambda2 = (1.06 - 3.2 * b2Lz + 4.5 * b2Lz ** 2) * shear1.steel_w / 2;
+      }
+      if (b1Ly <= 0.02) {
+        lambda3 = tension.steel_w;
+      } else {
+        lambda3 = (1.06 - 3.2 * b1Ly + 4.5 * b1Ly ** 2) * ((shear1.steel_h + tf) / 2 );
+      }
+    }
+    lambda1 = Math.round(lambda1);
+    if (lambda1 >= 0.15*Ly) {
+      lambda1 = 0.15*Ly;
+    }
+    lambda2 = Math.round(lambda2);
+    if (lambda2 >= 0.15*Ly) {
+      lambda2 = 0.15*Ly;
+    }
+    lambda3 = Math.round(lambda3);
+    if (lambda3 >= 0.15*Ly) {
+      lambda3 = 0.15*Ly;
+    }
+    const Lz_b = 2 * lambda1 + 2 * lambda2;
+    const Ly_b = 2 * lambda3 - tf; 
+
+
+
     // 5.4.1 板要素の耐荷性の照査
     // (1) 上フランジ
     // (2) 下フランジ
-    /* const bt_upper = (( sectionM.steels['3']['steel_b'] - sectionM.steels['2']['steel_b'] ) / 2)
-                   / sectionM.steels['3']['steel_h']; */
+    const bt_tension = ((tension.steel_b - shear1.steel_b) / 2) / tension.steel_h;
+    const bto_tension = 16;
+    result['bt_tension'] = bt_tension;
+    result['bto_tension'] = bto_tension;
     // (3) 腹板
+    const dt_shear = shear1.steel_h / shear1.steel_b;
+    const dto_shear = 67.9;
+    result['dt_shear'] = dt_shear;
+    result['dto_shear'] = dto_shear;
 
     // 5.4.2 設計限界値の算定
     // (1) 圧縮側
@@ -274,7 +366,7 @@ export class CalcSafetyTorsionalMomentService {
     // (4) 設計せん断力
     const Aw: number = dim['Aw'];
     result['An'] = dim['Aw'] + dim['Afgu'] + dim['Afgl'];
-    const fsvyk_web: number = shear['fsy']['fsvyk'];
+    const fsvyk_web: number = shear1['fsy']['fsvyk'];
     const fsvyd = fsvyk_web / rb_S;
     result['fsvyk_web'] = fsvyk_web;
     const Vyd: number = Aw * fsvyd / rs / 1000;

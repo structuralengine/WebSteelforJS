@@ -760,24 +760,24 @@
         <tr>
           <th colspan="2" class="cell_name1">(Dw/tw)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.bt.alien}} g-left2">
-              {{column.bt.value}}</td>
+            <td colspan="2" class="{{column.dt_shear.alien}} g-left2">
+              {{column.dt_shear.value}}</td>
           </ng-container>
         </tr>
         <!-- 板要素の幅厚比の上限値 -->
         <tr>
           <th colspan="2" class="cell_name1">(Dw/tw)o</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.bto.alien}} g-left2">
-              {{column.bto.value}}</td>
+            <td colspan="2" class="{{column.dto_shear.alien}} g-left2">
+              {{column.dto_shear.value}}</td>
           </ng-container>
         </tr>
         <!-- 板要素の最大幅厚比 -->
         <tr>
           <th colspan="2" class="cell_name1">χwt(Dw/tw)o</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.chi_wt_bto.alien}} g-left2">
-              {{column.chi_wt_bto.value}}</td>
+            <td colspan="2" class="{{column.chi_wt_dto_shear.alien}} g-left2">
+              {{column.chi_wt_dto_shear.value}}</td>
           </ng-container>
         </tr>
         <!-- 最大幅厚比の緩和係数 -->
@@ -908,24 +908,24 @@
           <tr>
             <th colspan="2" class="cell_name1">(b/t)</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.bt.alien}} g-left2">
-                {{column.bt.value}}</td>
+              <td colspan="2" class="{{column.bt_tension.alien}} g-left2">
+                {{column.bt_tension.value}}</td>
             </ng-container>
           </tr>
           <!-- 板要素の幅厚比の上限値 -->
           <tr>
             <th colspan="2" class="cell_name1">(b/t)o</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.bto.alien}} g-left2">
-                {{column.bto.value}}</td>
+              <td colspan="2" class="{{column.bto_tension.alien}} g-left2">
+                {{column.bto_tension.value}}</td>
             </ng-container>
           </tr>
           <!-- 板要素の最大幅厚比 -->
           <tr>
             <th colspan="2" class="cell_name1">χwt(b/t)o</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.chi_wt_bto.alien}} g-left2">
-                {{column.chi_wt_bto.value}}</td>
+              <td colspan="2" class="{{column.chi_wt_bto_tension.alien}} g-left2">
+                {{column.chi_wt_bto_tension.value}}</td>
             </ng-container>
           </tr>
           <!-- 最大幅厚比の緩和係数 -->
