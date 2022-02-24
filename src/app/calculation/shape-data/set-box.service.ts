@@ -1530,6 +1530,25 @@ export class SetBoxService {
           0.5 * element["lib_b3"] * Math.cos(lib_deg2) -
           element["lib_h3"] * Math.sin(lib_deg2);
 
+        // x = this.drawPosition(
+        //   element,
+        //   st_shape,
+        //   theta,
+        //   element["steel_w2"] + lib3_side + x_remain,
+        //   1,
+        //   3,
+        //   LibFlg
+        // );
+        // y = this.drawPosition(
+        //   element,
+        //   st_shape,
+        //   theta,
+        //   Math.tan(theta) * element["steel_w2"] - lib3_height + y_remain,
+        //   Math.tan(theta),
+        //   3,
+        //   LibFlg
+        // );
+
         x =
           element["steel_w1"] +
           element["steel_w2"] +
