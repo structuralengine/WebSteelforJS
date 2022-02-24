@@ -936,22 +936,18 @@ export class SetBoxService {
       }
     }
     if (element["lib_w4"] === 0) {
-      if (element["lib_n4"] === 1 && !PIflag) {
-        element["lib_w4"] = 0;
+      if (PIflag) {
+        element["lib_w4"] =
+          (element["steel_b4"] -
+            element["steel_w4"] -
+            0.5 * st_shape.st2_btLen) /
+          (element["lib_n4"] + 1);
       } else {
-        if (PIflag) {
-          element["lib_w4"] =
-            (element["steel_b4"] -
-              element["steel_w4"] -
-              0.5 * st_shape.st2_btLen) /
-            (element["lib_n4"] + 1);
-        } else {
-          element["lib_w4"] =
-            (element["steel_w3"] -
-              0.5 * st_shape.st2_btLen -
-              0.5 * st_shape.st3_btLen) /
-            (element["lib_n4"] + 1);
-        }
+        element["lib_w4"] =
+          (element["steel_w3"] -
+            0.5 * st_shape.st2_btLen -
+            0.5 * st_shape.st3_btLen) /
+          (element["lib_n4"] + 1);
       }
     }
 
@@ -1319,23 +1315,6 @@ export class SetBoxService {
         );
         z = 0;
 
-        // x =
-        //   0.5 * element["steel_h1"] * Math.sin(theta) +
-        //   element["steel_w1"] +
-        //   element["steel_w2"] -
-        //   0.5 * element["steel_b3"] * Math.cos(theta) +
-        //   (element["steel_b3"] + 2 * st3_sideLen) / 2 -
-        //   element["steel_w5"];
-        // y =
-        //   Math.tan(theta) *
-        //     (element["steel_w1"] -
-        //       0.5 * element["steel_h1"] * Math.sin(theta) -
-        //       0.5 * element["steel_b3"] * Math.cos(theta)) -
-        //   element["steel_h1"] * Math.cos(theta) -
-        //   element["steel_h3"] +
-        //   0.5 * element["steel_b3"] * Math.sin(theta);
-        z = 0;
-
         list.vertice.push(new THREE.Vector3(0, 0, 0));
         list.vertice.push(new THREE.Vector3(element["steel_b5"], 0, 0));
         list.vertice.push(
@@ -1392,20 +1371,39 @@ export class SetBoxService {
       element["lib_w4"] * co -
       0.5 * element["lib_b4"];
     if (PIflag) {
-      lib4_width =
-        element["steel_b4"] -
-        element["steel_w4"] -
-        0.5 * element["steel_b2"] -
-        element["lib_w4"] * element["lib_n4"] +
-        element["lib_w4"] * co -
-        0.5 * element["lib_b4"];
+      if (element["lib_n4"] == 1) {
+        lib4_width =
+          element["steel_b4"] -
+          element["steel_w4"] -
+          0.5 * st2_btLen -
+          element["lib_w4"] * element["lib_n4"] -
+          0.5 * element["lib_b4"];
+      } else {
+        lib4_width =
+          0.5 *
+            (element["steel_b4"] -
+              element["steel_w4"] -
+              0.5 * st2_btLen -
+              element["lib_w4"] * (element["lib_n4"] - 1)) +
+          element["lib_w4"] * co -
+          0.5 * element["lib_b4"];
+      }
     }
     let lib5_width =
-      element["steel_w5"] -
-      0.5 * element["steel_b3"] -
-      element["lib_w5"] * element["lib_n5"] +
+      0.5 *
+        (element["steel_w5"] -
+          0.5 * element["steel_b3"] -
+          element["lib_w5"] * (element["lib_n5"] - 1)) +
       element["lib_w5"] * co +
       0.5 * element["lib_b5"];
+
+    if (element["lib_n5"] == 1) {
+      lib5_width =
+        element["steel_w5"] -
+        0.5 * st3_btLen -
+        element["lib_w5"] * element["lib_n5"] +
+        0.5 * element["lib_b5"];
+    }
 
     let lib2_height =
       0.5 *
@@ -1532,6 +1530,25 @@ export class SetBoxService {
           0.5 * element["lib_b3"] * Math.cos(lib_deg2) -
           element["lib_h3"] * Math.sin(lib_deg2);
 
+        // x = this.drawPosition(
+        //   element,
+        //   st_shape,
+        //   theta,
+        //   element["steel_w2"] + lib3_side + x_remain,
+        //   1,
+        //   3,
+        //   LibFlg
+        // );
+        // y = this.drawPosition(
+        //   element,
+        //   st_shape,
+        //   theta,
+        //   Math.tan(theta) * element["steel_w2"] - lib3_height + y_remain,
+        //   Math.tan(theta),
+        //   3,
+        //   LibFlg
+        // );
+
         x =
           element["steel_w1"] +
           element["steel_w2"] +
@@ -1580,7 +1597,7 @@ export class SetBoxService {
         break;
 
       case 4:
-        x_remain = st2_sideLen + st2_btLen;
+        x_remain = st2_sideLen;
         y_remain =
           -element["steel_h2"] +
           0.5 * st2_upLen * Math.sin(theta) +
@@ -1588,7 +1605,7 @@ export class SetBoxService {
 
         x =
           element["steel_w1"] +
-          0.5 * element["steel_h1"] * Math.sin(theta) -
+          0.5 * element["steel_h1"] * Math.sin(theta) +
           0.5 * st2_upLen * Math.cos(theta) +
           x_remain +
           lib4_width;
