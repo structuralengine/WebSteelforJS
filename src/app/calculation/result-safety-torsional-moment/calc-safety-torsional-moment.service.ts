@@ -11,6 +11,8 @@ import { InputSafetyFactorsMaterialStrengthsService } from "src/app/components/s
 import { absoluteFrom } from "@angular/compiler-cli/src/ngtsc/file_system";
 import { CalcVmuService } from "../result-calc-page/calc-vmu.service";
 import { InputCrackSettingsService } from "src/app/components/crack/crack-settings.service";
+import { SetParamService } from "../shape-data/set-param.service";
+import { sign } from "crypto";
 
 @Injectable({
   providedIn: "root",
@@ -28,6 +30,7 @@ export class CalcSafetyTorsionalMomentService {
     private force: SetDesignForceService,
     private post: SetPostDataService,
     private calc: InputCalclationPrintService,
+    private param: SetParamService,
     private vmu: CalcVmuService,
     private basic: InputBasicInformationService,
     private crack: InputCrackSettingsService,
@@ -187,15 +190,15 @@ export class CalcSafetyTorsionalMomentService {
     if (Nd === null) {
       Nd = 0;
     }
-    Nd = Math.abs(Nd);
-    result['Nd'] = Nd;
+    // Nd = Math.abs(Nd);
+    result['Nd'] = Math.abs(Nd);
 
     let Md: number = this.helper.toNumber(force.Md);
     if (Md === null) {
       Md = 0;
     }
-    Md = Math.abs(Md);
-    const Mxd = Md;
+    // Md = Math.abs(Md);
+    const Mxd = Math.abs(Md);
     const Myd = 0;
     result['Mxd'] = Mxd;
     result['Myd'] = Myd;
@@ -236,10 +239,6 @@ export class CalcSafetyTorsionalMomentService {
       }
 
     }
-    const A = sectionM.steels.A;
-    const Ix = sectionM.steels.Ix;
-    const Iy = sectionM.steels.Iy;
-    const dim = sectionM.steels.dim;
 
     const crackInfo = this.crack.getCalcData(res1.index);
 
@@ -306,16 +305,117 @@ export class CalcSafetyTorsionalMomentService {
     }
     const Lz_b = 2 * lambda1 + 2 * lambda2;
     const Ly_b = 2 * lambda3 - tf; 
+    const lambda: number[] = [lambda1, lambda2, lambda3];
 
+    // 断面性能
+    //// 総断面
+    const A = sectionM.steels.A;
+    const Ix = sectionM.steels.Ix;
+    const Iy = sectionM.steels.Iy;
+    const dim = sectionM.steels.dim;
+    const rx = ( Ix / A ) ** 0.5;
+    const ry = ( Iy / A ) ** 0.5;
+    //  軸方向回転時有効断面
+    let vertices: any
+    let param = {};
+    let centroid: THREE.Vector3;
+    if (sectionM.shapeName === 'Box') {
+      // 頂点座標を再取得してparamを計算
+      vertices = this.param.getVertices_fixed(sectionM, lambda)
+      centroid = this.param.getCentroid(vertices);
+      param = this.param.getSectionParam(vertices, centroid);
+    }
+    const yu = centroid.y;
+    const Zzu = param['Ix'] / yu;
+    const yuw = compress['steel_h'] + centroid.y;
+    const Zzuw = param['Ix'] / yuw;
+    const ylw = tension['steel_h'] + shear1['steel_h'] + centroid.y;
+    const Zzlw = param['Ix'] / ylw;
+    const yl = tension['steel_h'] + shear1['steel_h'] + compress['steel_h'] + centroid.y;
+    const Zzl = param['Ix'] / yl;
 
 
     // 5.4.1 板要素の耐荷性の照査
+    const sigma_N = (Nd > 0) ? 0: Nd * 1000 / A;
+    const sigma_My1 = 0;
+    const sigma_My2 = 0;
+    const sigma_Mz1 = Md * 1000 * 1000 / Zzu;
+    const sigma_Mz2 = Md * 1000 * 1000 / Zzl;
+    const sigmasigma1 = sigma_N + sigma_My1 + sigma_Mz1;
+    const sigmasigma2 = sigma_N + sigma_My2 + sigma_Mz1;
+    const sigmasigma3 = sigma_N + sigma_My1 + sigma_Mz2;
+    const sigmasigma4 = sigma_N + sigma_My2 + sigma_Mz2;
+
+    const E: number = 2.0 * 10**5;
+    const nu: number = 0.3;
     // (1) 上フランジ
+    const bt_compress = ((compress.steel_b - shear1.steel_b) / 2) / compress.steel_h;
+    let bto_compress = 16;
+    const fsy_compress = compress.fsy.fsyk;
+    result['bt_compress'] = bt_compress;
+    result['bto_compress'] = bto_compress;
+
+    const sigma1_compress = (Math.abs(sigmasigma1) > Math.abs(sigmasigma2)) ? sigmasigma1 : sigmasigma2;
+    const sigma2_compress = (sigma1_compress === sigmasigma1) ? sigmasigma2 : sigmasigma1;
+    const psi_compress = sigma2_compress / sigma1_compress;
+    const Rcr_compress = 0.85 - 0.15 * psi_compress;
+    const k_compress = (-1.0 <= psi_compress && psi_compress < 0) ? 10*psi_compress**2 - 6.27*psi_compress + 7.63 : 8.4 / (psi_compress + 1.1);
+
+    const eta_compress = (0.85 - 0.15*psi_compress) * k_compress**0.5 / 1.4;
+    const ko_compress = 4.0;
+    const Rr_compress = 1 / eta_compress * 280 / 22 * ( (12*(1-nu**2)) / (Math.PI**2*ko_compress) * fsy_compress / E )**0.5;
+    const rho_bl_compress = 0.49 / Math.max(0.7, Rr_compress)**2;
+
+    if ( true && sigma1_compress > 0 && sigma2_compress > 0 ) {
+      bto_compress = 60;
+    } else if (sigma1_compress > 0 && sigma2_compress > 0) {
+      bto_compress = 60 * (-1);
+    } else {
+      bto_compress = Rcr_compress * ( (Math.PI**2 * k_compress) / (12*(1-nu**2)) * E / compress.fsy.fsyk  )**0.5;
+    }
+
     // (2) 下フランジ
     const bt_tension = ((tension.steel_b - shear1.steel_b) / 2) / tension.steel_h;
-    const bto_tension = 16;
+    let bto_tension = 16;
+    const fsy_tension = tension.fsy.fsyk;
     result['bt_tension'] = bt_tension;
     result['bto_tension'] = bto_tension;
+
+    const sigma1_tension = (Math.abs(sigmasigma3) > Math.abs(sigmasigma4)) ? sigmasigma3 : sigmasigma4;
+    const sigma2_tension = (sigma1_tension === sigmasigma3) ? sigmasigma4 : sigmasigma3;
+    const psi_tension = sigma2_tension / sigma1_tension;
+    const Rcr_tension = 0.85 - 0.15 * psi_tension;
+    const k_tension = (-1.0 <= psi_tension && psi_tension < 0) ? 10*psi_tension**2 - 6.27*psi_tension + 7.63 : 8.4 / (psi_tension + 1.1);
+
+    const eta_tension = (0.85 - 0.15*psi_tension) * k_tension**0.5 / 1.4;
+    const ko_tension = 4.0;
+    const Rr_tension = 1 / eta_tension * 280 / 22 * ( (12*(1-nu**2)) / (Math.PI**2*ko_tension) * fsy_tension / E )**0.5;
+    const rho_bl_tension = 0.49 / Math.max(0.7, Rr_tension)**2;
+
+    if ( true && sigma1_tension > 0 && sigma2_tension > 0 ) {
+      bto_tension = 60;
+    } else if (sigma1_tension > 0 && sigma2_tension > 0) {
+      bto_tension = 60 * (-1);
+    } else {
+      bto_tension = Rcr_tension * ( (Math.PI**2 * k_tension) / (12*(1-nu**2)) * E / tension.fsy.fsyk  )**0.5;
+    }
+
+    let rho_bl0: number;
+    let nu0: number;
+    let ko0: number;
+    let Rr0: number; 
+    if ( rho_bl_compress === Math.min(rho_bl_tension, rho_bl_compress) ) {
+      rho_bl0 = rho_bl_compress;
+      nu0 = eta_compress;
+      ko0 = ko_compress;
+      Rr0 = Rr_compress; 
+    } else {
+      rho_bl0 = rho_bl_tension;
+      nu0 = eta_tension;
+      ko0 = ko_tension;
+      Rr0 = Rr_tension; 
+    }
+
     // (3) 腹板
     const dt_shear = shear1.steel_h / shear1.steel_b;
     const dto_shear = 67.9;

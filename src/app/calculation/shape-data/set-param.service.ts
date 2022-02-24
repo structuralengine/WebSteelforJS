@@ -252,4 +252,111 @@ export class SetParamService {
     return Math.abs(I);
   }
 
+  public getVertices_fixed(section, lambda, key = 'x'): any[] {
+    const result = []; // 出力される頂点情報群
+    const vertices = section.steels.vertices;
+    const lambda1 = lambda[0];
+    const lambda2 = lambda[1];
+    const lambda3 = lambda[2];
+    // for ( let n = 0; n < vertices.length; n++ ) {
+    // 1部材について -> 4つに分解する
+    let child = {};
+    const vertice1 = vertices[0].vertice;
+    const vertice4 = vertices[3].vertice;
+    const position1 = vertices[0].position;
+    const position4 = vertices[3].position;
+    const target_steel = section.steels[0 + 1];
+    const w1 = section.steels[0 + 1].steel_w;
+    const w2 = section.steels[1 + 1].steel_w;
+    const w3 = section.steels[2 + 1].steel_w;
+    const w4 = section.steels[3 + 1].steel_w;
+    let shita = Math.atan((vertice1[1].y - vertice1[0].y) / (vertice1[1].x - vertice1[0].x));  // 0
+    let dx = lambda1 * Math.cos(shita); // 100
+    let dy = lambda1 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice1[2].y + dy, 0),
+                          new Vector3(0, vertice1[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position1.x + w1 - dx, position1.y, position1.z)
+                      };
+    result.push(child);
+    dx = lambda2 * Math.cos(shita); // 100
+    dy = lambda2 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice1[2].y + dy, 0),
+                          new Vector3(0, vertice1[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position1.x + w1, position1.y, position1.z)
+                      };
+    result.push(child);
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice1[2].y + dy, 0),
+                          new Vector3(0, vertice1[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position1.x + w1 + w2 - dx, position1.y, position1.z)
+                      };
+    result.push(child);
+    dx = lambda1 * Math.cos(shita); // 100
+    dy = lambda1 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice1[2].y + dy, 0),
+                          new Vector3(0, vertice1[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position1.x + w1 + w2, position1.y, position1.z)
+                      };
+    result.push(child);
+    // 2部材
+    result.push(vertices[1]);
+    // 3部材
+    result.push(vertices[2]);
+    // 4部材
+    //result.push(vertices[3]);
+    shita = Math.atan((vertice4[1].y - vertice4[0].y) / (vertice4[1].x - vertice4[0].x));  // 0
+    dx = lambda1 * Math.cos(shita); // 100
+    dy = lambda1 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice4[2].y + dy, 0),
+                          new Vector3(0, vertice4[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position4.x + w1 - dx, position4.y, position4.z)
+                      };
+    result.push(child);
+    dx = lambda2 * Math.cos(shita); // 100
+    dy = lambda2 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice4[2].y + dy, 0),
+                          new Vector3(0, vertice4[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position4.x + w4, position4.y, position4.z)
+                      };
+    result.push(child);
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice4[2].y + dy, 0),
+                          new Vector3(0, vertice4[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position4.x + w4 + w3 - dx, position4.y, position4.z)
+                      };
+    result.push(child);
+    dx = lambda1 * Math.cos(shita); // 100
+    dy = lambda1 * Math.sin(shita); // 0
+    child = {'vertice': [ new Vector3(0, 0, 0),
+                          new Vector3(dx, dy, 0),
+                          new Vector3(dx, vertice4[2].y + dy, 0),
+                          new Vector3(0, vertice4[2].y + dy, 0),
+                        ],
+              'position': new Vector3(position4.x + w4 + w2, position4.y, position4.z)
+                      };
+    result.push(child);
+    // }
+
+    return result;
+  }
+
 }

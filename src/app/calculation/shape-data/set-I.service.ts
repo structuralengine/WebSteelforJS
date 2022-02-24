@@ -158,6 +158,7 @@ export class SetIService {
     steel["Ix"] = param.Ix;
     steel["Iy"] = param.Iy;
     steel["dim"] = dim;
+    steel["vertices"] = vertices;
     steel["rs"] = safety.safety_factor.S_rs;
 
     result["steel"] = steel;

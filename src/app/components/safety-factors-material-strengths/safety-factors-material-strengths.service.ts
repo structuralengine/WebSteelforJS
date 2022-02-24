@@ -59,7 +59,7 @@ export class InputSafetyFactorsMaterialStrengthsService {
             id: 5, title: '安全性 （破壊）',
             ri: 1.20,  // 安全係数
             rb_T: 1.05, // 引張側鉄骨の材料係数
-            rb_C: 1.05, // 圧縮側鉄骨の材料係数
+            rb_C: 1.10, // 圧縮側鉄骨の材料係数
             rb_S: 1.05, // せん断鉄骨の材料係数
             rs: 1.1 // 部材係数
           },

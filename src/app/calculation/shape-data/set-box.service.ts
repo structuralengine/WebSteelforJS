@@ -265,7 +265,7 @@ export class SetBoxService {
           lib_n: vertexlist["lib_n" + String(n)],
         };
         const fsy_key =
-          n === 1 || n === 3 ? "steel_h" + String(n) : "steel_b" + String(n);
+          n === 1 || n === 4 || n === 5 ? "steel_h" + String(n) : "steel_b" + String(n);
         steel[n]["fsy"] = this.helper.getFsyk2(
           vertexlist[fsy_key],
           safety.material_steel
@@ -307,6 +307,7 @@ export class SetBoxService {
     steel["Ix"] = param.Ix;
     steel["Iy"] = param.Iy;
     steel["dim"] = dim;
+    steel["vertices"] = vertices;
     steel["rs"] = safety.safety_factor.S_rs;
 
     result["steel"] = steel;
