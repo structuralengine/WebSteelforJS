@@ -147,13 +147,13 @@ export class ThreePanelService {
     const scale = 1 / (this.max / 10);
 
     // スケールを調整
-    for (const key of Object.keys(element)) {
-      if (key !== "shape") {
-        if (!key.includes("n")) {
-          element[key] = element[key] * scale;
-        }
-      }
-    }
+    // for (const key of Object.keys(element)) {
+    //   if (key !== "shape") {
+    //     if (!key.includes("n")) {
+    //       element[key] = element[key] * scale;
+    //     }
+    //   }
+    // }
 
     this.shape(element /* , data['shape'] */);
   }

@@ -14,7 +14,7 @@ export class SetBoxService {
     private bars: InputBarsService,
     private steel: InputSteelsService,
     private helper: DataHelperModule,
-    private param: SetParamService,
+    private param: SetParamService
   ) {}
 
   // 矩形断面の POST 用 データ作成
@@ -264,8 +264,12 @@ export class SetBoxService {
           lib_w: vertexlist["lib_w" + String(n)],
           lib_n: vertexlist["lib_n" + String(n)],
         };
-        const fsy_key = (n === 1 || n === 3) ? "steel_h" + String(n) : "steel_b" + String(n);
-        steel[n]['fsy'] = this.helper.getFsyk2( vertexlist[fsy_key], safety.material_steel);
+        const fsy_key =
+          n === 1 || n === 3 ? "steel_h" + String(n) : "steel_b" + String(n);
+        steel[n]["fsy"] = this.helper.getFsyk2(
+          vertexlist[fsy_key],
+          safety.material_steel
+        );
       }
     }
 
@@ -285,14 +289,20 @@ export class SetBoxService {
       }
     } */
     const dim = {
-      Afgu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
-      Afnu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
-      Afgl: vertexlist["steel_b4"] * vertexlist["steel_h4"], 
-      Afnl: vertexlist["steel_b4"] * vertexlist["steel_h4"], 
-      Aw: vertexlist["steel_b2"] * vertexlist["steel_h2"] + vertexlist["steel_b3"] * vertexlist["steel_h3"], 
+      Afgu: vertexlist["steel_b1"] * vertexlist["steel_h1"],
+      Afnu: vertexlist["steel_b1"] * vertexlist["steel_h1"],
+      Afgl: vertexlist["steel_b4"] * vertexlist["steel_h4"],
+      Afnl: vertexlist["steel_b4"] * vertexlist["steel_h4"],
+      Aw:
+        vertexlist["steel_b2"] * vertexlist["steel_h2"] +
+        vertexlist["steel_b3"] * vertexlist["steel_h3"],
       yc: 0 - centroid.y,
-      yt: vertexlist["steel_h1"] + vertexlist["steel_h2"] + vertexlist["steel_h4"] + centroid.y,
-    }
+      yt:
+        vertexlist["steel_h1"] +
+        vertexlist["steel_h2"] +
+        vertexlist["steel_h4"] +
+        centroid.y,
+    };
     steel["A"] = param.A;
     steel["Ix"] = param.Ix;
     steel["Iy"] = param.Iy;
@@ -926,16 +936,33 @@ export class SetBoxService {
       }
     }
     if (element["lib_w4"] === 0) {
-      if (element["lib_n4"] === 1) {
+      if (element["lib_n4"] === 1 && !PIflag) {
         element["lib_w4"] = 0;
       } else {
-        element["lib_w4"] =
-          (element["steel_w3"] -
-            0.5 * st_shape.st3_btLen -
-            0.5 * st_shape.st3_btLen) /
-          (element["lib_n4"] + 1);
+        if (PIflag) {
+          element["lib_w4"] =
+            (element["steel_b4"] -
+              element["steel_w4"] -
+              0.5 * st_shape.st2_btLen) /
+            (element["lib_n4"] + 1);
+        } else {
+          element["lib_w4"] =
+            (element["steel_w3"] -
+              0.5 * st_shape.st2_btLen -
+              0.5 * st_shape.st3_btLen) /
+            (element["lib_n4"] + 1);
+        }
       }
     }
+
+    if (element["lib_w5"] === 0) {
+      if (PIflag) {
+        element["lib_w5"] =
+          (element["steel_w5"] - 0.5 * st_shape.st3_btLen) /
+          (element["lib_n5"] + 1);
+      }
+    }
+
     if (element["lib_w2"] === 0) {
       if (element["lib_n2"] === 1) {
         element["lib_w2"] = 0;
@@ -956,6 +983,24 @@ export class SetBoxService {
       for (let i = 1; i <= 5; i++) {
         vertices.push(this.box_vertice(element, i, theta, st_shape));
       }
+      for (let i = 1; i <= 5; i++) {
+        for (let j = 0; j < element["lib_n" + String(i)]; j++) {
+          if (element["lib_n" + String(i)] !== 0) {
+            vertices.push(
+              this.box_lib_vertice(
+                element,
+                i,
+                j,
+                theta,
+                fai_1,
+                fai_2,
+                st_shape,
+                PIflag
+              )
+            );
+          }
+        }
+      }
     } else {
       // フランジ・ウェブを描く
       for (let i = 1; i <= 4; i++) {
@@ -967,7 +1012,16 @@ export class SetBoxService {
         for (let j = 0; j < element["lib_n" + String(i)]; j++) {
           if (element["lib_n" + String(i)] !== 0) {
             vertices.push(
-              this.box_lib_vertice(element, i, j, theta, fai_1, fai_2, st_shape)
+              this.box_lib_vertice(
+                element,
+                i,
+                j,
+                theta,
+                fai_1,
+                fai_2,
+                st_shape,
+                PIflag
+              )
             );
           }
         }
@@ -1235,21 +1289,51 @@ export class SetBoxService {
 
         break;
       case 5:
-        x =
-          0.5 * element["steel_h1"] * Math.sin(theta) +
-          element["steel_w1"] +
-          element["steel_w2"] -
-          0.5 * element["steel_b3"] * Math.cos(theta) +
-          (element["steel_b3"] + 2 * st3_sideLen) / 2 -
+        let option_X1 =
+          element["steel_w2"] +
+          st3_sideLen +
+          0.5 * st3_btLen -
           element["steel_w5"];
-        y =
-          Math.tan(theta) *
-            (element["steel_w1"] -
-              0.5 * element["steel_h1"] * Math.sin(theta) -
-              0.5 * element["steel_b3"] * Math.cos(theta)) -
-          element["steel_h1"] * Math.cos(theta) -
+        let option_Y1 =
+          Math.tan(theta) * element["steel_w2"] -
           element["steel_h3"] +
-          0.5 * element["steel_b3"] * Math.sin(theta);
+          0.5 * st3_upLen * Math.sin(theta);
+
+        x = this.drawPosition(
+          element,
+          st_shape,
+          theta,
+          option_X1,
+          1,
+          3,
+          LibFlg
+        );
+        y = this.drawPosition(
+          element,
+          st_shape,
+          theta,
+          option_Y1,
+          Math.tan(theta),
+          3,
+          LibFlg
+        );
+        z = 0;
+
+        // x =
+        //   0.5 * element["steel_h1"] * Math.sin(theta) +
+        //   element["steel_w1"] +
+        //   element["steel_w2"] -
+        //   0.5 * element["steel_b3"] * Math.cos(theta) +
+        //   (element["steel_b3"] + 2 * st3_sideLen) / 2 -
+        //   element["steel_w5"];
+        // y =
+        //   Math.tan(theta) *
+        //     (element["steel_w1"] -
+        //       0.5 * element["steel_h1"] * Math.sin(theta) -
+        //       0.5 * element["steel_b3"] * Math.cos(theta)) -
+        //   element["steel_h1"] * Math.cos(theta) -
+        //   element["steel_h3"] +
+        //   0.5 * element["steel_b3"] * Math.sin(theta);
         z = 0;
 
         list.vertice.push(new THREE.Vector3(0, 0, 0));
@@ -1273,7 +1357,8 @@ export class SetBoxService {
     theta: number = 0,
     fai_1: number = 0,
     fai_2: number = 0,
-    st_shape
+    st_shape,
+    PIflag
   ) {
     let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
     let x = 0,
@@ -1285,6 +1370,7 @@ export class SetBoxService {
     let st2_sideLen = st_shape.st2_sideLen;
     let st3_btLen = st_shape.st3_btLen;
     let st3_upLen = st_shape.st3_upLen;
+    let st3_sideLen = st_shape.st3_sideLen;
 
     let LibFlg = true;
 
@@ -1304,7 +1390,22 @@ export class SetBoxService {
           0.5 * st3_btLen -
           element["lib_w4"] * (element["lib_n4"] - 1)) +
       element["lib_w4"] * co -
-      0.5 * element["lib_b4"] * Math.cos(theta);
+      0.5 * element["lib_b4"];
+    if (PIflag) {
+      lib4_width =
+        element["steel_b4"] -
+        element["steel_w4"] -
+        0.5 * element["steel_b2"] -
+        element["lib_w4"] * element["lib_n4"] +
+        element["lib_w4"] * co -
+        0.5 * element["lib_b4"];
+    }
+    let lib5_width =
+      element["steel_w5"] -
+      0.5 * element["steel_b3"] -
+      element["lib_w5"] * element["lib_n5"] +
+      element["lib_w5"] * co +
+      0.5 * element["lib_b5"];
 
     let lib2_height =
       0.5 *
@@ -1320,20 +1421,6 @@ export class SetBoxService {
 
     switch (no) {
       case 1:
-        // x =
-        //   element["steel_w1"] +
-        //   0.5 * element["steel_h1"] * Math.sin(theta) +
-        //   0.5 * st2_upLen * Math.cos(theta) +
-        //   lib1_width;
-
-        // y =
-        //   Math.tan(theta) *
-        //     (element["steel_w1"] -
-        //       0.5 * element["steel_h1"] * Math.sin(theta) +
-        //       0.5 * st2_upLen * Math.cos(theta)) -
-        //   element["steel_h1"] * Math.cos(theta) +
-        //   Math.tan(theta) * lib1_width;
-
         x = this.drawPosition(
           element,
           st_shape,
@@ -1524,35 +1611,40 @@ export class SetBoxService {
 
         break;
 
-      // case 5:
-      //   x =
-      //     0.5 * element["steel_h1"] * Math.sin(theta) +
-      //     element["steel_w1"] +
-      //     element["steel_w2"] -
-      //     0.5 * element["steel_b3"] * Math.cos(theta) +
-      //     (element["steel_b3"] + 2 * tan2) / 2 -
-      //     element["steel_w5"];
-      //   y =
-      //     Math.tan(theta) *
-      //       (element["steel_w1"] -
-      //         0.5 * element["steel_h1"] * Math.sin(theta) -
-      //         0.5 * element["steel_b3"] * Math.cos(theta)) -
-      //     element["steel_h1"] * Math.cos(theta) -
-      //     element["steel_h3"] +
-      //     0.5 * element["steel_b3"] * Math.sin(theta);
-      //   z = 0;
+      case 5:
+        if (PIflag) {
+          x_remain = st3_sideLen;
+          y_remain =
+            -element["steel_h3"] +
+            0.5 * st3_upLen * Math.sin(theta) +
+            element["lib_h5"];
 
-      //   list.vertice.push(new THREE.Vector3(0, 0, 0));
-      //   list.vertice.push(new THREE.Vector3(element["steel_b5"], 0, 0));
-      //   list.vertice.push(
-      //     new THREE.Vector3(element["steel_b5"], -element["steel_h5"], 0)
-      //   );
-      //   list.vertice.push(new THREE.Vector3(0, -element["steel_h5"], 0));
-      //   list.position = new THREE.Vector3(x, y, z);
+          x =
+            element["steel_w1"] +
+            element["steel_w2"] -
+            0.5 * element["steel_h1"] * Math.sin(theta) -
+            0.5 * st3_upLen * Math.cos(theta) +
+            x_remain -
+            lib5_width;
+          y =
+            Math.tan(theta) *
+              (element["steel_w1"] +
+                element["steel_w2"] -
+                0.5 * element["steel_h1"] * Math.sin(theta) -
+                0.5 * st3_upLen * Math.cos(theta)) -
+            element["steel_h1"] * Math.cos(theta) +
+            y_remain;
+          z = 0;
 
-      //   break;
-
-      // w2とw3の値によって分岐. w2 < w3, w2 === w3, w2 > w3
+          list.vertice.push(new THREE.Vector3(0, 0, 0));
+          list.vertice.push(new THREE.Vector3(element["lib_b5"], 0, 0));
+          list.vertice.push(
+            new THREE.Vector3(element["lib_b5"], -element["lib_h5"], 0)
+          );
+          list.vertice.push(new THREE.Vector3(0, -element["lib_h5"], 0));
+          list.position = new THREE.Vector3(x, y, z);
+        }
+        break;
     }
     return list;
   }
