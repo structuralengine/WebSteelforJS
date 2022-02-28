@@ -323,8 +323,8 @@ export class CalcSafetyTorsionalMomentService {
     if (sectionM.shapeName === 'Box') {
       // 頂点座標を再取得してparamを計算
       vertices = this.param.getVertices_fixed(sectionM, lambda_list);
-      // centroid = this.param.getCentroid(vertices);
-      param = this.param.getSectionParam(vertices/* , centroid */);
+      centroid = this.param.getCentroid(vertices);
+      param = this.param.getSectionParam(vertices, centroid);
     }
     const yu = centroid.y;
     const Zzu = param['Ix'] / yu;
@@ -364,12 +364,12 @@ export class CalcSafetyTorsionalMomentService {
 
     // 5.4.2 設計限界値の算定
     // 軸方向圧縮耐力
-    // console.log('Lz =', Lz, ', Ly =', Ly, ', rx =', rx, ', ry =', ry);
     const Lzrz = Lz / rx;
     const Lyry = Ly / ry;
     for (const flange of [compress, tension]) {
       const key: string = (flange === compress) ? '_compress': '_tension'; 
       // rho_bg(rho_bg_N)の計算
+      // minusは引張、plusは圧縮
       const lambda: number = (Mxd > Myd)
                           ? 1 / Math.PI * (flange.fsy.fsyk / E)**0.5 * Lzrz
                           : 1 / Math.PI * (flange.fsy.fsyk / E)**0.5 * Lyry;
@@ -389,10 +389,14 @@ export class CalcSafetyTorsionalMomentService {
       // 幅厚比の照査で完了しているため省略.
       const rb = (key === '_compress') ? rb_C : rb_T;
       const fsy = flange.fsy.fsyk / rs;
-      const Nud_minus = rho_bg_Nminus * 1.0/*6ページで計算する変数*/ * A * fsy / rb_T / 1000;
-      const Nud_plus = rho_bg_Nplus * result['rho_bl' + key] * A * fsy / rb_C / 1000;
+      const rho_bl_minus: number = 1.0;
+      const rho_bl_plus = result['rho_bl' + key];
+      const Nud_minus = rho_bg_Nminus * rho_bl_minus * A * fsy / rb_T / 1000;
+      const Nud_plus = rho_bg_Nplus * rho_bl_plus * A * fsy / rb_C / 1000;
 
     }
+
+    // 設計曲げ圧縮耐力（z軸(x軸)まわり）
 
     // (1) 圧縮側
     const rho_bg: number = 1.0;
@@ -573,7 +577,16 @@ export class CalcSafetyTorsionalMomentService {
     const eta = (0.85 - 0.15*psi) * k**0.5 / 1.4;
     const ko = 4.0;
     const Rr = 1 / eta * 280 / 22 * ( (12*(1-nu**2)) / (Math.PI**2*ko) * fsy / E )**0.5;
-    const rho_bl = 0.49 / Math.max(0.7, Rr)**2;
+    let rho_bl: number;
+    if (true) {
+      rho_bl = 0.49 / Math.max(0.7, Rr)**2;
+    } else {
+      if (0.5 < Rr && Rr <= 1.0) {
+        rho_bl = 1.5 - Math.max(0.5, Rr);
+      } else {
+        rho_bl = 0.5 / Rr**2;
+      }
+    }
 
     let bto = 16;
     if ( true && sigma1 > 0 && sigma2 > 0 ) {
