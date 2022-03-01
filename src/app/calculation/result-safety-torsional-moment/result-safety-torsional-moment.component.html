@@ -448,7 +448,7 @@
 
         <!-- 鋼材のパラメータ -->
         <ng-container>
-        <!-- 上フランジの総断面積 -->
+        <!-- 引張フランジの総断面積 -->
         <tr>
           <th class="cell_name2">Afgu</th>
           <th class="cell_name3">(mm<sup>2</sup>)</th>
@@ -457,7 +457,7 @@
               {{column.Afgu.value}}</td>
           </ng-container>
         </tr>
-        <!-- 上フランジの有効断面積 -->
+        <!-- 引張フランジの有効断面積 -->
         <tr>
           <th class="cell_name2">Afnu</th>
           <th class="cell_name3">(mm<sup>2</sup>)</th>
@@ -466,7 +466,7 @@
               {{column.Afnu.value}}</td>
           </ng-container>
         </tr>
-        <!-- 下フランジの総断面積 -->
+        <!-- 圧縮フランジの総断面積 -->
         <tr>
           <th class="cell_name2">Afgl</th>
           <th class="cell_name3">(mm<sup>2</sup>)</th>
@@ -475,7 +475,7 @@
               {{column.Afgl.value}}</td>
           </ng-container>
         </tr>
-        <!-- 下フランジの有効断面積 -->
+        <!-- 圧縮フランジの有効断面積 -->
         <tr>
           <th class="cell_name2">Afnl</th>
           <th class="cell_name3">(mm<sup>2</sup>)</th>
@@ -531,10 +531,10 @@
         </tr>
         </ng-container>
 
-        <!-- タイトル（上フランジ（片縁支持版）） -->
+        <!-- タイトル（引張フランジ（片縁支持版）） -->
         <ng-container>
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2">上フランジ（片縁支持版）</th>
+          <th colspan="12" class="cell_name1 g-bottom2">引張フランジ（片縁支持版）</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
               {{column.empty.value}}</td>
@@ -631,10 +631,10 @@
         </tr>
         </ng-container>
 
-        <!-- タイトル（上フランジ（両縁支持版or補剛板）） -->
+        <!-- タイトル（引張フランジ（両縁支持版or補剛板）） -->
         <ng-container>
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2">上フランジ（両縁支持版or補剛板）</th>
+          <th colspan="12" class="cell_name1 g-bottom2">引張フランジ（両縁支持版or補剛板）</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
               {{column.empty.value}}</td>
@@ -887,10 +887,10 @@
           </ng-container>
         </tr>
 
-        <!-- タイトル（下フランジ（片縁支持版）） -->
+        <!-- タイトル（圧縮フランジ（片縁支持版）） -->
         <ng-container>
           <tr>
-            <th colspan="12" class="cell_name1 g-bottom2">下フランジ（片縁支持版）</th>
+            <th colspan="12" class="cell_name1 g-bottom2">圧縮フランジ（片縁支持版）</th>
             <!-- <ng-container *ngFor="let column of pages.columns; index as c">
               <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
                 {{column.empty.value}}</td>
@@ -987,10 +987,10 @@
           </tr>
         </ng-container>
   
-        <!-- タイトル（下フランジ（両縁支持版or補剛板）） -->
+        <!-- タイトル（圧縮フランジ（両縁支持版or補剛板）） -->
         <ng-container>
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2">下フランジ（両縁支持版or補剛板）</th>
+          <th colspan="12" class="cell_name1 g-bottom2">圧縮フランジ（両縁支持版or補剛板）</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
               {{column.empty.value}}</td>
@@ -1095,10 +1095,10 @@
         </tr>
         </ng-container>
 
-        <!-- タイトル（縦リブ（上フランジ側）） -->
+        <!-- タイトル（縦リブ（引張フランジ側）） -->
         <ng-container>
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2">縦リブ（上フランジ側）</th>
+          <th colspan="12" class="cell_name1 g-bottom2">縦リブ（引張フランジ側）</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
               {{column.empty.value}}</td>
@@ -1164,10 +1164,10 @@
         </tr>
         </ng-container>
 
-        <!-- タイトル（縦リブ（下フランジ側）） -->
+        <!-- タイトル（縦リブ（圧縮フランジ側）） -->
         <ng-container>
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2">縦リブ（下フランジ側）</th>
+          <th colspan="12" class="cell_name1 g-bottom2">縦リブ（圧縮フランジ側）</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-bottom2 g-left2">
               {{column.empty.value}}</td>
@@ -1425,9 +1425,9 @@
               {{column.gamma_i.value}}</td>
           </ng-container>
         </tr>
-        <!-- 上フランジ上縁、ratio -->
+        <!-- 引張フランジ上縁、ratio -->
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2 left">上フランジ上縁の照査結果 ( = γi・(Mxd/Muxd+Myd/Muyd))</th>
+          <th colspan="12" class="cell_name1 g-bottom2 left">引張フランジ外縁の照査結果 ( = γi・(Mxd/Muxd+Myd/Muyd))</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-left2">
               {{column.empty.value}}</td>
@@ -1440,9 +1440,9 @@
               {{column.ratio_M_compress.value}}</td>
           </ng-container>
         </tr>
-        <!-- 下フランジ下縁、ratio -->
+        <!-- 圧縮フランジ下縁、ratio -->
         <tr>
-          <th colspan="12" class="cell_name1 g-bottom2 left">下フランジ下縁の照査結果 ( = γi・(Mxd/Muxd+Myd/Muyd+Nd/Nud))</th>
+          <th colspan="12" class="cell_name1 g-bottom2 left">圧縮フランジ外縁の照査結果 ( = γi・(Mxd/Muxd+Myd/Muyd+Nd/Nud))</th>
           <!-- <ng-container *ngFor="let column of pages.columns; index as c">
             <td colspan="2" class="{{column.empty.alien}} g-left2">
               {{column.empty.value}}</td>
@@ -1480,8 +1480,8 @@
           <th class="cell_name2">Mtd</th>
           <th class="cell_name3">(kN・m)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.Mtd.alien}} g-left2">
-              {{column.Mtd.value}}</td>
+            <td colspan="2" class="{{column.Mt.alien}} g-left2">
+              {{column.Mt.value}}</td>
           </ng-container>
         </tr>
         <!-- 設計せん断耐力 -->
@@ -1498,8 +1498,8 @@
           <th class="cell_name2">Mtud</th>
           <th class="cell_name3">(kN・m)</th>
           <ng-container *ngFor="let column of pages.columns; index as c">
-            <td colspan="2" class="{{column.Mtud.alien}} g-left2">
-              {{column.Mtud.value}}</td>
+            <td colspan="2" class="{{column.Mtuyd.alien}} g-left2">
+              {{column.Mtuyd.value}}</td>
           </ng-container>
         </tr>
         <!-- せん断力に対する有効断面積 -->
@@ -1659,8 +1659,8 @@
             <th class="cell_name2">Mtd</th>
             <th class="cell_name3">(kN・m)</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.Mtd.alien}} g-left2">
-                {{column.Mtd.value}}</td>
+              <td colspan="2" class="{{column.Mt.alien}} g-left2">
+                {{column.Mt.value}}</td>
             </ng-container>
           </tr>
           <!-- 設計曲げ圧縮耐力（x軸周り） -->
@@ -1722,8 +1722,8 @@
             <th class="cell_name2">Mtud</th>
             <th class="cell_name3">(kN・m)</th>
             <ng-container *ngFor="let column of pages.columns; index as c">
-              <td colspan="2" class="{{column.Mtud.alien}} g-left2">
-                {{column.Mtud.value}}</td>
+              <td colspan="2" class="{{column.Mtuyd.alien}} g-left2">
+                {{column.Mtuyd.value}}</td>
             </ng-container>
           </tr>
           <!-- 軸方向力に対する有効断面積 -->
@@ -1792,7 +1792,7 @@
                 {{column.ratio_MV_web_u.value}}</td>
             </ng-container>
           </tr>
-          <!-- 下フランジ下縁、ratio -->
+          <!-- 圧縮フランジ下縁、ratio -->
           <tr>
             <th colspan="12" class="cell_name1 g-bottom2 left">腹板下縁の照査結果 ( = (γi/1.1)<sup>2</sup>・((Mxd/Muxd+Myd/Muyd+Nd/Nud)<sup>2</sup>+(Vd/Vyd+Mtd/Mtud)<sup>2</sup>)</th>
             <!-- <ng-container *ngFor="let column of pages.columns; index as c">

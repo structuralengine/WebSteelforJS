@@ -311,6 +311,10 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       bto_tension: { alien: "center", value: "-" },
       chi_wt_bto_tension: { alien: "center", value: "-" },
       
+      bt_compress: { alien: "center", value: "-" },
+      bto_compress: { alien: "center", value: "-" },
+      chi_wt_bto_compress: { alien: "center", value: "-" },
+
       bt: { alien: "center", value: "-" },
       bto: { alien: "center", value: "-" },
       chi_wt_bto: { alien: "center", value: "-" },
@@ -335,12 +339,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
 
       Mxd: { alien: "center", value: "-" },
       Myd: { alien: "center", value: "-" },
-      // Nd: { alien: "center", value: "-" },
       Mucxd: { alien: "center", value: "-" },
       Mutxd: { alien: "center", value: "-" },
       Mucyd: { alien: "center", value: "-" },
       Mutyd: { alien: "center", value: "-" },
+      // Nud: { alien: "center", value: "-" },
       Nud: { alien: "center", value: "-" },
+      Nuod: { alien: "center", value: "-" },
+      Nuod2: { alien: "center", value: "-" },
       An: { alien: "center", value: "-" },
       rho_bg_culc: { alien: "center", value: "-" },
       lambda_e: { alien: "center", value: "-" },
@@ -354,7 +360,8 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       // Vd: { alien: "center", value: "-" },
       Mtd: { alien: "center", value: "-" },
       Vyd: { alien: "center", value: "-" },
-      Mtud: { alien: "center", value: "-" },
+      Mtuyd: { alien: "center", value: "-" },
+      Mtuzd: { alien: "center", value: "-" },
       // Aw: { alien: "center", value: "-" },
       At: { alien: "center", value: "-" },
       // gamma_b1: { alien: "center", value: "-" },
@@ -465,6 +472,18 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("bt" in re) {
       result.bt = { alien: "right", value: re.bt.toFixed(3) };
     }
+    if ("bt_compress" in re) {
+      result.bt_compress = { alien: "right", value: re.bt_compress.toFixed(3) };
+    }
+    if ("bt_tension" in re) {
+      result.bt_tension = { alien: "right", value: re.bt_tension.toFixed(3) };
+    }
+    if ("bto_compress" in re) {
+      result.bto_compress = { alien: "right", value: re.bto_compress.toFixed(3) };
+    }
+    if ("bto_tension" in re) {
+      result.bto_tension = { alien: "right", value: re.bto_tension.toFixed(3) };
+    }
     if ("bto" in re) {
       result.bto = { alien: "right", value: re.bto.toFixed(3) };
     }
@@ -547,6 +566,12 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("Nud" in re) {
       result.Nud = { alien: "right", value: re.Nud.toFixed(1) };
     }
+    if ("Nuod" in re) {
+      result.Nuod = { alien: "right", value: re.Nuod.toFixed(1) };
+    }
+    if ("Nuod2" in re) {
+      result.Nuod2 = { alien: "right", value: re.Nuod2.toFixed(1) };
+    }
     if ("An" in re) {
       result.An = { alien: "right", value: re.An.toFixed(0) };
     }
@@ -584,8 +609,11 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("Vyd" in re) {
       result.Vyd = { alien: "right", value: re.Vyd.toFixed(1) };
     }
-    if ("Mtud" in re) {
-      result.Mtud = { alien: "right", value: re.Mtud.toFixed(1) };
+    if ("Mtuyd" in re) {
+      result.Mtuyd = { alien: "right", value: re.Mtuyd.toFixed(1) };
+    }
+    if ("Mtuzd" in re) {
+      result.Mtuzd = { alien: "right", value: re.Mtuzd.toFixed(1) };
     }
     /*if ("Aw" in re) {
       result.Aw = { alien: "right", value: re.Aw.toFixed(3) };
