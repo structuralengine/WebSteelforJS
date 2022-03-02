@@ -207,14 +207,14 @@ export class CalcSafetyTorsionalMomentService {
     if (Vd === null) {
       Vd = 0;
     }
-    Vd = Math.abs(Vd);
-    result['Vd'] = Vd;
+    // Vd = Math.abs(Vd);
+    result['Vd'] = Math.abs(Vd);;
 
     let tension: any;
     let compress: any;
     let shear1: any;
     let shear2: any;
-    // 部材の整理 I型のみの対応
+    // 部材の整理 I型, Box型のみの対応
     if (sectionM.shapeName === 'I')  {
       if (force.side.includes('下側')) {
         tension = sectionM.steels['3'];
@@ -366,7 +366,7 @@ export class CalcSafetyTorsionalMomentService {
     // 軸方向圧縮耐力
     const Lzrz = Lz / rx;
     const Lyry = Ly / ry;
-    for (const flange of [compress, tension]) {
+    /* for (const flange of [compress, tension]) {
       const key: string = (flange === compress) ? '_compress': '_tension'; 
       // rho_bg(rho_bg_N)の計算
       // minusは引張、plusは圧縮
@@ -398,7 +398,34 @@ export class CalcSafetyTorsionalMomentService {
       result['Nuod'] = Nud_plus;
       result['Nuod2'] = Noud2;
 
+    } */
+    // rho_bg(rho_bg_N)の計算
+    // minusは引張、plusは圧縮
+    const lambda: number = (Mxd > Myd)
+                         ? 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lzrz
+                         : 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lyry;
+    let rho_bg_Nplus: number;
+    if (lambda <= 0.1) {
+      rho_bg_Nplus = 1.0;
+    } else if (0.1 < lambda && lambda <= 2**0.5) {
+      rho_bg_Nplus = 1.0 - 0.53 * (lambda - 0.1);
+    } else {
+      rho_bg_Nplus = 1.7 / (2.8 * lambda ** 2);
     }
+    let rho_bg_Nminus: number = 1.0;
+    result['rho_bg_Nplus'] = rho_bg_Nplus;
+    result['rho_bg_Nminus'] = rho_bg_Nminus;
+    // rho_bl(rho_bl_N)の計算は、
+    // 幅厚比の照査で完了しているため省略.
+    const rho_bl_minus: number = 1.0;
+    const rho_bl_plus = result['rho_bl0'];
+    const Nud_minus = rho_bg_Nminus * rho_bl_minus * A * (tension.fsy.fsyk / rs) / rb_T / 1000;
+    const Nud_plus = rho_bg_Nplus * rho_bl_plus * A * (compress.fsy.fsyk / rs) / rb_C / 1000;
+    const Noud2 = rho_bg_Nplus * rho_bl_plus * A * (compress.fsy.fsyk / rs) / rb_C / 1000;
+    result['Nud'] = Nud_minus;
+    result['Nuod'] = Nud_plus;
+    result['Nuod2'] = Noud2;
+
 
     // 設計曲げ圧縮耐力（z軸(x軸)まわり）
     const alpha: number = 22/12;
@@ -415,6 +442,7 @@ export class CalcSafetyTorsionalMomentService {
       F = 1.28 * (3*alpha+beta) ** 0.5 * (560/1050) * 0.5
     }
     const lambda_e: number = 1 / Math.PI * (235 / E)**0.5 * (F * 1050 / 560);
+    result['lambda_e'] = lambda_e;
     let rho_bg_culc: number;
     if (lambda_e <= 0.1) {
       rho_bg_culc = 1.0;
@@ -497,7 +525,6 @@ export class CalcSafetyTorsionalMomentService {
     result['Mucyd'] = 0;
 
     // 設計曲げ引張耐力（z軸(x軸)まわり）
-
     // (2) 引張側
     const fsyk_tension = tension['fsy']['fsyk'];
     const fsyd_tension: number = fsyk_tension / rs;
@@ -545,7 +572,7 @@ export class CalcSafetyTorsionalMomentService {
     const fsvyk_web: number = shear1['fsy']['fsvyk'];
     const fsvyd = fsvyk_web / rb_S;
     result['fsvyk_web'] = fsvyk_web;
-    const Vyd: number = Aw * fsvyd / rs / 1000;
+    const Vyd: number = Aw * 133.3/* fsvyd */ / rs / 1000;
     result['Vyd'] = Vyd;
 
     // 設計ねじり耐力（x軸廻り）
@@ -553,22 +580,30 @@ export class CalcSafetyTorsionalMomentService {
     const At = (tension['steel_h']/2 + shear1['steel_h'] + compress['steel_h']/2)
              * (shear1['steel_w'] + shear1['steel_b']);
     result['At'] = At;
-    const Mtuyd = 2 * At * shear1['steel_b'] * fsvyd / rb_T / 1000 / 1000;
-    const Mtuzd = 2 * At * (tension['steel_h'] / 2 + compress['steel_h'] / 2) * fsvyd / rb_T / 1000 / 1000;
+    const Mtuyd = 2 * At * shear1['steel_b'] * 133.3/* fsvyd */ / rb_T / 1000 / 1000;
+    const Mtuzd = 2 * At * (tension['steel_h'] / 2 + compress['steel_h'] / 2) * 133.3/* fsvyd */ / rb_T / 1000 / 1000;
     result['Mtuyd'] = Mtuyd;
     result['Mtuzd'] = Mtuzd;
     
     // 照査
-    const ratio_M_compress = ri * Mxd / Mutd1;
-    const ratio_M_tension = ri * Mxd / Mutd1;
+    const ratio_M_compress = ri * ( Mxd / Mucd1 );
+    const ratio_M_tension = ri * ( Mxd / Mutd1 + Nd / Nud_minus );
     result['ratio_M_compress'] = ratio_M_compress;
     result['ratio_M_tension'] = ratio_M_tension;
     const ratio_VT_web = ri * (Math.abs(Vd / Vyd) + Math.abs(Mt / Mtuyd));
     result['ratio_VT_web'] = ratio_VT_web;
-    const ratio_MV_web_u = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd)**2 );
-    const ratio_MV_web_l = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd)**2 );
+    const ratio_MV_web_u = (ri / 1.1)**2 * ( (Md / Mud)**2 + (Vd / Vyd + Mt / Mtuzd)**2 );
+    const ratio_MV_web_l = (ri / 1.1)**2 * ( (Md / Mud + Nd / Nud_minus)**2 + (Vd / Vyd + Mt / Mtuzd)**2 );
     result['ratio_MV_web_u'] = ratio_MV_web_u;
     result['ratio_MV_web_l'] = ratio_MV_web_l;
+    const case1 = (Nd > 0)
+                ? ( (ri/1.1)**2 ) * ((         Nd / Nud_minus + Math.abs(Md / Mutwd))**2 + ((Math.abs(Vd / Vyd) + Math.abs(Mt / Mtuzd))**2))
+                : ( (ri/1.1)**2 ) * ((Math.abs(Nd / Nud_plus) + Math.abs(Md / Mucwd))**2 + ((Math.abs(Vd / Vyd) + Math.abs(Mt / Mtuzd))**2));
+    const case2 = (Nd > 0)
+                ? ( (ri/1.1)**2 ) * ((         Nd / Nud_minus - Math.abs(Md / Mucwd))**2 + ((Math.abs(Vd / Vyd) + Math.abs(Mt / Mtuzd))**2))
+                : ( (ri/1.1)**2 ) * ((Math.abs(Nd / Nud_plus) - Math.abs(Md / Mutwd))**2 + ((Math.abs(Vd / Vyd) + Math.abs(Mt / Mtuzd))**2));
+    const ratio_MV_web = Math.max(case1, case2)
+    result['ratio_MV_web'] = ratio_MV_web;
 
     return result;
   }
@@ -599,22 +634,22 @@ export class CalcSafetyTorsionalMomentService {
     for (const key of Object.keys(bto_com)) {
       result[key + '_compress'] = bto_com[key];
     }
-    let kai: any;
-    let kai_bto: any;
+    let chi: any;
+    let chi_bto: any;
     if( result['bt_compress'] < result['bto_compress'] ) {
-      kai = '---';
-      kai_bto = '---';
+      chi = '---';
+      chi_bto = '---';
     } else {
       if (true) {
-        kai = 1.2;
-        kai_bto = kai * result['bto_compress'];
+        chi = 1.2;
+        chi_bto = chi * result['bto_compress'];
       } else {
-        kai = 1.7;
-        kai_bto = kai * result['bto_compress'];
+        chi = 1.7;
+        chi_bto = chi * result['bto_compress'];
       }
     }
-    result['kai_compress'] = kai;
-    result['kai_bto_compress'] = kai_bto;
+    result['chi_compress'] = chi;
+    result['chi_bto_compress'] = chi_bto;
 
     // 下フランジ（引張側）
     const bto_ten = this.calcBto_flange(tension, shear1, [sigmasigma3, sigmasigma4]);
@@ -622,19 +657,19 @@ export class CalcSafetyTorsionalMomentService {
       result[key + '_tension'] = bto_ten[key];
     }
     if( result['bt_tension'] < result['bto_tension'] ) {
-      kai = '---';
-      kai_bto = '---';
+      chi = '---';
+      chi_bto = '---';
     } else {
       if (true) {
-        kai = 1.2
-        kai_bto = kai * result['bto_tension'];
+        chi = 1.2
+        chi_bto = chi * result['bto_tension'];
       } else {
-        kai = 1.7
-        kai_bto = kai * result['bto_tension'];
+        chi = 1.7
+        chi_bto = chi * result['bto_tension'];
       }
     }
-    result['kai_tension'] = kai;
-    result['kai_bto_tension'] = kai_bto;
+    result['chi_tension'] = chi;
+    result['chi_bto_tension'] = chi_bto;
 
     // 腹板（せん断）
     const d: number = tension['steel_h'] + shear1['steel_h'] + compress['steel_h']; 
@@ -723,7 +758,7 @@ export class CalcSafetyTorsionalMomentService {
     const Dw: number = shear1.steel_h;
     const tw: number = shear1.steel_b;
     const Dt: number = Dw / tw;
-    result['Dt'] = Dt;
+    result['dt'] = Dt;
 
     let Dto: number;
     const element_no = num; // SM400;
@@ -769,7 +804,7 @@ export class CalcSafetyTorsionalMomentService {
         }
       }
     }
-    result['Dto'] = Dto;
+    result['dto'] = Dto;
     const dDw: number = d / Dw;
     
     let Ax40;

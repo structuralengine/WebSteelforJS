@@ -297,24 +297,19 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       fcd: { alien: "center", value: "-" },
       fsyk_tension: { alien: "center", value: "-" },
       fsyk_compress: { alien: "center", value: "-" },
+      fsyk_shear: { alien: "center", value: "-" },
       fsvyk_web: { alien: "center", value: "-" },
 
+      ////////// 断面力 //////////
       Md: { alien: "center", value: "-" },
       Nd: { alien: "center", value: "-" },
       Vd: { alien: "center", value: "-" },
-      Mt: { alien: "center", value: "-" },
+      Mtd: { alien: "center", value: "-" },
 
       // ipu_cu: { alien: "center", value: "-" },
       // ipu_s: { alien: "center", value: "-" },
       // x: { alien: "center", value: "-" },
-      bt_tension: { alien: "center", value: "-" },
-      bto_tension: { alien: "center", value: "-" },
-      chi_wt_bto_tension: { alien: "center", value: "-" },
-      
-      bt_compress: { alien: "center", value: "-" },
-      bto_compress: { alien: "center", value: "-" },
-      chi_wt_bto_compress: { alien: "center", value: "-" },
-
+      ////////// 基礎事項 //////////
       bt: { alien: "center", value: "-" },
       bto: { alien: "center", value: "-" },
       chi_wt_bto: { alien: "center", value: "-" },
@@ -325,11 +320,42 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       rho_bl: { alien: "center", value: "-" },
       bt_ratio: { alien: "center", value: "-" },
       bt_chi_wt_bt_ratio: { alien: "center", value: "-" },
-      
+
+      ////////// 引張側の幅厚比の照査 //////////
+      bt_tension: { alien: "center", value: "-" },
+      bto_tension: { alien: "center", value: "-" },
+      chi_wt_bto_tension: { alien: "center", value: "-" },
+      chi_bto_tension: { alien: "center", value: "-" },
+      chi_tension: { alien: "center", value: "-" },
+      Rcr_tension: { alien: "center", value: "-" },
+      ko_tension: { alien: "center", value: "-" },
+      rho_bl_tension: { alien: "center", value: "-" },
+      bt_ratio_tension: { alien: "center", value: "-" },
+      bt_chi_ratio_tension: { alien: "center", value: "-" },
+
+      ////////// 圧縮側の幅厚比の照査 //////////
+      bt_compress: { alien: "center", value: "-" },
+      bto_compress: { alien: "center", value: "-" },
+      chi_wt_bto_compress: { alien: "center", value: "-" },
+      chi_bto_compress: { alien: "center", value: "-" },
+      chi_compress: { alien: "center", value: "-" },
+      Rcr_compress: { alien: "center", value: "-" },
+      ko_compress: { alien: "center", value: "-" },
+      rho_bl_compress: { alien: "center", value: "-" },
+      bt_ratio_compress: { alien: "center", value: "-" },
+      bt_chi_ratio_compress: { alien: "center", value: "-" },
+
+      ////////// 腹板の幅厚比の照査 //////////
       dt_shear: { alien: "center", value: "-" },
       dto_shear: { alien: "center", value: "-" },
-      chi_wt_dto_shear: { alien: "center", value: "-" },
+      chi_dto_shear: { alien: "center", value: "-" },
+      chi_shear: { alien: "center", value: "-" },
+      Rcr_shear: { alien: "center", value: "-" },
+      kb_shear: { alien: "center", value: "-" },
+      dt_ratio_shear: { alien: "center", value: "-" },
+      dt_chi_ratio_shear: { alien: "center", value: "-" },
 
+      ////////// 縦リブ（引張圧縮側）※分ける /////////
       bsts: { alien: "center", value: "-" },
       Is: { alien: "center", value: "-" },
       bstso: { alien: "center", value: "-" },
@@ -337,13 +363,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       bsts_ratio: { alien: "center", value: "-" },
       Is_I_ratio: { alien: "center", value: "-" },
 
+      ////////// 曲げモーメントを受ける部材 //////////
       Mxd: { alien: "center", value: "-" },
       Myd: { alien: "center", value: "-" },
+      // Nd: { alien: "center", value: "-" },
       Mucxd: { alien: "center", value: "-" },
       Mutxd: { alien: "center", value: "-" },
       Mucyd: { alien: "center", value: "-" },
       Mutyd: { alien: "center", value: "-" },
-      // Nud: { alien: "center", value: "-" },
       Nud: { alien: "center", value: "-" },
       Nuod: { alien: "center", value: "-" },
       Nuod2: { alien: "center", value: "-" },
@@ -357,86 +384,40 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       ratio_M_compress: { alien: "center", value: "-" },
       ratio_M_tension: { alien: "center", value: "-" },
 
+      ////////// せん断とねじりを受ける部材 //////////
       // Vd: { alien: "center", value: "-" },
-      Mtd: { alien: "center", value: "-" },
+      // Mtd: { alien: "center", value: "-" },
       Vyd: { alien: "center", value: "-" },
-      Mtuyd: { alien: "center", value: "-" },
       Mtuzd: { alien: "center", value: "-" },
-      // Aw: { alien: "center", value: "-" },
+        // Mtuyd: { alien: "center", value: "-" },
+      Aw: { alien: "center", value: "-" },
       At: { alien: "center", value: "-" },
       // gamma_b1: { alien: "center", value: "-" },
       // gamma_i: { alien: "center", value: "-" },
       ratio_VT_web: { alien: "center", value: "-" },
 
+      ////////// 曲げとせん断を受ける部材 //////////
+      // Mxd: { alien: "center", value: "-" },
+      // Myd: { alien: "center", value: "-" },
+      // Nd: { alien: "center", value: "-" },
+      // Vd: { alien: "center", value: "-" },
+      // Mt: { alien: "center", value: "-" },
+      // Mucxd: { alien: "center", value: "-" },
+      // Mutxd: { alien: "center", value: "-" },
+      // Mucyd: { alien: "center", value: "-" },
+      // Mutyd: { alien: "center", value: "-" },
+      // Nud: { alien: "center", value: "-" },
+      // Vyd: { alien: "center", value: "-" },
+      // Mtuzd: { alien: "center", value: "-" },
+      // An: { alien: "center", value: "-" },
+      // Aw: { alien: "center", value: "-" },
+      // At: { alien: "center", value: "-" },
+      // gamma_b1: { alien: "center", value: "-" },
+      // gamma_b2: { alien: "center", value: "-" },
+      // gamma_i: { alien: "center", value: "-" },
       ratio_MV_web_u: { alien: "center", value: "-" },
       ratio_MV_web_l: { alien: "center", value: "-" },
-
-      /* deg_b: { alien: "center", value: "-" },
-      Sb: { alien: "center", value: "-" },
-      fvcd: { alien: "center", value: "-" },
-
-      Bd: { alien: "center", value: "-" },
-      pc: { alien: "center", value: "-" },
-      Bp: { alien: "center", value: "-" },
-      Mo: { alien: "center", value: "-" },
-      Vcd: { alien: "center", value: "-" },
-      Vsd: { alien: "center", value: "-" },
-      Vsd2: { alien: "center", value: "-" },
-
-      ri: { alien: "center", value: "-" },
-      Vyd_ratio: { alien: "center", value: "-" },
-
-      M_rb: { alien: "center", value: "-" },
-      // rb: { alien: "center", value: "-" },
-      Mud: { alien: "center", value: "-" },
-      Mudd: { alien: "center", value: "-" },
-      V_rbt: { alien: "center", value: "-" },
-      V_rbc: { alien: "center", value: "-" },
-      V_rbs: { alien: "center", value: "-" },
-      T_rbt: {alien:"center",value:"-"},
-      Mu: { alien: "center", value: "-" },
-      // Vyd: { alien: "center", value: "-" },
-      fwcd: { alien: "center", value: "-" },
-      Vwcd: { alien: "center", value: "-" },
-      Vwcd_ratio: { alien: "center", value: "-" },
-
-      Kt: { alien: "center", value: "-" },
-      rbt: { alien: "center", value: "-" },
-
-      Mtcud: { alien: "center", value: "-" },
-      Mtcud_Ratio: { alien: "center", value: "-" },
-      bo: { alien: "center", value: "-" },
-      do: { alien: "center", value: "-" },
-      Am: { alien: "center", value: "-" },
-      qw: { alien: "center", value: "-" },
-      ql: { alien: "center", value: "-" },
-      Mtyd: { alien: "center", value: "-" },
-      Mtu_min: { alien: "center", value: "-" },
-      sigma_nd: { alien: "center", value: "-" },
-      ftd: { alien: "center", value: "-" },
-      Bn: { alien: "center", value: "-" },
-      Bnt: { alien: "center", value: "-" },
-      Mtcd: { alien: "center", value: "-" },
-      Mtcd_Ratio: { alien: "center", value: "-" },
-      Mtcd_Result: { alien: "center", value: "-" },
-
-      Mtud1: { alien: "center", value: "-" },
-      Mtud1_Ratio: { alien: "center", value: "-" },
-      Mtud1_Result: { alien: "center", value: "-" },
-      Mtud2: { alien: "center", value: "-" },
-      Mtud2_Ratio: { alien: "center", value: "-" },
-      Mtud2_Result: { alien: "center", value: "-" },
-      Mtud3: { alien: "center", value: "-" },
-      Mtud3_Ratio: { alien: "center", value: "-" },
-      Mtud3_Result: { alien: "center", value: "-" },
-      Mtud4: { alien: "center", value: "-" },
-      Mtud4_Ratio: { alien: "center", value: "-" },
-      Mtud4_Result: { alien: "center", value: "-" }, */
-
-
-      // Mtvd: { alien: "center", value: "-" },
-      // Mtvd_Ratio: { alien: "center", value: "-" },
-      // Result: { alien: "center", value: "-" },
+      ratio_MV_web: { alien: "center", value: "-" },
     };
 
     if (re === null) {
@@ -465,24 +446,13 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.Vd = { alien: "right", value: (Math.round(re.Vd * 10) / 10).toFixed(1) };
     }
     if ("Mt" in re) {
-      result.Mt = { alien: "right", value: (Math.round(re.Mt * 10) / 10).toFixed(1) };
+      result.Mtd = { alien: "right", value: (Math.round(re.Mt * 10) / 10).toFixed(1) };
     }
 
     // 計算結果
+    // 幅厚比の照査
     if ("bt" in re) {
       result.bt = { alien: "right", value: re.bt.toFixed(3) };
-    }
-    if ("bt_compress" in re) {
-      result.bt_compress = { alien: "right", value: re.bt_compress.toFixed(3) };
-    }
-    if ("bt_tension" in re) {
-      result.bt_tension = { alien: "right", value: re.bt_tension.toFixed(3) };
-    }
-    if ("bto_compress" in re) {
-      result.bto_compress = { alien: "right", value: re.bto_compress.toFixed(3) };
-    }
-    if ("bto_tension" in re) {
-      result.bto_tension = { alien: "right", value: re.bto_tension.toFixed(3) };
     }
     if ("bto" in re) {
       result.bto = { alien: "right", value: re.bto.toFixed(3) };
@@ -509,26 +479,152 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.bt_chi_wt_bt_ratio = { alien: "right", value: re.bt_chi_wt_bt_ratio.toFixed(3) };
     }
 
-    if ("dt_shear" in re) {
-      result.dt_shear = { alien: "right", value: re.dt_shear.toFixed(1) };
-    }
-    if ("dto_shear" in re) {
-      result.dto_shear = { alien: "right", value: re.dto_shear.toFixed(1) };
-    }
-    if ("chi_wt_dto_shear" in re) {
-      result.chi_wt_dto_shear = { alien: "right", value: re.chi_wt_dto_shear.toFixed(1) };
-    }
-
+    ////////// 引張側の幅厚比の照査 //////////
     if ("bt_tension" in re) {
-      result.bt_tension = { alien: "right", value: re.bt_tension.toFixed(1) };
+      result.bt_tension = { alien: "right", value: re.bt_tension.toFixed(3) };
     }
     if ("bto_tension" in re) {
-      result.bto_tension = { alien: "right", value: re.bto_tension.toFixed(1) };
+      result.bto_tension = { alien: "right", value: re.bto_tension.toFixed(3) };
     }
-    if ("chi_wt_bto_tension" in re) {
-      result.chi_wt_bto_tension = { alien: "right", value: re.chi_wt_bto_tension.toFixed(1) };
+    if ("chi_bto_tension" in re) {
+      result.chi_bto_tension.alien = "right";
+      if (typeof (re.chi_bto_tension) === 'string') {
+        result.chi_bto_tension.value = re.chi_bto_tension;
+      } else {
+        result.chi_bto_tension.value = re.chi_bto_tension.toFixed(3);
+      }
+    }
+    if ("chi_tension" in re) {
+      result.chi_tension.alien = "right";
+      if (typeof (re.chi_tension) === 'string') {
+        result.chi_tension.value = re.chi_tension;
+      } else {
+        result.chi_tension.value = re.chi_tension.toFixed(3);
+      }
+    }
+    if ("Rcr_tension" in re) {
+      result.Rcr_tension = { alien: "right", value: re.Rcr_tension.toFixed(3) };
+    }
+    if ("ko_tension" in re) {
+      result.ko_tension = { alien: "right", value: re.ko_tension.toFixed(3) };
+    }
+    if ("rho_bl_tension" in re) {
+      result.rho_bl_tension = { alien: "right", value: re.rho_bl_tension.toFixed(3) };
+    }
+    if ("bt_tension" in re && "bto_tension" in re) {
+      result.bt_ratio_tension = { 
+        alien: "right", 
+        value: (re.bt_tension / re.bto_tension < 1.0) ? 'OK' : 'NG' 
+      };
+    }
+    if ("bt_tension" in re && "chi_bto_tension" in re) {
+      result.bt_chi_ratio_tension.alien = "right";
+      if (typeof (re.chi_bto_tension) === 'string') {
+        result.bt_chi_ratio_tension.value = re.chi_bto_tension;
+      } else {
+        if (re.bt_tension / re.chi_bto_tension < 1.0) {
+          result.bt_chi_ratio_tension.value = 'OK';
+        } else {
+          result.bt_chi_ratio_tension.value = 'NG';
+        }
+      }
     }
 
+    ////////// 圧縮側の幅厚比の照査 //////////
+    if ("bt_compress" in re) {
+      result.bt_compress = { alien: "right", value: re.bt_compress.toFixed(3) };
+    }
+    if ("bto_compress" in re) {
+      result.bto_compress = { alien: "right", value: re.bto_compress.toFixed(3) };
+    }
+    if ("chi_bto_compress" in re) {
+      result.chi_bto_compress.alien = "right";
+      if (typeof (re.chi_bto_compress) === 'string') {
+        result.chi_bto_compress.value = re.chi_bto_compress;
+      } else {
+        result.chi_bto_compress.value = re.chi_bto_compress.toFixed(3);
+      }
+    }
+    if ("chi_compress" in re) {
+      result.chi_compress.alien = "right";
+      if (typeof (re.chi_compress) === 'string') {
+        result.chi_compress.value = re.chi_compress;
+      } else {
+        result.chi_compress.value = re.chi_compress.toFixed(3);
+      }
+    }
+    if ("Rcr_compress" in re) {
+      result.Rcr_compress = { alien: "right", value: re.Rcr_compress.toFixed(3) };
+    }
+    if ("ko_compress" in re) {
+      result.ko_compress = { alien: "right", value: re.ko_compress.toFixed(3) };
+    }
+    if ("rho_bl_compress" in re) {
+      result.rho_bl_compress = { alien: "right", value: re.rho_bl_compress.toFixed(3) };
+    }
+    if ("bt_compress" in re && "bto_compress" in re) {
+      result.bt_ratio_compress = { 
+        alien: "right", 
+        value: (re.bt_compress / re.bto_compress < 1.0) ? 'OK' : 'NG' 
+      };
+    }
+    if ("bt_compress" in re && "chi_bto_compress" in re) {
+      result.bt_chi_ratio_compress.alien = "right";
+      if (typeof (re.chi_bto_compress) === 'string') {
+        result.bt_chi_ratio_compress.value = re.chi_bto_compress;
+      } else {
+        if (re.bt_compress / re.chi_bto_compress < 1.0) {
+          result.bt_chi_ratio_compress.value = 'OK';
+        } else {
+          result.bt_chi_ratio_compress.value = 'NG';
+        }
+      }
+    }
+
+    ////////// 腹板の幅厚比の照査 //////////
+    if ("dt_shear" in re) {
+      result.dt_shear = { alien: "right", value: re.dt_shear.toFixed(3) };
+    }
+    if ("dto_shear" in re) {
+      result.dto_shear = { alien: "right", value: re.dto_shear.toFixed(3) };
+    }
+    if ("chi_dto_shear" in re) {
+      result.chi_dto_shear = { alien: "right", value: re.chi_dto_shear.toFixed(1) };
+    }
+    if ("chi_shear" in re) {
+      result.chi_shear.alien = "right";
+      if (typeof (re.chi_shear) === 'string') {
+        result.chi_shear.value = re.chi_shear;
+      } else {
+        result.chi_shear.value = re.chi_shear.toFixed(2);
+      }
+    }
+    if ("Rcr_shear" in re) {
+      result.Rcr_shear = { alien: "right", value: re.Rcr_shear.toFixed(3) };
+    }
+    if ("kb_shear" in re) {
+      result.kb_shear = { alien: "right", value: re.kb_shear.toFixed(3) };
+    }
+    if ("dt_shear" in re && "dto_shear" in re) {
+      result.dt_ratio_shear = { 
+        alien: "right", 
+        value: (re.dt_shear / re.dto_shear < 1.0) ? 'OK' : 'NG' 
+      };
+    }
+    if ("dt_shear" in re && "chi_dto_shear" in re) {
+      result.dt_chi_ratio_shear.alien = "right";
+      if (typeof (re.chi_dto_shear) === 'string') {
+        result.dt_chi_ratio_shear.value = re.chi_dto_shear;
+      } else {
+        if (re.dt_shear / re.chi_dto_shear < 1.0) {
+          result.dt_chi_ratio_shear.value = 'OK';
+        } else {
+          result.dt_chi_ratio_shear.value = 'NG';
+        }
+      }
+    }
+
+    ////////// 縦リブ（引張圧縮側）の幅厚比の照査 ※分ける /////////
     if ("bsts" in re) {
       result.bsts = { alien: "right", value: re.bsts.toFixed(3) };
     }
@@ -545,12 +641,16 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.bsts_ratio = { alien: "right", value: re.bsts_ratio.toFixed(3) };
     }
 
+    ////////// 曲げモーメントを受ける部材 //////////
     if ("Mxd" in re) {
       result.Mxd = { alien: "right", value: re.Mxd.toFixed(1) };
     }
     if ("Myd" in re) {
       result.Myd = { alien: "right", value: re.Myd.toFixed(1) };
     }
+    /* if ("Nd" in re) {
+      result.Nd = { alien: "right", value: re.Nd.toFixed(1) };
+    } */
     if ("Mucxd" in re) {
       result.Mucxd = { alien: "right", value: re.Mucxd.toFixed(1) };
     }
@@ -566,12 +666,12 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("Nud" in re) {
       result.Nud = { alien: "right", value: re.Nud.toFixed(1) };
     }
-    if ("Nuod" in re) {
+    /* if ("Nuod" in re) {
       result.Nuod = { alien: "right", value: re.Nuod.toFixed(1) };
     }
     if ("Nuod2" in re) {
       result.Nuod2 = { alien: "right", value: re.Nuod2.toFixed(1) };
-    }
+    } */
     if ("An" in re) {
       result.An = { alien: "right", value: re.An.toFixed(0) };
     }
@@ -600,24 +700,25 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.ratio_M_tension = { alien: "right", value: re.ratio_M_tension.toFixed(3) };
     }
 
+    ////////// せん断とねじりを受ける部材 //////////
     /*if ("Vd" in re) {
       result.Vd = { alien: "right", value: re.Vd.toFixed(3) };
     }*/
-    if ("Mtd" in re) {
+    /* if ("Mt" in re) {
       result.Mtd = { alien: "right", value: re.Mtd.toFixed(1) };
-    }
+    } */
     if ("Vyd" in re) {
       result.Vyd = { alien: "right", value: re.Vyd.toFixed(1) };
-    }
-    if ("Mtuyd" in re) {
-      result.Mtuyd = { alien: "right", value: re.Mtuyd.toFixed(1) };
     }
     if ("Mtuzd" in re) {
       result.Mtuzd = { alien: "right", value: re.Mtuzd.toFixed(1) };
     }
-    /*if ("Aw" in re) {
+    /* if ("Mtuyd" in re) {
+      result.Mtuyd = { alien: "right", value: re.Mtuyd.toFixed(1) };
+    } */
+    if ("Aw" in re) {
       result.Aw = { alien: "right", value: re.Aw.toFixed(3) };
-    }*/
+    }
     if ("At" in re) {
       result.At = { alien: "right", value: re.At.toFixed(0) };
     }
@@ -631,11 +732,15 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.ratio_VT_web = { alien: "right", value: re.ratio_VT_web.toFixed(3) };
     }
 
+    ////////// せん断とねじりを受ける部材 //////////
     if ("ratio_MV_web_u" in re) {
       result.ratio_MV_web_u = { alien: "right", value: re.ratio_MV_web_u.toFixed(3) };
     }
     if ("ratio_MV_web_l" in re) {
       result.ratio_MV_web_l = { alien: "right", value: re.ratio_MV_web_l.toFixed(3) };
+    }
+    if ("ratio_MV_web" in re) {
+      result.ratio_MV_web = { alien: "right", value: re.ratio_MV_web.toFixed(3) };
     }
 
     return result;
