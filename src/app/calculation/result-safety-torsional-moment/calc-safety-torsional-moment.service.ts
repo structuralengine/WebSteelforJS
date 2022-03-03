@@ -230,23 +230,26 @@ export class CalcSafetyTorsionalMomentService {
         tension = sectionM.steels['4'];
         compress = sectionM.steels['1'];
         shear1   = sectionM.steels['2'];
-        shear1   = sectionM.steels['3'];
+        shear2   = sectionM.steels['3'];
       } else {
         tension = sectionM.steels['1'];
         compress = sectionM.steels['4'];
         shear1   = sectionM.steels['2'];
-        shear1   = sectionM.steels['3'];
+        shear2   = sectionM.steels['3'];
       }
 
     }
 
     const crackInfo = this.crack.getCalcData(res1.index);
 
+    // 座屈長の計算
+    const lambda_list = this.calcEffectiveWidth(sectionM, compress, tension, shear1, shear2, crackInfo.section)
+
     // 緒元の計算
     const Lz: number = this.helper.toNumber(sectionM.member.eff_len) * 1000;
     const Ly: number = this.helper.toNumber(sectionM.member.eff_len) * 1000;
 
-    // memo: 左上の外内, 右上の外内, 左下の外内, 右下の外内
+    /* // memo: 左上の外内, 右上の外内, 左下の外内, 右下の外内
     // memo: I型のときは内側がない
     const b1Lz = tension.steel_w / Lz;
     const b2Lz = (shear1.steel_w / 2) / Lz;// 本来は中立軸で分離(/2ではない)
@@ -303,9 +306,20 @@ export class CalcSafetyTorsionalMomentService {
     if (lambda3 >= 0.15*Ly) {
       lambda3 = 0.15*Ly;
     }
-    const Lz_b = 2 * lambda1 + 2 * lambda2;
-    const Ly_b = 2 * lambda3 - tf; 
-    const lambda_list: number[] = [lambda1, lambda2, lambda3];
+    const lambda_list_1: number[] = [lambda1, lambda2, lambda3]; */
+    // const Lz_b = 2 * lambda1 + 2 * lambda2;
+    const tf: number = tension.steel_h / 2 + compress.steel_h / 2
+    let Lz_b: number = 0;
+    if (sectionM.shapeName === 'I') {
+      Lz_b = lambda_list.x['lambda1'] 
+            + lambda_list.x['lambda4'];
+    } else if (sectionM.shapeName === 'Box') {
+      Lz_b = lambda_list.x['lambda1'] 
+            + lambda_list.x['lambda1'] 
+            + lambda_list.x['lambda1'] 
+            + lambda_list.x['lambda4'];
+    }
+    const Ly_b = 2 * lambda_list.y['lambda1'] - tf; 
 
     // 断面性能
     //// 総断面
@@ -320,12 +334,11 @@ export class CalcSafetyTorsionalMomentService {
     let vertices: any
     let param = {};
     let centroid: THREE.Vector3;
-    if (sectionM.shapeName === 'Box') {
       // 頂点座標を再取得してparamを計算
-      vertices = this.param.getVertices_fixed(sectionM, lambda_list);
-      centroid = this.param.getCentroid(vertices);
-      param = this.param.getSectionParam(vertices, centroid);
-    }
+    vertices = this.param.getVertices_fixed(sectionM, lambda_list);
+    centroid = this.param.getCentroid(vertices);
+    param = this.param.getSectionParam(vertices, centroid);
+
     const yu = centroid.y;
     const Zzu = param['Ix'] / yu;
     const yuw = compress['steel_h'] + centroid.y;
@@ -401,16 +414,20 @@ export class CalcSafetyTorsionalMomentService {
     } */
     // rho_bg(rho_bg_N)の計算
     // minusは引張、plusは圧縮
-    const lambda: number = (Mxd > Myd)
-                         ? 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lzrz
-                         : 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lyry;
     let rho_bg_Nplus: number;
-    if (lambda <= 0.1) {
+    if (Lzrz === 0 && Lyry === 0) {
       rho_bg_Nplus = 1.0;
-    } else if (0.1 < lambda && lambda <= 2**0.5) {
-      rho_bg_Nplus = 1.0 - 0.53 * (lambda - 0.1);
     } else {
-      rho_bg_Nplus = 1.7 / (2.8 * lambda ** 2);
+      const lambda: number = (Mxd > Myd)
+                          ? 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lzrz
+                          : 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * Lyry;
+      if (lambda <= 0.1) {
+        rho_bg_Nplus = 1.0;
+      } else if (0.1 < lambda && lambda <= 2**0.5) {
+        rho_bg_Nplus = 1.0 - 0.53 * (lambda - 0.1);
+      } else {
+        rho_bg_Nplus = 1.7 / (2.8 * lambda ** 2);
+      }
     }
     let rho_bg_Nminus: number = 1.0;
     result['rho_bg_Nplus'] = rho_bg_Nplus;
@@ -606,6 +623,146 @@ export class CalcSafetyTorsionalMomentService {
     result['ratio_MV_web'] = ratio_MV_web;
 
     return result;
+  }
+
+  // 有効幅の計算
+  private calcEffectiveWidth(section, compress, tension, shear1, shear2, sectionNo) {
+
+    const eff_len: number = this.helper.toNumber(section.member.eff_len);
+    let lambda1: number = 0;
+    let lambda2: number = 0;
+    let lambda3: number = 0;
+    let lambda4: number = 0;
+    let lambda5: number = 0;
+    let lambda6: number = 0;
+    let lambda7: number = 0;
+    let lambda8: number = 0;
+    let lambda11: number = 0;
+    if (eff_len <= 0 || eff_len == undefined) {
+      // 有効幅を考慮しない
+      switch (section.shapeName) {
+        
+        case 'I':
+          lambda1 = compress.steel_w;
+          lambda2 = 0;
+          lambda3 = 0;
+          lambda4 = compress.steel_b - lambda1;
+          lambda5 = tension.steel_w;
+          lambda6 = 0;
+          lambda7 = 0;
+          lambda8 = tension.steel_b - lambda5;
+
+          lambda11 = shear1.steel_h;
+          break
+
+        case 'Box':
+          lambda1 = compress.steel_w;
+          lambda2 = shear1.steel_w / 2; // 厳密には/2ではない. 中立軸に合わせた値
+          lambda3 = shear1.steel_w - lambda2;
+          lambda4 = compress.steel_b - (lambda1 + lambda2 + lambda3);
+          lambda5 = tension.steel_w;
+          lambda6 = shear2.steel_w / 2;
+          lambda7 = shear2.steel_w - lambda6;
+          lambda8 = tension.steel_b - (lambda5 + lambda6 + lambda7);
+          lambda11 = shear1.steel_h;
+          break
+      }
+
+      if (section.shapename === 'Box') {
+      }
+    } else {
+      // 有効幅を考慮する
+      // 緒元の計算
+      const Lz: number = eff_len * 1000;
+      const Ly: number = eff_len * 1000;
+
+      // memo: 左上の外内, 右上の外内, 左下の外内, 右下の外内
+      // memo: I型のときは内側がない
+      const b1Lz = tension.steel_w / Lz;
+      const b2Lz = (shear1.steel_w / 2) / Lz;// 本来は中立軸で分離(/2ではない)
+      const tf: number = tension.steel_h / 2 + compress.steel_h / 2
+      const b1Ly = ((shear1.steel_h + tf) / 2 ) / Ly;
+      // let lambda1: number;
+      // let lambda2: number;
+      // let lambda3: number;
+      // 部材区間によってフランジの有効幅が変化するため分岐
+      if (sectionNo === 1 || sectionNo === 5) {
+        // 式(6.2.3)を使用する
+        if (b1Lz <= 0.05) {
+          lambda1 = tension.steel_w;
+        } else {
+          lambda1 = ( 1.1 - 2 * b1Lz ) * tension.steel_w;
+        }
+        if (b2Lz <= 0.05) {
+          lambda2 = tension.steel_w;
+        } else {
+          lambda2 = ( 1.1 - 2 * b2Lz ) * shear1.steel_w / 2;
+        }
+        if (b1Ly <= 0.05) {
+          lambda11 = tension.steel_w;
+        } else {
+          lambda11 = ( 1.1 - 2 * b1Ly ) * ((shear1.steel_h + tf) / 2 );
+        }
+      } else {
+        // 式(6.2.4)を使用する
+        if (b1Lz <= 0.02) {
+          lambda1 = tension.steel_w;
+        } else {
+          lambda1 = (1.06 - 3.2 * b1Lz + 4.5 * b1Lz ** 2) * tension.steel_w;
+        }
+        if (b2Lz <= 0.02) {
+          lambda2 = tension.steel_w;
+        } else {
+          lambda2 = (1.06 - 3.2 * b2Lz + 4.5 * b2Lz ** 2) * shear1.steel_w / 2;
+        }
+        if (b1Ly <= 0.02) {
+          lambda11 = tension.steel_w;
+        } else {
+          lambda11 = (1.06 - 3.2 * b1Ly + 4.5 * b1Ly ** 2) * ((shear1.steel_h + tf) / 2 );
+        }
+      }
+      lambda1 = Math.round(lambda1);
+      if (lambda1 >= 0.15*Ly) {
+        lambda1 = 0.15*Ly;
+      }
+      lambda2 = Math.round(lambda2);
+      if (lambda2 >= 0.15*Ly) {
+        lambda2 = 0.15*Ly;
+      }
+      lambda11 = Math.round(lambda11);
+      if (lambda11 >= 0.15*Ly) {
+        lambda11 = 0.15*Ly;
+      }
+      const Lz_b = 2 * lambda1 + 2 * lambda2;
+      const Ly_b = 2 * lambda11 - tf; 
+      // const lambda_list: number[] = [lambda1, lambda2, lambda3];
+
+      // 一旦配置
+      lambda3 = lambda2;
+      lambda4 = lambda1;
+      lambda5 = lambda1;
+      lambda6 = lambda2;
+      lambda7 = lambda2;
+      lambda8 = lambda1;
+      // 一旦配置ここまで
+    }
+
+    const lambda_list = { x: {}, y: {} };
+    lambda_list.x['lambda1'] = lambda1;
+    lambda_list.x['lambda2'] = lambda2;
+    lambda_list.x['lambda3'] = lambda3;
+    lambda_list.x['lambda4'] = lambda4;
+    lambda_list.x['lambda5'] = lambda5;
+    lambda_list.x['lambda6'] = lambda6;
+    lambda_list.x['lambda7'] = lambda7;
+    lambda_list.x['lambda8'] = lambda8;
+
+    lambda_list.y['lambda1'] = lambda11;
+    lambda_list.y['lambda2'] = lambda11;
+    lambda_list.y['lambda3'] = lambda11;
+    lambda_list.y['lambda4'] = lambda11;
+
+    return lambda_list
   }
 
   // 板要素の耐荷性の照査
