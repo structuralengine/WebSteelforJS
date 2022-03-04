@@ -333,6 +333,18 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       bt_ratio_tension: { alien: "center", value: "-" },
       bt_chi_ratio_tension: { alien: "center", value: "-" },
 
+      ////////// 引張側（両縁支持板）の幅厚比の照査 //////////
+      bt_both_tension: { alien: "center", value: "-" },
+      bto_both_tension: { alien: "center", value: "-" },
+      chi_wt_bto_both_tension: { alien: "center", value: "-" },
+      chi_bto_both_tension: { alien: "center", value: "-" },
+      chi_both_tension: { alien: "center", value: "-" },
+      Rcr_both_tension: { alien: "center", value: "-" },
+      ko_both_tension: { alien: "center", value: "-" },
+      rho_bl_both_tension: { alien: "center", value: "-" },
+      bt_both_ratio_tension: { alien: "center", value: "-" },
+      bt_chi_both_ratio_tension: { alien: "center", value: "-" },
+
       ////////// 圧縮側の幅厚比の照査 //////////
       bt_compress: { alien: "center", value: "-" },
       bto_compress: { alien: "center", value: "-" },
@@ -344,6 +356,18 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       rho_bl_compress: { alien: "center", value: "-" },
       bt_ratio_compress: { alien: "center", value: "-" },
       bt_chi_ratio_compress: { alien: "center", value: "-" },
+
+      ////////// 引張側（両縁支持板）の幅厚比の照査 //////////
+      bt_both_compress: { alien: "center", value: "-" },
+      bto_both_compress: { alien: "center", value: "-" },
+      chi_wt_bto_both_compress: { alien: "center", value: "-" },
+      chi_bto_both_compress: { alien: "center", value: "-" },
+      chi_both_compress: { alien: "center", value: "-" },
+      Rcr_both_compress: { alien: "center", value: "-" },
+      ko_both_compress: { alien: "center", value: "-" },
+      rho_bl_both_compress: { alien: "center", value: "-" },
+      bt_both_ratio_compress: { alien: "center", value: "-" },
+      bt_chi_both_ratio_compress: { alien: "center", value: "-" },
 
       ////////// 腹板の幅厚比の照査 //////////
       dt_shear: { alien: "center", value: "-" },
@@ -415,6 +439,8 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       // gamma_b1: { alien: "center", value: "-" },
       // gamma_b2: { alien: "center", value: "-" },
       // gamma_i: { alien: "center", value: "-" },
+      ratio_MV_tension_u: { alien: "center", value: "-" },
+      ratio_MV_tension_l: { alien: "center", value: "-" },
       ratio_MV_web_u: { alien: "center", value: "-" },
       ratio_MV_web_l: { alien: "center", value: "-" },
       ratio_MV_web: { alien: "center", value: "-" },
@@ -530,6 +556,57 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       }
     }
 
+    ////////// 引張側（両縁支持板）の幅厚比の照査 //////////
+    if ("bt_both_tension" in re) {
+      result.bt_both_tension = { alien: "right", value: re.bt_both_tension.toFixed(3) };
+    }
+    if ("bto_both_tension" in re) {
+      result.bto_both_tension = { alien: "right", value: re.bto_both_tension.toFixed(3) };
+    }
+    if ("chi_bto_both_tension" in re) {
+      result.chi_bto_both_tension.alien = "right";
+      if (typeof (re.chi_bto_both_tension) === 'string') {
+        result.chi_bto_both_tension.value = re.chi_bto_both_tension;
+      } else {
+        result.chi_bto_both_tension.value = re.chi_bto_both_tension.toFixed(3);
+      }
+    }
+    if ("chi_both_tension" in re) {
+      result.chi_both_tension.alien = "right";
+      if (typeof (re.chi_both_tension) === 'string') {
+        result.chi_both_tension.value = re.chi_both_tension;
+      } else {
+        result.chi_both_tension.value = re.chi_both_tension.toFixed(3);
+      }
+    }
+    if ("Rcr_both_tension" in re) {
+      result.Rcr_both_tension = { alien: "right", value: re.Rcr_both_tension.toFixed(3) };
+    }
+    if ("ko_both_tension" in re) {
+      result.ko_both_tension = { alien: "right", value: re.ko_both_tension.toFixed(3) };
+    }
+    if ("rho_bl_both_tension" in re) {
+      result.rho_bl_both_tension = { alien: "right", value: re.rho_bl_both_tension.toFixed(3) };
+    }
+    if ("bt_both_tension" in re && "bto_both_tension" in re) {
+      result.bt_both_ratio_tension = { 
+        alien: "right", 
+        value: (re.bt_both_tension / re.bto_both_tension < 1.0) ? 'OK' : 'NG' 
+      };
+    }
+    if ("bt_both_tension" in re && "chi_bto_both_tension" in re) {
+      result.bt_chi_both_ratio_tension.alien = "right";
+      if (typeof (re.chi_bto_both_tension) === 'string') {
+        result.bt_chi_both_ratio_tension.value = re.chi_bto_both_tension;
+      } else {
+        if (re.bt_both_tension / re.chi_bto_both_tension < 1.0) {
+          result.bt_chi_both_ratio_tension.value = 'OK';
+        } else {
+          result.bt_chi_both_ratio_tension.value = 'NG';
+        }
+      }
+    }
+
     ////////// 圧縮側の幅厚比の照査 //////////
     if ("bt_compress" in re) {
       result.bt_compress = { alien: "right", value: re.bt_compress.toFixed(3) };
@@ -577,6 +654,57 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
           result.bt_chi_ratio_compress.value = 'OK';
         } else {
           result.bt_chi_ratio_compress.value = 'NG';
+        }
+      }
+    }
+
+    ////////// 圧縮側（両縁支持板）の幅厚比の照査 //////////
+    if ("bt_both_compress" in re) {
+      result.bt_both_compress = { alien: "right", value: re.bt_both_compress.toFixed(3) };
+    }
+    if ("bto_both_compress" in re) {
+      result.bto_both_compress = { alien: "right", value: re.bto_both_compress.toFixed(3) };
+    }
+    if ("chi_bto_both_compress" in re) {
+      result.chi_bto_both_compress.alien = "right";
+      if (typeof (re.chi_bto_both_compress) === 'string') {
+        result.chi_bto_both_compress.value = re.chi_bto_both_compress;
+      } else {
+        result.chi_bto_both_compress.value = re.chi_bto_both_compress.toFixed(3);
+      }
+    }
+    if ("chi_both_compress" in re) {
+      result.chi_both_compress.alien = "right";
+      if (typeof (re.chi_both_compress) === 'string') {
+        result.chi_both_compress.value = re.chi_both_compress;
+      } else {
+        result.chi_both_compress.value = re.chi_both_compress.toFixed(3);
+      }
+    }
+    if ("Rcr_both_compress" in re) {
+      result.Rcr_both_compress = { alien: "right", value: re.Rcr_both_compress.toFixed(3) };
+    }
+    if ("ko_both_compress" in re) {
+      result.ko_both_compress = { alien: "right", value: re.ko_both_compress.toFixed(3) };
+    }
+    if ("rho_bl_both_compress" in re) {
+      result.rho_bl_both_compress = { alien: "right", value: re.rho_bl_both_compress.toFixed(3) };
+    }
+    if ("bt_both_compress" in re && "bto_both_compress" in re) {
+      result.bt_both_ratio_compress = { 
+        alien: "right", 
+        value: (re.bt_both_compress / re.bto_both_compress < 1.0) ? 'OK' : 'NG' 
+      };
+    }
+    if ("bt_both_compress" in re && "chi_bto_both_compress" in re) {
+      result.bt_chi_both_ratio_compress.alien = "right";
+      if (typeof (re.chi_bto_both_compress) === 'string') {
+        result.bt_chi_both_ratio_compress.value = re.chi_bto_both_compress;
+      } else {
+        if (re.bt_both_compress / re.chi_bto_both_compress < 1.0) {
+          result.bt_chi_both_ratio_compress.value = 'OK';
+        } else {
+          result.bt_chi_both_ratio_compress.value = 'NG';
         }
       }
     }
@@ -733,6 +861,12 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
 
     ////////// せん断とねじりを受ける部材 //////////
+    if ("ratio_MV_tension_u" in re) {
+      result.ratio_MV_tension_u = { alien: "right", value: re.ratio_MV_tension_u.toFixed(3) };
+    }
+    if ("ratio_MV_tension_l" in re) {
+      result.ratio_MV_tension_l = { alien: "right", value: re.ratio_MV_tension_l.toFixed(3) };
+    }
     if ("ratio_MV_web_u" in re) {
       result.ratio_MV_web_u = { alien: "right", value: re.ratio_MV_web_u.toFixed(3) };
     }
