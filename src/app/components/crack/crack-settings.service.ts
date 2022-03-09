@@ -29,6 +29,9 @@ export class InputCrackSettingsService {
       g_name: null,
       p_name: null,
       section: null,
+      buckle_u: true,
+      buckle_s: true,
+      buckle_l: true,
     };
   }
 
@@ -125,6 +128,9 @@ export class InputCrackSettingsService {
       b.g_name =    column.g_name;
       b.p_name = column.p_name;
       b.section = column.section;
+      b.buckle_u = column.buckle_u;
+      b.buckle_s = column.buckle_s;
+      b.buckle_l = column.buckle_l;
       this.crack_list.push(b);
     }
   }

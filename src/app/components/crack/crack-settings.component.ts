@@ -44,7 +44,7 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
         sortable: false,
         locale: "jp",
         height: this.tableHeight().toString(),
-        width: isManual ? 390 : 500,
+        width: isManual ? 540 : 650,
         numberCell: { show: false }, // 行番号
         colModel: this.columnHeaders,
         dataModel: { data: this.table_datas[i] },
@@ -83,6 +83,13 @@ export class CrackSettingsComponent implements OnInit, OnDestroy, AfterViewInit 
     this.columnHeaders.push(
       { title: '算出点名', dataType: 'string', dataIndx: 'p_name', editable: false, frozen: true, sortable: false, width: 250, style: { 'background': '#f5f5f5' }, styleHead: { 'background': '#f5f5f5' } },
       { title: '区間No', dataType: 'integer', dataIndx: 'section', sortable: false, width: 70 },
+      {
+        title: '局部座屈', align: 'center', colModel: [
+          { title: '上側', align: 'center', dataType: 'bool', dataIndx: 'buckle_u', type: 'checkbox', sortable: false, width: 50 },
+          { title: 'せん断', align: 'center', dataType: 'bool', dataIndx: 'buckle_s', type: 'checkbox', sortable: false, width: 50 },
+          { title: '下側', align: 'center', dataType: 'bool', dataIndx: 'buckle_l', type: 'checkbox', sortable: false, width: 50 }
+        ]
+      },
       /* {
         title: '環境条件', align: 'center', colModel: [
           { title: '上側', dataType: 'integer', dataIndx: 'con_u', sortable: false, width: 60 },

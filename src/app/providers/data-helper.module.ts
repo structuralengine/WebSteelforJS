@@ -163,17 +163,17 @@ export class DataHelperModule {
       if (thickness <= material_steel[0].separate) {
         result['fsyk']  = this.toNumber(material_steel[0].fsyk);
         result['fsvyk'] = this.toNumber(material_steel[0].fsvyk);
-        result['fsuk']  = this.toNumber(material_steel[0].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[0].fsuk);
         result.id = "1";
       } else if (thickness <= material_steel[1].separate) {
         result['fsyk']  = this.toNumber(material_steel[1].fsyk);
         result['fsvyk'] = this.toNumber(material_steel[1].fsvyk);
-        result['fsuk']  = this.toNumber(material_steel[1].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[1].fsuk);
         result.id = "2";
       } else {
         result['fsyk']  = this.toNumber(material_steel[2].fsyk);
         result['fsvyk'] = this.toNumber(material_steel[2].fsvyk);
-        result['fsuk']  = this.toNumber(material_steel[2].fsvyk);
+        result['fsuk']  = this.toNumber(material_steel[2].fsuk);
         result.id = "3";
       }
     } else {

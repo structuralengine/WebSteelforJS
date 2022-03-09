@@ -241,9 +241,19 @@ export class CalcSafetyTorsionalMomentService {
     }
 
     const crackInfo = this.crack.getCalcData(res1.index);
+    let buckle_c: boolean;
+    let buckle_s: boolean = crackInfo.buckle_s;
+    let buckle_t: boolean;
+    if (force.side.includes('下側')) {
+      buckle_c = crackInfo.buckle_u;
+      buckle_t = crackInfo.buckle_l;
+    } else {
+      buckle_c = crackInfo.buckle_l;
+      buckle_t = crackInfo.buckle_u;
+    }
 
     // 座屈長の計算
-    const lambda_list = this.calcEffectiveWidth(sectionM, compress, tension, shear1, shear2, crackInfo.section)
+    const lambda_list = this.calcEffectiveWidth(sectionM, compress, tension, shear1, shear2, crackInfo)
 
     // 緒元の計算
     const Lz: number = this.helper.toNumber(sectionM.member.eff_len) * 1000;
@@ -371,6 +381,7 @@ export class CalcSafetyTorsionalMomentService {
     // (2) 下フランジ
     // (3) 腹板
     const bto_list = this.calcBtoDto( {tension, compress, shear1, shear2}, 
+                                      {buckle_c, buckle_s, buckle_t},
                                       param_sec, 
                                       param_val,
                                       sectionM.shapeName);
@@ -633,9 +644,10 @@ export class CalcSafetyTorsionalMomentService {
   }
 
   // 有効幅の計算
-  private calcEffectiveWidth(section, compress, tension, shear1, shear2, sectionNo) {
+  private calcEffectiveWidth(section, compress, tension, shear1, shear2, info) {
 
     const eff_len: number = this.helper.toNumber(section.member.eff_len);
+    const sectionNo = info.section;
     let lambda1: number = 0;
     let lambda2: number = 0;
     let lambda3: number = 0;
@@ -775,7 +787,7 @@ export class CalcSafetyTorsionalMomentService {
   }
 
   // 板要素の耐荷性の照査
-  private calcBtoDto(steels, param_sec, param_val, shapeName) {
+  private calcBtoDto(steels, buckle, param_sec, param_val, shapeName) {
     const result = {};
 
     const tension = steels.tension;
@@ -799,54 +811,36 @@ export class CalcSafetyTorsionalMomentService {
     const sigmasigma3 = sigma_N1 + sigma_My1 + sigma_Mz4;
     const sigmasigma4 = sigma_N1 + sigma_My2 + sigma_Mz4;
     const sigmasigmas = [ [sigmasigma1, sigmasigma2], [sigmasigma3, sigmasigma4] ];
+    const sigmas1 = {
+      sigma_N: sigma_N1,
+      sigma_My1: sigma_My1,
+      sigma_My2: sigma_My2,
+      sigma_Mz: sigma_Mz1,
+    }
+    const sigmas2 = {
+      sigma_N: sigma_N1,
+      sigma_My1: sigma_My1,
+      sigma_My2: sigma_My2,
+      sigma_Mz: sigma_Mz4,
+    }
 
     // 上フランジ（圧縮側）
-    const bto_com = this.calcBto_flange(compress, shear1, [sigmasigma1, sigmasigma2], shapeName);
+    const bto_com = this.calcBto_flange(compress, shear1, sigmas1, buckle.buckle_c, shapeName);
     for (const key of Object.keys(bto_com)) {
       result[key + '_compress'] = bto_com[key];
     }
-    let chi: any;
-    let chi_bto: any;
-    if( result['bt_compress'] < result['bto_compress'] ) {
-      chi = '---';
-      chi_bto = '---';
-    } else {
-      if (compress.lib_n <= 0) {
-        chi = 1.2;
-        chi_bto = chi * result['bto_compress'];
-      } else {
-        chi = 1.7;
-        chi_bto = chi * result['bto_compress'];
-      }
-    }
-    result['chi_compress'] = chi;
-    result['chi_bto_compress'] = chi_bto;
 
     // 下フランジ（引張側）
-    const bto_ten = this.calcBto_flange(tension, shear1, [sigmasigma3, sigmasigma4], shapeName);
+    const bto_ten = this.calcBto_flange(tension, shear1, sigmas2, buckle.buckle_t, shapeName);
     for (const key of Object.keys(bto_ten)) {
       result[key + '_tension'] = bto_ten[key];
     }
-    if( result['bt_tension'] < result['bto_tension'] ) {
-      chi = '---';
-      chi_bto = '---';
-    } else {
-      if (tension.lib_n <= 0) {
-        chi = 1.2
-        chi_bto = chi * result['bto_tension'];
-      } else {
-        chi = 1.7
-        chi_bto = chi * result['bto_tension'];
-      }
-    }
-    result['chi_tension'] = chi;
-    result['chi_bto_tension'] = chi_bto;
 
     // 腹板（せん断）
     const d: number = tension['steel_h'] + shear1['steel_h'] + compress['steel_h']; 
     const sigma_d: number = Math.abs(sigma_N) + Math.abs(sigma_My3) + Math.abs(sigma_Mz3);
     const tau_d: number = 0 / (shear1['steel_h'] * shear1['steel_b'])
-    const Dto = this.calcDto(d, shear1, shear2, 400, {sigma_d, tau_d});
+    const Dto = this.calcDto(d, shear1, shear2, {sigma_d, tau_d}, buckle.buckle_s);
     for (const key of Object.keys(Dto)) {
       result[key + '_shear'] = Dto[key];
     }
@@ -870,20 +864,16 @@ export class CalcSafetyTorsionalMomentService {
     return result;
   }
 
-  private calcBto_flange(element, shear, sigmasigmas, shapeName): any {
+  private calcBto_flange(element, shear, sigmas, buckle, shapeName): any {
 
     const result = {};
-
-    const sigma1 = (Math.abs(sigmasigmas[0]) > Math.abs(sigmasigmas[1])) ? sigmasigmas[0] : sigmasigmas[1];
-    const sigma2 = (sigma1 === sigmasigmas[0]) ? sigmasigmas[1] : sigmasigmas[0];
-    const psi = sigma2 / sigma1;
 
     // elementはtensionまたはcompress
     if (shapeName === 'I' || shapeName === 'Box' || shapeName === 'PI') {
       // まずは片縁支持板のb/tを計算する
       const bt = ( element.steel_w - shear.steel_b / 2 ) / element.steel_h;
       result['bt'] = bt;
-      const single = this.calcBtoParam_flange(element, shear, {sigma1, sigma2, psi}, 'single');
+      const single = this.calcBtoParam_flange(element, shear, {bt: bt, sigmas, buckle}, 'single');
       for (const key of Object.keys(single)) {
         result[key] = single[key];
       }
@@ -891,7 +881,7 @@ export class CalcSafetyTorsionalMomentService {
       if (shapeName === 'Box' || shapeName === 'PI') {
         const bt_both = ( shear.steel_w - shear.steel_b / 2 - shear.steel_b / 2 ) / element.steel_h;
         result['bt_both'] = bt_both;
-        const both = this.calcBtoParam_flange(element, shear, {sigma1, sigma2, psi}, 'both');
+        const both = this.calcBtoParam_flange(element, shear, {bt: bt_both, sigmas, buckle}, 'both');
         for (const key of Object.keys(both)) {
           result[key + '_both'] = both[key];
         }
@@ -911,99 +901,185 @@ export class CalcSafetyTorsionalMomentService {
 
     const n = element.lib_n + 1;
 
-    const psi = param.psi;
-    result['psi'] = psi;
+    const bt = param.bt;
+    const buckle = param.buckle;
 
-    const sigma1 = param.sigma1;
-    const sigma2 = param.sigma2;
+    // sigmaの整理
+    const sigmas = param.sigmas;
+    const sigma_N: number = sigmas.sigma_N;
+    const sigma_My1: number = sigmas.sigma_My1;
+    const sigma_My2: number = sigmas.sigma_My2;
+    const sigma_Mz: number = sigmas.sigma_Mz;
+    const sigmasigma1: number = sigma_N + sigma_My1 + sigma_Mz;
+    const sigmasigma2: number = sigma_N + sigma_My2 + sigma_Mz;
+    const sigma1 = (Math.abs(sigmasigma1) > Math.abs(sigmasigma2)) ? sigmasigma1 : sigmasigma2;
+    const sigma2 = (sigma1 === sigmasigma1) ? sigmasigma2 : sigmasigma1;
+    const state = (sigma2 >= 0) ? 'compress' : 'tension';
+    let psi = sigma2 / sigma1;
+    if (sigma_N < 0) {
+      psi = -1;
+    }
 
+    // 幅厚比の上限値
+    let bto: number;
+    // 限界座屈パラメータ
     let Rcr: number;
-    if (flag) {
-      if (n <= 1) {
-        Rcr = 0.85 - 0.15 * psi;
+    // 座屈係数
+    let k: number;
+    // 局部座屈の影響を考慮する係数
+    // let rho_bl: number; // 最大幅厚比を考慮しない場合は1.0
+    // 緩和係数
+    let chi: any;
+    // 最大幅厚比
+    let chi_bto: any;
+
+    if (sigma1 > 0 && sigma2 > 0) {
+      // 軸引張力を受ける部材のとき
+      Rcr = 0;
+      k = 0;
+      if (!flag) {
+        // 片縁支持板のとき
+        bto = 16;
       } else {
-        Rcr = 0.75 - 0.25*(n - 1 + psi) / n;
+        if (n <= 1) {
+          // 両縁支持板のとき
+          bto = 60;
+        } else {
+          // 補剛版のとき
+          bto = 60 * n;
+        }
       }
     } else {
-      // 片縁支持板のRcrは未確認
-      Rcr = 0.85 - 0.15 * psi;
-    }
-    result['Rcr'] = Rcr;
 
-    let k: number;
-    if (flag) {
-      if (n <= 1) {        
-        if ( -1.0 <= psi && psi < 0 ) {
-          k = 10*psi**2 - 6.27*psi + 7.63;
+      // Rcrの計算
+      if (flag) {
+        if (n <= 1) {
+          // 両縁支持板のとき
+          Rcr = 0.85 - 0.15 * psi;
         } else {
-          k = 8.4 / (psi + 1.1);
+          // 補剛版のとき 
+          Rcr = 0.75 - 0.25*(n - 1 + psi) / n;
         }
       } else {
-        k = 8.4*(n ** 3) / (2.1 * n - 1 + psi);
+        // 片縁支持板のRcrは0.7とする
+        Rcr = 0.7; // 0.85 - 0.15 * psi;
       }
-    } else {
-      // 片縁支持板のkは未確認
-      if ( -1.0 <= psi && psi < 0 ) {
-          k = 10*psi**2 - 6.27*psi + 7.63;
-       } else {
-          k = 8.4 / (psi + 1.1);
-      }
-    }
-    result['k'] = k;
 
-    let eta: number;
-    if (flag) {
-      if (n <= 1) {
-        eta = (0.85 - 0.15*psi) * k**0.5 / 1.4;
+      // kを計算
+      if (!flag) {
+        // 片縁支持板のとき、このケースは未確認
+        k = 0.425;
       } else {
-        eta = ( 0.5 + 0.25*(1 - psi) / n ) * k ** 0.5 / n;
+        if (n <= 1) {    
+          // 両縁支持板のとき、psiの値で分岐    
+          if ( -1.0 <= psi && psi < 0 ) {
+            k = 10*psi**2 - 6.27*psi + 7.63;
+          } else {
+            k = 8.4 / (psi + 1.1);
+          }
+        } else {
+          // 補剛板のとき
+          k = 8.4*(n ** 3) / (2.1 * n - 1 + psi);
+        }
+      }
+
+      // btoの計算
+      bto = Rcr * ( (Math.PI**2 * k) / (12*(1-nu**2)) * E / element.fsy.fsyk )**0.5;
+
+    }
+
+    if (buckle) {
+      // 最大幅厚比の緩和係数の計算
+      if (!flag) {
+        // 片縁支持板のとき
+        chi = 1.2;
+      } else {
+        if (n <= 1) {
+          // 両縁支持板のとき
+          chi = 1.2;
+        } else {
+          // 補剛版のとき
+          chi = 1.7;
+        }
       }
     } else {
-      // 片縁支持板のetaは未確認
-      eta = (0.85 - 0.15*psi) * k**0.5 / 1.4;
+      chi = 0;
     }
-    result['eta'] = eta;
+    chi_bto = chi * bto;
 
-    const ko = 4.0;
-    result['ko'] = ko;
+    result['Rcr'] = Rcr;
+    result['k'] = k;
+    result['bto'] = bto;
+    result['chi'] = chi;
+    result['chi_bto'] = chi_bto;
 
-    const Rr = 1 / eta * shear.steel_w / element.steel_h * ( (12*(1-nu**2)) / (Math.PI**2*ko) * element.fsy.fsyk / E )**0.5;
-    result['Rr'] = Rr;
-
+    // 設計軸方向耐力計算時の係数
+    let eta: number;
+    let ko: number;
+    let Rr: number;
     let rho_bl: number;
-    if (flag) {
+
+    // ko, etaの計算
+    if (!flag) {
+      // 片縁支持板のとき
+      // 両縁支持板と補剛板の2式の小さい方を採用
+      ko = 0.425;
+      const case1 = (0.85 - 0.15*psi) * ko**0.5 / 1.4;
+      const case2 = ( 0.5 + 0.25*(1 - psi) / 1 ) * ko**0.5 / 1;
+      if (case1 < case2) {
+        eta = case1;
+      } else {
+        eta = case2;
+      }
+    } else {
       if (n <= 1) {
+        // 両縁支持板のとき
+        ko = 4.0;
+        eta = (0.85 - 0.15*psi) * ko**0.5 / 1.4;
+      } else {
+        // 補剛板のとき
+        ko = 4.0 * n ** 2; 
+        eta = ( 0.5 + 0.25*(1 - psi) / n ) * ko ** 0.5 / n;
+      }
+    }
+
+    // Rrの計算
+    Rr = (1 / eta) * /* (shear.steel_w / element.steel_h) */bt * ( (12*(1-nu**2)) / (Math.PI**2 * ko) * element.fsy.fsyk / E )**0.5;
+
+    // rho_blの計算
+    if (sigma1 > 0 && sigma2 > 0) {
+      rho_bl = 1.0;
+    } else {
+      if (!flag) {
+        // 片縁支持板のとき（軸圧縮力のみの式を採用）
         rho_bl = 0.49 / Math.max(0.7, Rr)**2;
       } else {
-        if (0.5 < Rr && Rr <= 1.0) {
-          rho_bl = 1.5 - Math.max(0.5, Rr);
+        if (n <= 1) {
+          // 両縁支持板のとき
+          rho_bl = 0.49 / Math.max(0.7, Rr)**2;
         } else {
-          rho_bl = 0.5 / Rr**2;
+          // 補剛版のとき
+          if (Rr <= 0.5) {
+            rho_bl = 1.5 - 0.5;
+          } else if (0.5 < Rr && Rr <= 1.0) {
+            rho_bl = 1.5 - Rr;
+          } else {
+            rho_bl = 0.5 / Rr**2;
+          }
         }
       }
-    } else {
-      // 片縁支持板のrho_blは未確認
-      rho_bl = 0.49 / Math.max(0.7, Rr)**2;
     }
-    result['rho_bl'] = rho_bl;
 
-    let bto = 16;
-    if (flag) {
-      if ( n <= 1 && sigma1 > 0 && sigma2 > 0 ) {
-        bto = 60;
-      } else if (sigma1 > 0 && sigma2 > 0) {
-        bto = 60 * n;
-      } else {
-        bto = Rcr * ( (Math.PI**2 * k) / (12*(1-nu**2)) * E / element.fsy.fsyk )**0.5;
-      }
-    }
-    result['bto'] = bto;
+    result['eta'] = eta;
+    result['ko'] = ko;
+    result['Rr'] = Rr;
+    result['rho_bl'] = rho_bl;
 
     return result;
 
   }
 
-  private calcDto (d, shear1, shear2, num, sigma_list) {
+  private calcDto (d, shear1, shear2, sigma_list, buckle) {
     const result = {};
 
     const Dw: number = shear1.steel_h;
@@ -1011,55 +1087,42 @@ export class CalcSafetyTorsionalMomentService {
     const Dt: number = Dw / tw;
     result['dt'] = Dt;
 
-    let Dto: number;
-    const element_no = num; // SM400;
-    // 水平補剛版があるときはtrue, 無ければfalse
-    if (false) {
-      if (element_no === 570) {
-        Dto = 225;
-      } else {
-        Dto = 250;
-      }
+    const E: number = 2.0 * 10**5;
+    const nu: number = 0.3;
+
+    // 座屈係数kb
+    let kb;
+    if (shear1.lib_n <= 1) {
+      kb = 23.9;
     } else {
-      if (element_no === 400) {
-        if (0 <= tw && tw <= 16) {
-          Dto = 132.8;
-        } else if (16 < tw && tw <= 40) {
-          Dto = 135.6;
-        } else {
-          Dto = 141.8;
-        }
-      } else if (element_no === 490) {
-        if (0 <= tw && tw <= 16) {
-          Dto = 115.3;
-        } else if (16 < tw && tw <= 40) {
-          Dto = 117.1;
-        } else {
-          Dto = 121.0;
-        }
-      } else if (element_no === 520) {
-        if (0 <= tw && tw <= 16) {
-          Dto = 108.8;
-        } else if (16 < tw && tw <= 40) {
-          Dto = 110.3;
-        } else {
-          Dto = 113.6;
-        }
-      } else {
-        if (0 <= tw && tw <= 16) {
-          Dto = 96.9;
-        } else if (16 < tw && tw <= 40) {
-          Dto = 98.0;
-        } else {
-          Dto = 100.2;
-        }
-      }
+      kb = 129;
     }
+    result['kb'] = kb;
+
+    // 限界座屈パラメータ
+    const Rcr = 1.0;
+    result['Rcr'] = Rcr;
+
+    const fsyk: number = shear1.fsy.fsyk;
+    const element_no = shear1.fsy.fsuk; 
+
+    // とりあえず中間補剛材、水平補剛材がないケース
+    let Dto: number = Rcr * ( ( (Math.PI**2 * kb) / (12 * (1 - nu**2) ) ) * ( E / fsyk ) )**0.5;
     result['dto'] = Dto;
+
+    // 中間補剛材の配置間隔 dDw
     const dDw: number = d / Dw;
+
+    // 最大幅厚比の緩和係数
+    const chi: number = (buckle && shear1.lib_n <= 0) ? 1.2 : 0.0;
+    const chi_dto: number = chi * Dto;
+
+    result['chi'] = chi;
+    result['chi_dto'] = chi_dto;
     
+    // 中間補剛材の照査 -> 要修正
     let Ax40;
-    if (false && dDw < 0.8) {
+    if (shear1.lib_n >= 1 && dDw < 0.8) {
       Ax40 = 0.8;
     } else if (dDw < 1) {
       Ax40 = 1
@@ -1067,19 +1130,19 @@ export class CalcSafetyTorsionalMomentService {
       Ax40 = 2
     }
     let Ax41;
-    if (false && dDw > 0.8) {
+    if (shear1.lib_n >= 1 && dDw > 0.8) {
       Ax41 = 0.8;
-    } else if (false && dDw <= 0.8) {
+    } else if (shear1.lib_n >= 1 && dDw <= 0.8) {
       Ax41 = '-';
     } else if (dDw > 1) {
       Ax41 = 1;
     } else {
       Ax41 = '-';
     }
-    const AB44: number = (false) ? 2036 : 377;
+    const AB44: number = (shear1.lib_n >= 1) ? 2036 : 377;
     let AM44: number;
     let AT44: number;
-    if (false) {
+    if (shear1.lib_n >= 1) {
       if (dDw <= 0.8) {
         AM44 = 98.6;
         AT44 = 84.3;

@@ -457,6 +457,9 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("fsyk_compress" in re) {
       result.fsyk_compress = { alien: "right", value: re.fsyk_compress.toFixed(1) };
     }
+    if ("fsyk_shear" in re) {
+      result.fsyk_shear = { alien: "right", value: re.fsyk_shear.toFixed(1) };
+    }
     if ("fsvyk_web" in re) {
       result.fsvyk_web = { alien: "right", value: re.fsvyk_web.toFixed(1) };
     }
@@ -514,25 +517,35 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("chi_bto_tension" in re) {
       result.chi_bto_tension.alien = "right";
-      if (typeof (re.chi_bto_tension) === 'string') {
-        result.chi_bto_tension.value = re.chi_bto_tension;
-      } else {
+      if (re.chi_bto_tension !== 0) {
         result.chi_bto_tension.value = re.chi_bto_tension.toFixed(3);
+      } else {
+        result.chi_bto_tension.value = '---';
       }
     }
     if ("chi_tension" in re) {
       result.chi_tension.alien = "right";
-      if (typeof (re.chi_tension) === 'string') {
-        result.chi_tension.value = re.chi_tension;
-      } else {
+      if (re.chi_tension !== 0) {
         result.chi_tension.value = re.chi_tension.toFixed(3);
+      } else {
+        result.chi_tension.value = '---';
       }
     }
     if ("Rcr_tension" in re) {
-      result.Rcr_tension = { alien: "right", value: re.Rcr_tension.toFixed(3) };
+      result.Rcr_tension.alien = "right";
+      if (re.Rcr_tension !== 0) {
+        result.Rcr_tension.value = re.Rcr_tension.toFixed(3);
+      } else {
+        result.Rcr_tension.value = '---';
+      }
     }
-    if ("ko_tension" in re) {
-      result.ko_tension = { alien: "right", value: re.ko_tension.toFixed(3) };
+    if ("k_tension" in re) {
+      result.ko_tension.alien = "right";
+      if (re.k_tension !== 0) {
+        result.ko_tension.value = re.k_tension.toFixed(3);
+      } else {
+        result.ko_tension.value = '---';
+      }
     }
     if ("rho_bl_tension" in re) {
       result.rho_bl_tension = { alien: "right", value: re.rho_bl_tension.toFixed(3) };
@@ -545,14 +558,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("bt_tension" in re && "chi_bto_tension" in re) {
       result.bt_chi_ratio_tension.alien = "right";
-      if (typeof (re.chi_bto_tension) === 'string') {
-        result.bt_chi_ratio_tension.value = re.chi_bto_tension;
-      } else {
+      if (re.chi_bto_tension !== 0) {
         if (re.bt_tension / re.chi_bto_tension < 1.0) {
           result.bt_chi_ratio_tension.value = 'OK';
         } else {
           result.bt_chi_ratio_tension.value = 'NG';
         }
+      } else {
+        result.bt_chi_ratio_tension.value = '---';
       }
     }
 
@@ -565,25 +578,35 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("chi_bto_both_tension" in re) {
       result.chi_bto_both_tension.alien = "right";
-      if (typeof (re.chi_bto_both_tension) === 'string') {
-        result.chi_bto_both_tension.value = re.chi_bto_both_tension;
-      } else {
+      if (re.chi_bto_both_tension !== 0) {
         result.chi_bto_both_tension.value = re.chi_bto_both_tension.toFixed(3);
+      } else {
+        result.chi_bto_both_tension.value = '---';
       }
     }
     if ("chi_both_tension" in re) {
       result.chi_both_tension.alien = "right";
-      if (typeof (re.chi_both_tension) === 'string') {
-        result.chi_both_tension.value = re.chi_both_tension;
-      } else {
+      if (re.chi_both_tension !== 0) {
         result.chi_both_tension.value = re.chi_both_tension.toFixed(3);
+      } else {
+        result.chi_both_tension.value = '---';
       }
     }
     if ("Rcr_both_tension" in re) {
-      result.Rcr_both_tension = { alien: "right", value: re.Rcr_both_tension.toFixed(3) };
+      result.Rcr_both_tension.alien = "right";
+      if (re.Rcr_both_tension !== 0) {
+        result.Rcr_both_tension.value = re.Rcr_both_tension.toFixed(3);
+      } else {
+        result.Rcr_both_tension.value = '---';
+      }
     }
-    if ("ko_both_tension" in re) {
-      result.ko_both_tension = { alien: "right", value: re.ko_both_tension.toFixed(3) };
+    if ("k_both_tension" in re) {
+      result.ko_both_tension.alien = "right";
+      if (re.k_both_tension !== 0) {
+        result.ko_both_tension.value = re.k_both_tension.toFixed(3);
+      } else {
+        result.ko_both_tension.value = '---';
+      }
     }
     if ("rho_bl_both_tension" in re) {
       result.rho_bl_both_tension = { alien: "right", value: re.rho_bl_both_tension.toFixed(3) };
@@ -596,14 +619,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("bt_both_tension" in re && "chi_bto_both_tension" in re) {
       result.bt_chi_both_ratio_tension.alien = "right";
-      if (typeof (re.chi_bto_both_tension) === 'string') {
-        result.bt_chi_both_ratio_tension.value = re.chi_bto_both_tension;
-      } else {
+      if (re.chi_bto_both_tension !== 0) {
         if (re.bt_both_tension / re.chi_bto_both_tension < 1.0) {
           result.bt_chi_both_ratio_tension.value = 'OK';
         } else {
           result.bt_chi_both_ratio_tension.value = 'NG';
         }
+      } else {
+        result.bt_chi_both_ratio_tension.value = '---';
       }
     }
 
@@ -616,25 +639,35 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("chi_bto_compress" in re) {
       result.chi_bto_compress.alien = "right";
-      if (typeof (re.chi_bto_compress) === 'string') {
-        result.chi_bto_compress.value = re.chi_bto_compress;
-      } else {
+      if (re.chi_bto_compress !== 0) {
         result.chi_bto_compress.value = re.chi_bto_compress.toFixed(3);
+      } else {
+        result.chi_bto_compress.value = '---';
       }
     }
     if ("chi_compress" in re) {
       result.chi_compress.alien = "right";
-      if (typeof (re.chi_compress) === 'string') {
-        result.chi_compress.value = re.chi_compress;
-      } else {
+      if (re.chi_compress !== 0) {
         result.chi_compress.value = re.chi_compress.toFixed(3);
+      } else {
+        result.chi_compress.value = '---';
       }
     }
     if ("Rcr_compress" in re) {
-      result.Rcr_compress = { alien: "right", value: re.Rcr_compress.toFixed(3) };
+      result.Rcr_compress.alien = "right";
+      if (re.Rcr_compress !== 0) {
+        result.Rcr_compress.value = re.Rcr_compress.toFixed(3);
+      } else {
+        result.Rcr_compress.value = '---';
+      }
     }
-    if ("ko_compress" in re) {
-      result.ko_compress = { alien: "right", value: re.ko_compress.toFixed(3) };
+    if ("k_compress" in re) {
+      result.ko_compress.alien = "right";
+      if (re.k_compress !== 0) {
+        result.ko_compress.value = re.k_compress.toFixed(3);
+      } else {
+        result.ko_compress.value = '---';
+      }
     }
     if ("rho_bl_compress" in re) {
       result.rho_bl_compress = { alien: "right", value: re.rho_bl_compress.toFixed(3) };
@@ -642,19 +675,19 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     if ("bt_compress" in re && "bto_compress" in re) {
       result.bt_ratio_compress = { 
         alien: "right", 
-        value: (re.bt_compress / re.bto_compress < 1.0) ? 'OK' : 'NG' 
+        value: (re.bt_compress / re.bto_compress < 1.0) ? 'OK' : 'NG',
       };
     }
     if ("bt_compress" in re && "chi_bto_compress" in re) {
       result.bt_chi_ratio_compress.alien = "right";
-      if (typeof (re.chi_bto_compress) === 'string') {
-        result.bt_chi_ratio_compress.value = re.chi_bto_compress;
-      } else {
+      if (re.chi_bto_compress !== 0) {
         if (re.bt_compress / re.chi_bto_compress < 1.0) {
           result.bt_chi_ratio_compress.value = 'OK';
         } else {
           result.bt_chi_ratio_compress.value = 'NG';
         }
+      } else {
+        result.bt_chi_ratio_compress.value = '---';
       }
     }
 
@@ -667,25 +700,35 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("chi_bto_both_compress" in re) {
       result.chi_bto_both_compress.alien = "right";
-      if (typeof (re.chi_bto_both_compress) === 'string') {
-        result.chi_bto_both_compress.value = re.chi_bto_both_compress;
-      } else {
+      if (re.chi_bto_both_compress !== 0) {
         result.chi_bto_both_compress.value = re.chi_bto_both_compress.toFixed(3);
+      } else {
+        result.chi_bto_both_compress.value = '---';
       }
     }
     if ("chi_both_compress" in re) {
       result.chi_both_compress.alien = "right";
-      if (typeof (re.chi_both_compress) === 'string') {
-        result.chi_both_compress.value = re.chi_both_compress;
-      } else {
+      if (re.chi_both_compress !== 0) {
         result.chi_both_compress.value = re.chi_both_compress.toFixed(3);
+      } else {
+        result.chi_both_compress.value = '---';
       }
     }
     if ("Rcr_both_compress" in re) {
-      result.Rcr_both_compress = { alien: "right", value: re.Rcr_both_compress.toFixed(3) };
+      result.Rcr_both_compress.alien = "right";
+      if (re.Rcr_both_compress !== 0) {
+        result.Rcr_both_compress.value = re.Rcr_both_compress.toFixed(3);
+      } else {
+        result.Rcr_both_compress.value = '---';
+      }
     }
-    if ("ko_both_compress" in re) {
-      result.ko_both_compress = { alien: "right", value: re.ko_both_compress.toFixed(3) };
+    if ("k_both_compress" in re) {
+      result.ko_both_compress.alien = "right";
+      if (re.k_both_compress !== 0) {
+        result.ko_both_compress.value = re.k_both_compress.toFixed(3);
+      } else {
+        result.ko_both_compress.value = '---';
+      }
     }
     if ("rho_bl_both_compress" in re) {
       result.rho_bl_both_compress = { alien: "right", value: re.rho_bl_both_compress.toFixed(3) };
@@ -698,14 +741,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("bt_both_compress" in re && "chi_bto_both_compress" in re) {
       result.bt_chi_both_ratio_compress.alien = "right";
-      if (typeof (re.chi_bto_both_compress) === 'string') {
-        result.bt_chi_both_ratio_compress.value = re.chi_bto_both_compress;
-      } else {
+      if (re.chi_bto_both_compress !== 0) {
         if (re.bt_both_compress / re.chi_bto_both_compress < 1.0) {
           result.bt_chi_both_ratio_compress.value = 'OK';
         } else {
           result.bt_chi_both_ratio_compress.value = 'NG';
         }
+      } else {
+        result.bt_chi_both_ratio_compress.value = '---';
       }
     }
 
@@ -717,21 +760,36 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
       result.dto_shear = { alien: "right", value: re.dto_shear.toFixed(3) };
     }
     if ("chi_dto_shear" in re) {
-      result.chi_dto_shear = { alien: "right", value: re.chi_dto_shear.toFixed(1) };
+      result.chi_dto_shear.alien = "right";
+      if (re.chi_dto_shear !== 0) {
+        result.chi_dto_shear.value = re.chi_dto_shear.toFixed(1);
+      } else {
+        result.chi_dto_shear.value = '---';
+      }
     }
     if ("chi_shear" in re) {
       result.chi_shear.alien = "right";
-      if (typeof (re.chi_shear) === 'string') {
-        result.chi_shear.value = re.chi_shear;
-      } else {
+      if (re.chi_shear !== 0) {
         result.chi_shear.value = re.chi_shear.toFixed(2);
+      } else {
+        result.chi_shear.value = '---';
       }
     }
     if ("Rcr_shear" in re) {
-      result.Rcr_shear = { alien: "right", value: re.Rcr_shear.toFixed(3) };
+      result.Rcr_shear.alien = "right";
+      if (re.Rcr_shear !== 0) {
+        result.Rcr_shear.value = re.Rcr_shear.toFixed(3);
+      } else {
+        result.Rcr_shear.value = '---';
+      }
     }
     if ("kb_shear" in re) {
-      result.kb_shear = { alien: "right", value: re.kb_shear.toFixed(3) };
+      result.kb_shear.alien = "right";
+      if (re.kb_shear !== 0) {
+        result.kb_shear.value = re.kb_shear.toFixed(3);
+      } else {
+        result.kb_shear.value = '---';
+      }
     }
     if ("dt_shear" in re && "dto_shear" in re) {
       result.dt_ratio_shear = { 
@@ -741,14 +799,14 @@ export class ResultSafetyTorsionalMomentComponent implements OnInit {
     }
     if ("dt_shear" in re && "chi_dto_shear" in re) {
       result.dt_chi_ratio_shear.alien = "right";
-      if (typeof (re.chi_dto_shear) === 'string') {
-        result.dt_chi_ratio_shear.value = re.chi_dto_shear;
-      } else {
+      if (re.chi_dto_shear !== 0) {
         if (re.dt_shear / re.chi_dto_shear < 1.0) {
           result.dt_chi_ratio_shear.value = 'OK';
         } else {
           result.dt_chi_ratio_shear.value = 'NG';
         }
+      } else {
+        result.dt_chi_ratio_shear.value = '---';
       }
     }
 
