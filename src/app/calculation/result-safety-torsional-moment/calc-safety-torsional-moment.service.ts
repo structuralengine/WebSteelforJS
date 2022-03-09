@@ -191,14 +191,14 @@ export class CalcSafetyTorsionalMomentService {
       Nd = 0;
     }
     // Nd = Math.abs(Nd);
-    result['Nd'] = Math.abs(Nd);
+    result['Nd'] = Nd;// Math.abs(Nd);
 
     let Md: number = this.helper.toNumber(force.Md);
     if (Md === null) {
       Md = 0;
     }
     // Md = Math.abs(Md);
-    const Mxd = Math.abs(Md);
+    const Mxd = Md;
     const Myd = 0;
     result['Mxd'] = Mxd;
     result['Myd'] = Myd;
@@ -860,6 +860,9 @@ export class CalcSafetyTorsionalMomentService {
     result['ko0'] = ko0;
     result['Rr0'] = Rr0;
 
+    // 縦リブ（圧縮フランジ側）
+
+    // 縦リブ（引張フランジ側）
 
     return result;
   }
