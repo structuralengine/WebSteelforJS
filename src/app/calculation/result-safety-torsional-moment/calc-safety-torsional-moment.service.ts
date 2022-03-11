@@ -393,39 +393,6 @@ export class CalcSafetyTorsionalMomentService {
     // 軸方向圧縮耐力
     const Lzrz = Lz / rx;
     const Lyry = Ly / ry;
-    /* for (const flange of [compress, tension]) {
-      const key: string = (flange === compress) ? '_compress': '_tension'; 
-      // rho_bg(rho_bg_N)の計算
-      // minusは引張、plusは圧縮
-      const lambda: number = (Mxd > Myd)
-                          ? 1 / Math.PI * (flange.fsy.fsyk / E)**0.5 * Lzrz
-                          : 1 / Math.PI * (flange.fsy.fsyk / E)**0.5 * Lyry;
-      let rho_bg_Nplus: number;
-      if (lambda <= 0.1) {
-        rho_bg_Nplus = 1.0;
-      } else if (0.1 < lambda && lambda <= 2**0.5) {
-        rho_bg_Nplus = 1.0 - 0.53 * (lambda - 0.1);
-      } else {
-        rho_bg_Nplus = 1.7 / (2.8 * lambda ** 2);
-      }
-      let rho_bg_Nminus: number = 1.0;
-      result['rho_bg_Nplus' + key] = rho_bg_Nplus;
-      result['rho_bg_Nminus' + key] = rho_bg_Nminus;
-
-      // rho_bl(rho_bl_N)の計算は、
-      // 幅厚比の照査で完了しているため省略.
-      const rb = (key === '_compress') ? rb_C : rb_T;
-      const fsy = flange.fsy.fsyk / rs;
-      const rho_bl_minus: number = 1.0;
-      const rho_bl_plus = result['rho_bl' + key];
-      const Nud_minus = rho_bg_Nminus * rho_bl_minus * A * fsy / rb_T / 1000;
-      const Nud_plus = rho_bg_Nplus * rho_bl_plus * A * fsy / rb_C / 1000;
-      const Noud2 = rho_bg_Nplus * rho_bl_plus * A * fsy / rb_C / 1000;
-      result['Nud'] = Nud_minus;
-      result['Nuod'] = Nud_plus;
-      result['Nuod2'] = Noud2;
-
-    } */
     // rho_bg(rho_bg_N)の計算
     // minusは引張、plusは圧縮
     let rho_bg_Nplus: number;
@@ -459,20 +426,33 @@ export class CalcSafetyTorsionalMomentService {
 
 
     // 設計曲げ圧縮耐力（z軸(x軸)まわり）
-    const alpha: number = compress.steel_h / shear1.steel_b;
-    const beta: number = shear1.steel_h / compress.steel_b;
-    const betao: number = (14 + 12 * alpha) / (5 + 21 * alpha);
-    const bl = compress.steel_b / Lz;
-    let F: number;
-    if (beta < betao) {
-      F = 0;
-    } else if (betao <= beta && beta < 1) {
-      F = (1.05*(beta-betao)/(1-betao))*(3*alpha+1) ** 0.5 * bl ** 0.5;
-    } else if (1 <= beta && beta < 2) {
-      F = 0.74*((3*alpha+beta)*(beta+1)) ** 0.5 * bl ** 0.5
+    // const tf: number = (tension.steel_h + compress.steel_h) / 2; 
+    const alpha: number = tf / shear1.steel_b;
+    // const alpha: number = compress.steel_h / shear1.steel_b;
+    const b: number = (tension.steel_b + compress.steel_b) / 2;
+    const beta: number = shear1.steel_h / b;
+    // const beta: number = shear1.steel_h / compress.steel_b;
+    // 有効座屈長を考慮しないときはどうする
+    const bl = b / Lz;
+    let F: number;  // Fの値は形状で分岐する
+    if (sectionM.shapeName === 'I') {
+      F = ( 12 + (2 * beta / alpha) ) ** 0.5;
+    } else if (sectionM.shapeName === 'Box') {
+      const betao: number = (14 + 12 * alpha) / (5 + 21 * alpha);
+      if (beta < betao) {
+        F = 0;
+      } else if (betao <= beta && beta < 1) {
+        F = (1.05*(beta-betao)/(1-betao))*(3*alpha+1) ** 0.5 * bl ** 0.5;
+      } else if (1 <= beta && beta < 2) {
+        F = 0.74*((3*alpha+beta)*(beta+1)) ** 0.5 * bl ** 0.5
+      } else {
+        F = 1.28 * (3*alpha+beta) ** 0.5 * bl * 0.5
+      }
     } else {
-      F = 1.28 * (3*alpha+beta) ** 0.5 * bl * 0.5
+      // 要分岐追加 -> 一旦I型の式を入れておく
+      F = ( 12 + (2 * beta / alpha) ) ** 0.5;
     }
+    // 等価細長比 lambda_e
     const lambda_e: number = 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * (F * (1 / bl));
     result['lambda_e'] = lambda_e;
     let rho_bg_culc: number;
@@ -483,41 +463,56 @@ export class CalcSafetyTorsionalMomentService {
     } else {
       rho_bg_culc = 1.7 / (2.8 * lambda_e ** 2)
     }
+    // rho_bl_culcは4(または8)ケースの最小の値を採用する
     let rho_bl_culc: number = 1.0;
-    for (const flange of [compress, tension]) {
-      const nu: number = 0.3;
-      const bt = shear1['steel_w'] / flange['steel_h'];
-      const Rcr = (flange.lib_n <= 0) ? 0.7 : 0.5;
-      const bto = Rcr * ((Math.PI * 4) / (12*(1-nu**2)) * E / flange.fsy.fsyk) ** 0.5;
-      let kai: any;
-      if (bt < bto) {
-        kai = '-';
-      } else {
-        if (flange.lib_n <= 0) {
-          kai = 1.2;
-        } else {
-          kai = 1.7;
-        }
-      }
-      let Rr: any = '-';
-      if (kai === '-') {
-        Rr = bt * ((Math.PI * 4) / (12*(1-nu**2)) * E / flange.fsy.fsyk) ** 0.5;
-      }
+    for (const key1 of ['_compress', '_tension']) {
+      for (const key2 of ['', '_both']) {
+        const key: string = key2 + key1;
 
-      let rho_bl;
-      if (kai === '-') {
-        rho_bl = 1.0;
-      } else {
-        if (flange.lib_n <= 0) {
-          rho_bl = 0.49 / (Math.max(0.7,Rr)**2)
-        } else if (Rr === '-') {
-          rho_bl = 1.5 - Math.max(0.5,Rr);
-        } else {
-          rho_bl = 0.5 / (Rr**2);
+        const bt: number = bto_list['bt' + key];
+        // 存在しなければスキップ
+        if (bt === undefined) {
+          break;
         }
-      }
-      if (rho_bl_culc > rho_bl) {
-        rho_bl_culc = rho_bl;
+
+        const E: number = 2.0 * 10**5;
+        const nu: number = 0.3;
+        const element = (key1 === '_compress') ? compress : tension;
+        const n: number = element.lib_n;
+        const ko: number = bto_list['ko' + key];
+        const fsyk = element.fsy.fsyk;
+        const Rcr = (n === 0) ? 0.7 : 0.5;
+
+        // btoを計算（圧縮力限定）
+        const bto: number = Rcr * ( (Math.PI**2 * ko) / (12*(1 - nu**2)) * E / fsyk )**0.5;
+
+        const chi: number = (n === 0) ? 1.2 : 1.7;
+        const chi_bto = chi * bto;
+        const Rr = bt * ( ((12*(1 - nu ** 2)) / (Math.PI ** 2 * ko)) * (fsyk / E) ) ** 0.5;
+
+        let rho_bl: number;
+        if (bt <= bto) {
+          rho_bl = 1.0;
+        } else if (bt < chi_bto) {
+          if (n <= 0) {
+            // 両縁支持板のとき
+            rho_bl = 0.49 / Math.min(0.7, Rr);
+          } else {
+            // 補剛版のとき
+            if (Rr <= 0.5) {
+              rho_bl = 1.5 - 0.5;
+            } else if (0.5 < Rr && Rr <= 1.0) {
+              rho_bl = 1.5 - Rr;
+            } else {
+              rho_bl = 0.5 / Rr**2;
+            }
+          }
+        }
+
+        // ρblの最小値の更新
+        if (rho_bl_culc > rho_bl) {
+          rho_bl_culc = rho_bl;
+        }
       }
     }
     const fsyk_compress = compress['fsy']['fsyk'];
@@ -525,6 +520,7 @@ export class CalcSafetyTorsionalMomentService {
     result['fsyk_compress'] = fsyk_compress;
     const Afg_compress = Lz_b * compress['steel_h'];
     const Afn_compress = Lz_b * compress['steel_h'];
+    // 有効座屈長を考慮してるのか、してないのか分からん！！！
     const Mucod = Math.min(rho_bg_culc, rho_bl_culc)
                 * ( param['Ix'] / dim['yc'] )
                 * fsyd_compress
@@ -1095,10 +1091,12 @@ export class CalcSafetyTorsionalMomentService {
 
     // 座屈係数kb
     let kb;
-    if (shear1.lib_n <= 1) {
+    if (shear1.lib_n <= 0) {
       kb = 23.9;
-    } else {
+    } else if (shear1.lib_n === 1){
       kb = 129;
+    } else {
+      kb = 129; //水平補剛材が2断以上の場合に分岐
     }
     result['kb'] = kb;
 
@@ -1111,6 +1109,7 @@ export class CalcSafetyTorsionalMomentService {
 
     // とりあえず中間補剛材、水平補剛材がないケース
     let Dto: number = Rcr * ( ( (Math.PI**2 * kb) / (12 * (1 - nu**2) ) ) * ( E / fsyk ) )**0.5;
+    Dto = (Dto > 250) ? 250 : Dto;
     result['dto'] = Dto;
 
     // 中間補剛材の配置間隔 dDw
