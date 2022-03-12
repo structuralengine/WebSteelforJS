@@ -10,6 +10,7 @@ import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetRectService } from "./shape-data/set-rect.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
+import { SetIService } from "./shape-data/set-I.service";
 import { SetBoxService } from "./shape-data/set-box.service";
 import { environment } from "src/environments/environment";
 
@@ -30,6 +31,7 @@ export class SetPostDataService {
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
     private vOval: SetVerticalOvalService,
+    private I: SetIService,
     private box: SetBoxService,) { }
 
   // 計算(POST)するときのヘルパー ///////////////////////////////////////////////////////////////////////////
@@ -93,9 +95,9 @@ export class SetPostDataService {
     option: any, ...DesignForceList: any[] ): any {
 
     const post_keys = [ 
-      'index', 'side', 'Nd','Md',
-      'ConcreteElastic', 'Concretes',
-      'SteelElastic', 'Bars', 'Steels','shape'
+      'index', 'side', 'Nd', 'Vd', 'Md', 'Mt',
+      // 'ConcreteElastic', 'Concretes',
+      'SteelElastic',/*  'Bars', */ 'Steels','shape'
     ];
 
     // 基本となる DesignForceList[0] の集計 ---------------------------------------------------------
@@ -116,7 +118,9 @@ export class SetPostDataService {
           Nd: force.Nd
         };
         if(type === "応力度") {
+          data['Vd'] = Math.abs(force.Vd);
           data['Md'] = Math.abs(force.Md);
+          data['Mt'] = Math.abs(force.Mt);
         }
         data['force'] = force; // 一時的に登録
         try {
@@ -124,8 +128,8 @@ export class SetPostDataService {
           data['shape'] = shape; // 一時的に登録
 
           // 断面形状
-          data['Concretes'] = shape.Concretes;
-          data['ConcreteElastic'] = shape.ConcreteElastic;
+          // data['Concretes'] = shape.Concretes;
+          // data['ConcreteElastic'] = shape.ConcreteElastic;
 
           // 鉄筋・鉄骨の本数
           // if('Bars' in shape){
@@ -424,9 +428,21 @@ export class SetPostDataService {
 
       }
 
+    } else if (member.shape.indexOf('I形') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'I';
+
+    } else if (member.shape.indexOf('H形') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'H';
+
     } else if (member.shape.indexOf('箱形/π形') >= 0) {
       // この辺りで修正。memberから情報を拾うのでは
       result = 'Box';
+
+    } else if (member.shape.indexOf('鋼管') >= 0) {
+      // この辺りで修正。memberから情報を拾うのでは
+      result = 'Pipe';
 
     } else {
       throw ("断面形状：" + member.shape + " は適切ではありません。");
@@ -477,6 +493,9 @@ export class SetPostDataService {
         break;
       case 'VerticalOval':      // 鉛直方向小判形
         result = this.vOval.getVerticalOval(member, index, force.side, safety, option);
+        break;
+      case 'I':      // 鉛直方向小判形
+        result = this.I.getI(target, member, index, force.side, safety, option);
         break;
       case 'Box':      // 鉛直方向小判形
         result = this.box.getBox(target, member, index, force.side, safety, option);

@@ -8,6 +8,10 @@ import { InputSteelsService } from "src/app/components/steels/steels.service";
 import { DataHelperModule } from "src/app/providers/data-helper.module";
 import { DataTexture3D } from "three";
 import { SetBoxService } from "src/app/calculation/shape-data/set-box.service";
+import { SetCircleService } from "src/app/calculation/shape-data/set-circle.service";
+import { SetIService } from "src/app/calculation/shape-data/set-I.service";
+import { ResultDataService } from "src/app/calculation/result-data.service";
+import { SetParamService } from "src/app/calculation/shape-data/set-param.service";
 
 @Injectable({
   providedIn: "root",
@@ -26,6 +30,8 @@ export class ThreePanelService {
   public y: number = 0;
   public z: number = 0;
 
+  public old_element = {};
+
   public max: number = 0;
   public select: number = 0;
 
@@ -33,7 +39,10 @@ export class ThreePanelService {
     private scene: SceneService,
     private http: HttpClient,
     private steel: InputSteelsService,
+    private I: SetIService,
     private box: SetBoxService,
+    private circle: SetCircleService,
+    private param: SetParamService,
     private helper: DataHelperModule
   ) {
     this.panel_List = new Array();
@@ -46,8 +55,12 @@ export class ThreePanelService {
     this.gui = null;
   }
 
-  public changeData(index: number): void {
-    const data = this.steel.getSteelJson(index);
+  public changeData(g_id: string): void {
+    // this.steel.clear();
+    const data = this.steel.getSteelJson(/* index */ g_id);
+    if (data === undefined) {
+      return;
+    }
     //対象のnodeDataを入手
     this.ClearData();
 
@@ -58,6 +71,10 @@ export class ThreePanelService {
     // for (let i = 0; i < data.length; i++) {
     let vertexlist = {};
     let element = {};
+
+    let flg: boolean = false;
+
+    this.old_element = {};
     // var length = 5;
     // var start = this.select;
     // var arr = Array.apply(null, new Array(length)).map(function (v, i) {
@@ -71,25 +88,54 @@ export class ThreePanelService {
       //for (let j = 0; j < data[i].length; j++) {
       // vertexlist.push(data[i][j]);
       vertexlist["shape"] = row["shape"];
-      vertexlist["b" + String(j)] =
+      vertexlist["steel_b" + String(j)] =
         row["steel_b"] == void 0 || null ? 0 : row["steel_b"];
-      vertexlist["h" + String(j)] =
+      vertexlist["steel_h" + String(j)] =
         row["steel_h"] == void 0 || null ? 0 : row["steel_h"];
-      vertexlist["w" + String(j)] =
+      vertexlist["steel_w" + String(j)] =
         row["steel_w"] == void 0 || null ? 0 : row["steel_w"];
+      vertexlist["lib_b" + String(j)] =
+        row["lib_b"] == void 0 || null ? 0 : row["lib_b"];
+      vertexlist["lib_h" + String(j)] =
+        row["lib_h"] == void 0 || null ? 0 : row["lib_h"];
+      vertexlist["lib_w" + String(j)] =
+        row["lib_w"] == void 0 || null ? 0 : row["lib_w"];
+      vertexlist["lib_n" + String(j)] =
+        row["lib_n"] == void 0 || null ? 0 : row["lib_n"];
+
       this.max = Math.max(
         this.max,
-        vertexlist["b" + String(j)],
-        vertexlist["h" + String(j)],
-        vertexlist["w" + String(j)]
+        vertexlist["steel_b" + String(j)],
+        vertexlist["steel_h" + String(j)],
+        vertexlist["steel_w" + String(j)]
       );
 
       if (j % 5 === 0 && Math.floor(Number(i) / 5) == this.select) {
-        vertexlist["shape"] = data[Number(i) - 4]["shape"];
-        element = vertexlist;
+        if (
+          vertexlist["steel_b1"] === 0 &&
+          vertexlist["steel_b3"] === 0 &&
+          !(Number(i) < 5)
+        ) {
+          element = this.old_element;
+        } else {
+          vertexlist["shape"] = data[Number(i) - 4]["shape"];
+          element = vertexlist;
+        }
+        flg = true;
       }
 
       if (j % 5 === 0) {
+        if (!flg || Number(i) < 5) {
+          vertexlist["shape"] = data[Number(i) - 4]["shape"];
+          if (vertexlist["steel_b1"] === 0 && vertexlist["steel_b3"] === 0) {
+            if (Number(i) < 5) {
+              this.old_element = vertexlist;
+            }
+          } else {
+            this.old_element = {};
+            this.old_element = vertexlist;
+          }
+        }
         vertexlist = {};
       }
 
@@ -100,11 +146,14 @@ export class ThreePanelService {
     }
     const scale = 1 / (this.max / 10);
 
-    for (const key of Object.keys(element)) {
-      if (key !== "shape") {
-        element[key] = element[key] * scale;
-      }
-    }
+    // スケールを調整
+    // for (const key of Object.keys(element)) {
+    //   if (key !== "shape") {
+    //     if (!key.includes("n")) {
+    //       element[key] = element[key] * scale;
+    //     }
+    //   }
+    // }
 
     this.shape(element /* , data['shape'] */);
   }
@@ -120,216 +169,30 @@ export class ThreePanelService {
     // if (flag) {
     switch (shape) {
       case "I形":
-        vertices = this.getVertices_I(element);
-        centroid = this.box.getCentroid_box(vertices);
+        vertices = this.I.getVertices(element);
+        centroid = this.param.getCentroid(vertices);
         child = this.createPlane(vertices);
         break;
       case "H形":
-        vertices = this.getVertices_H(element);
+        vertices = this.box.getVertices_H(element);
         centroid = this.box.getCentroid_box(vertices);
         child = this.createPlane(vertices);
         break;
       case "箱形/π形":
         vertices = this.box.getVertices_box(element);
-        centroid = this.box.getCentroid_box(vertices);
+        centroid = this.param.getCentroid(vertices);
         child = this.createPlane(vertices);
         break;
       case "鋼管":
-        vertices = this.getVertices_pipe(element);
-        centroid = this.box.getCentroid_box(vertices);
-        child = this.createPlane(vertices);
+        vertices = this.circle.getVertices_pipe(element);
+        centroid = this.circle.getCentroid_pipe(vertices);
+        child = this.circle.createPlane(vertices);
         break;
     }
     child.position.set(-centroid.x, -centroid.y, -centroid.z);
     this.panel_List.push(child);
     this.scene.add(child);
     // }
-  }
-
-  private getVertices_I(vertexlist) {
-    const vertices = []; // returnする頂点情報
-
-    const scale = 0.1;
-    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    let b1 =
-      vertexlist[0]["steel_b"] !== undefined
-        ? vertexlist[0]["steel_b"] * scale
-        : 0;
-    let h1 =
-      vertexlist[0]["steel_h"] !== undefined
-        ? vertexlist[0]["steel_h"] * scale
-        : 0;
-    let w1 =
-      vertexlist[0]["steel_w"] !== undefined
-        ? vertexlist[0]["steel_w"] * scale
-        : 0;
-    let b2 =
-      vertexlist[1]["steel_b"] !== undefined
-        ? vertexlist[1]["steel_b"] * scale
-        : 0;
-    let h2 =
-      vertexlist[1]["steel_h"] !== undefined
-        ? vertexlist[1]["steel_h"] * scale
-        : 0;
-
-    let b3 =
-      vertexlist[2]["steel_b"] !== undefined
-        ? vertexlist[2]["steel_b"] * scale
-        : 0;
-    let h3 =
-      vertexlist[2]["steel_h"] !== undefined
-        ? vertexlist[2]["steel_h"] * scale
-        : 0;
-    let w3 =
-      vertexlist[2]["steel_w"] !== undefined
-        ? vertexlist[2]["steel_w"] * scale
-        : 0;
-
-    // 空白セルがあったときの処理
-    if (h3 === 0) {
-      h3 = h1;
-    }
-    if (h1 === 0) {
-      h1 = h3;
-    }
-    if (b3 === 0) {
-      b3 = b1;
-    }
-    if (b1 === 0) {
-      b1 = b3;
-    }
-    if (w1 === 0) {
-      w1 = b1 / 2;
-    }
-    if (w3 === 0) {
-      w3 = b3 / 2;
-    }
-
-    // パターンごとに分岐
-    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    ////////// 1部材について //////////
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b1, 0, 0));
-    list.vertice.push(new THREE.Vector3(b1, -h1, 0));
-    list.vertice.push(new THREE.Vector3(0, -h1, 0));
-    list.position = new THREE.Vector3(0, 0, 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    ////////// 2部材について //////////
-    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b2, 0, 0));
-    list.vertice.push(new THREE.Vector3(b2, -h2, 0));
-    list.vertice.push(new THREE.Vector3(0, -h2, 0));
-    list.position = new THREE.Vector3(w1 - b2 / 2, -h1, 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    //////////3部材について //////////
-    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b3, 0, 0));
-    list.vertice.push(new THREE.Vector3(b3, -h3, 0));
-    list.vertice.push(new THREE.Vector3(0, -h3, 0));
-    list.position = new THREE.Vector3(w1 - w3, -(h1 + h2), 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    return vertices;
-  }
-
-  private getVertices_H(vertexlist) {
-    const vertices = []; // returnする頂点情報
-
-    const scale = 0.1;
-    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    let b1 =
-      vertexlist[0]["steel_b"] !== undefined
-        ? vertexlist[0]["steel_b"] * scale
-        : 0;
-    let h1 =
-      vertexlist[0]["steel_h"] !== undefined
-        ? vertexlist[0]["steel_h"] * scale
-        : 0;
-    let w1 =
-      vertexlist[0]["steel_w"] !== undefined
-        ? vertexlist[0]["steel_w"] * scale
-        : 0;
-    let b2 =
-      vertexlist[1]["steel_b"] !== undefined
-        ? vertexlist[1]["steel_b"] * scale
-        : 0;
-    let h2 =
-      vertexlist[1]["steel_h"] !== undefined
-        ? vertexlist[1]["steel_h"] * scale
-        : 0;
-
-    let b3 =
-      vertexlist[2]["steel_b"] !== undefined
-        ? vertexlist[2]["steel_b"] * scale
-        : 0;
-    let h3 =
-      vertexlist[2]["steel_h"] !== undefined
-        ? vertexlist[2]["steel_h"] * scale
-        : 0;
-    let w3 =
-      vertexlist[2]["steel_w"] !== undefined
-        ? vertexlist[2]["steel_w"] * scale
-        : 0;
-
-    // 空白セルがあったときの処理
-    if (h3 === 0) {
-      h3 = h1;
-    }
-    if (h1 === 0) {
-      h1 = h3;
-    }
-    if (b3 === 0) {
-      b3 = b1;
-    }
-    if (b1 === 0) {
-      b1 = b3;
-    }
-    if (w1 === 0) {
-      w1 = h1 / 2;
-    }
-    if (w3 === 0) {
-      w3 = h3 / 2;
-    }
-
-    // パターンごとに分岐
-    let list = { vertice: [], position: new THREE.Vector3(0, 0, 0) };
-    ////////// 1部材について //////////
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b1, 0, 0));
-    list.vertice.push(new THREE.Vector3(b1, -h1, 0));
-    list.vertice.push(new THREE.Vector3(0, -h1, 0));
-    list.position = new THREE.Vector3(0, 0, 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    ////////// 2部材について //////////
-    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b2, 0, 0));
-    list.vertice.push(new THREE.Vector3(b2, -h2, 0));
-    list.vertice.push(new THREE.Vector3(0, -h2, 0));
-    list.position = new THREE.Vector3(b1, -w1 + h2 / 2, 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    //////////3部材について //////////
-    list = { vertice: [], position: new THREE.Vector3(0, 0, 0) }; // リセット
-    list.vertice.push(new THREE.Vector3(0, 0, 0));
-    list.vertice.push(new THREE.Vector3(b3, 0, 0));
-    list.vertice.push(new THREE.Vector3(b3, -h3, 0));
-    list.vertice.push(new THREE.Vector3(0, -h3, 0));
-    list.position = new THREE.Vector3(b1 + b2, w3 - w1, 0);
-
-    vertices.push(list); // 頂点情報を追加
-
-    return vertices;
   }
 
   /*
@@ -769,26 +632,6 @@ export class ThreePanelService {
   }
   */
 
-  private getVertices_pipe(vertexlist) {
-    const scale = 0.1;
-    // memo: list[0～4]でkeyはsteel_b, steel_h, steel_w
-    const b1 =
-      vertexlist[0]["steel_b"] !== undefined
-        ? vertexlist[0]["steel_b"] * scale
-        : 0;
-    const h1 =
-      vertexlist[0]["steel_h"] !== undefined
-        ? vertexlist[0]["steel_h"] * scale
-        : 0;
-    const geometry = new THREE.TorusGeometry((b1 - h1) / 2, h1 / 2, 4, 200);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x3366cc,
-      side: THREE.DoubleSide,
-    });
-    const torus = new THREE.Mesh(geometry, material);
-    this.panel_List.push(torus);
-    this.scene.add(torus);
-  }
   /*
   private getCentroid(child): THREE.Vector3 {
     let Ax: number = 0;
@@ -864,7 +707,6 @@ export class ThreePanelService {
         points.push(list.vertice[num]);
       }
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
       const material = new THREE.MeshBasicMaterial({
         color: 0x3366cc,
         side: THREE.DoubleSide,

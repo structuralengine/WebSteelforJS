@@ -65,6 +65,7 @@ export class SceneService {
   public addControls() {
     const controls = new OrbitControls(this.camera, this.renderer.domElement);
     controls.enableRotate = false;
+    controls.enablePan = false;
     controls.addEventListener("change", this.render);
   }
 

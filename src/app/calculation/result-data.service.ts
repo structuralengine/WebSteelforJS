@@ -10,12 +10,17 @@ import { SetCircleService } from "./shape-data/set-circle.service";
 import { SetHorizontalOvalService } from "./shape-data/set-horizontal-oval.service";
 import { SetVerticalOvalService } from "./shape-data/set-vertical-oval.service";
 import { SetBoxService } from "./shape-data/set-box.service";
+import { Vector3 } from "three";
+import { SetIService } from "./shape-data/set-I.service";
+import { SaveDataService } from "../providers/save-data.service";
+
 
 @Injectable({
   providedIn: "root",
 })
 export class ResultDataService {
   constructor(
+    private save: SaveDataService,
     private members: InputMembersService,
     private points: InputDesignPointsService,
     private bars: InputBarsService,
@@ -26,6 +31,7 @@ export class ResultDataService {
     private rect: SetRectService,
     private hOval: SetHorizontalOvalService,
     private vOval: SetVerticalOvalService,
+    private I: SetIService,
     private box: SetBoxService,) { }
 
   // 表題の共通した行
@@ -35,8 +41,12 @@ export class ResultDataService {
     if (this.helper.toNumber(position.position) !== null) {
       strPos = position.position.toFixed(3);
     }
-    const m_no: string = member.m_no.toFixed(0);
-    let title1: string = m_no + "部材";
+    let title1: string = member.m_no.toFixed(0);
+    if(!this.save.isManual()){
+      title1 += "部材";
+    } else {
+      title1 = "No" + title1;
+    }
     if (member.m_len > 0) {
       title1 += "(" + strPos + ")";
     }
@@ -224,6 +234,16 @@ export class ResultDataService {
     let section: any;
     switch (shapeName) {
 
+      case 'I':
+        section = this.I.getShape(member, target, index, side, safety, {});
+        for (const num of Object.keys(section.steel)) {
+          result.steels[num] = section.steel[num];
+        }
+        break;
+
+      case 'H':
+        break;
+  
       case 'Box':
         section = this.box.getBoxShape(member, target, index, side, safety, {});
         for (const num of Object.keys(section.steel)) {
@@ -233,6 +253,9 @@ export class ResultDataService {
             result.steels[num] = section.steel[num];
           // }
         }
+        break;
+
+      case 'Pipe':
         break;
 
       default:
@@ -841,8 +864,5 @@ export class ResultDataService {
 
     return result;
   }
-
-
-
 
 }

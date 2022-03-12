@@ -9,7 +9,7 @@ import { InputDesignPointsService } from "../design-points/design-points.service
 export class InputSteelsService {
   // 鉄筋情報
   private steel_list: any[];
-  private table_datas: any[];
+  // private table_datas: any[];
 
   constructor(
     private points: InputDesignPointsService,
@@ -42,8 +42,13 @@ export class InputSteelsService {
       title: title,
       steel_b: null,
       steel_h: null,
-      steel_w1: null,
-      steel_w2: null,
+      steel_w: null,
+      // steel_w1: null,
+      // steel_w2: null,
+      lib_b: null,
+      lib_h: null,
+      lib_w: null,
+      lib_n: null,
     };
   }
   // private default_I_steel(): any {
@@ -75,7 +80,7 @@ export class InputSteelsService {
   public getTableColumns(): any[] {
     // 一旦teble_datasをprivateでおいてみる
     //const table_datas: any[] = new Array();
-    this.table_datas = new Array();
+    const table_datas = new Array();
 
     const groupe_list = this.points.getGroupeList();
     for (let i = 0; i < groupe_list.length; i++) {
@@ -93,6 +98,7 @@ export class InputSteelsService {
           // const bar: any = this.bars.getTableColumn(pos.index);
           data.m_no = member.m_no;
           data.shape = member.shape;
+          data["g_id"] = member.g_id;
           data.position = pos.position;
 
           // データを2行に分ける
@@ -108,10 +114,15 @@ export class InputSteelsService {
           const a: number = this.helper.toNumber(data.position);
           column1["position"] = a === null ? "" : a.toFixed(3);
           column1["p_name"] = data["p_name"];
+          column1["g_id"] = data["g_id"];
           column1["design_point_id"] = data["1"].title;
           column1["steel_b"] = data["1"].steel_b;
           column1["steel_h"] = data["1"].steel_h;
           column1["steel_w"] = data["1"].steel_w;
+          column1["lib_b"] = data["1"].lib_b;
+          column1["lib_h"] = data["1"].lib_h;
+          column1["lib_w"] = data["1"].lib_w;
+          column1["lib_n"] = data["1"].lib_n;
           // column1["steel_w2"] = data["1"].steel_w2;
 
           table_groupe.push(column1);
@@ -121,6 +132,10 @@ export class InputSteelsService {
           column2["steel_b"] = data["2"].steel_b;
           column2["steel_h"] = data["2"].steel_h;
           column2["steel_w"] = data["2"].steel_w;
+          column2["lib_b"] = data["2"].lib_b;
+          column2["lib_h"] = data["2"].lib_h;
+          column2["lib_w"] = data["2"].lib_w;
+          column2["lib_n"] = data["2"].lib_n;
           // column2["steel_w2"] = data["2"].steel_w2;
           table_groupe.push(column2);
 
@@ -129,6 +144,10 @@ export class InputSteelsService {
           column3["steel_b"] = data["3"].steel_b;
           column3["steel_h"] = data["3"].steel_h;
           column3["steel_w"] = data["3"].steel_w;
+          column3["lib_b"] = data["3"].lib_b;
+          column3["lib_h"] = data["3"].lib_h;
+          column3["lib_w"] = data["3"].lib_w;
+          column3["lib_n"] = data["3"].lib_n;
           // column3["steel_w2"] = data["3"].steel_w2;
           table_groupe.push(column3);
 
@@ -137,6 +156,10 @@ export class InputSteelsService {
           column4["steel_b"] = data["4"].steel_b;
           column4["steel_h"] = data["4"].steel_h;
           column4["steel_w"] = data["4"].steel_w;
+          column4["lib_b"] = data["4"].lib_b;
+          column4["lib_h"] = data["4"].lib_h;
+          column4["lib_w"] = data["4"].lib_w;
+          column4["lib_n"] = data["4"].lib_n;
           // column4["steel_w2"] = data["4"].steel_w2;
           table_groupe.push(column4);
 
@@ -145,14 +168,19 @@ export class InputSteelsService {
           column5["steel_b"] = data["5"].steel_b;
           column5["steel_h"] = data["5"].steel_h;
           column5["steel_w"] = data["5"].steel_w;
+          column5["lib_b"] = data["5"].lib_b;
+          column5["lib_h"] = data["5"].lib_h;
+          column5["lib_w"] = data["5"].lib_w;
+          column5["lib_n"] = data["5"].lib_n;
+
           // column5["steel_w2"] = data["5"].steel_w2;
           table_groupe.push(column5);
           count++;
         }
       }
-      this.table_datas.push(table_groupe);
+      table_datas.push(table_groupe);
     }
-    return this.table_datas;
+    return table_datas;
   }
 
   public getTableColumn(index: any): any {
@@ -197,7 +225,7 @@ export class InputSteelsService {
           //     }
           //   }
           // } else {
-            result[key] = data[key];
+          result[key] = data[key];
           // }
         }
       }
@@ -241,30 +269,50 @@ export class InputSteelsService {
       b["1"].steel_b = column1.steel_b;
       b["1"].steel_h = column1.steel_h;
       b["1"].steel_w = column1.steel_w;
+      b["1"].lib_b = column1.lib_b;
+      b["1"].lib_h = column1.lib_h;
+      b["1"].lib_w = column1.lib_w;
+      b["1"].lib_n = column1.lib_n;
       // b["1"].steel_w2 = column1.steel_w2;
 
       b["2"].title = column2.design_point_id;
       b["2"].steel_b = column2.steel_b;
       b["2"].steel_h = column2.steel_h;
       b["2"].steel_w = column2.steel_w;
+      b["2"].lib_b = column2.lib_b;
+      b["2"].lib_h = column2.lib_h;
+      b["2"].lib_w = column2.lib_w;
+      b["2"].lib_n = column2.lib_n;
       // b["2"].steel_w2 = column2.steel_w2;
 
       b["3"].title = column3.design_point_id;
       b["3"].steel_b = column3.steel_b;
       b["3"].steel_h = column3.steel_h;
       b["3"].steel_w = column3.steel_w;
+      b["3"].lib_b = column3.lib_b;
+      b["3"].lib_h = column3.lib_h;
+      b["3"].lib_w = column3.lib_w;
+      b["3"].lib_n = column3.lib_n;
       // b["3"].steel_w2 = column3.steel_w2;
 
       b["4"].title = column4.design_point_id;
       b["4"].steel_b = column4.steel_b;
       b["4"].steel_h = column4.steel_h;
       b["4"].steel_w = column4.steel_w;
+      b["4"].lib_b = column4.lib_b;
+      b["4"].lib_h = column4.lib_h;
+      b["4"].lib_w = column4.lib_w;
+      b["4"].lib_n = column4.lib_n;
       // b["4"].steel_w2 = column4.steel_w2;
 
       b["5"].title = column5.design_point_id;
       b["5"].steel_b = column5.steel_b;
       b["5"].steel_h = column5.steel_h;
       b["5"].steel_w = column5.steel_w;
+      b["5"].lib_b = column5.lib_b;
+      b["5"].lib_h = column5.lib_h;
+      b["5"].lib_w = column5.lib_w;
+      b["5"].lib_n = column5.lib_n;
       // b["5"].steel_w2 = column5.steel_w2;
 
       this.steel_list.push(b);
@@ -285,7 +333,76 @@ export class InputSteelsService {
     return this.points.getGroupeName(i);
   }
 
+  // 入力情報を得る関数, pegeが一致するのを全部回収
   public getSteelJson(index) {
-    return this.table_datas[index];
+    const grouping_datas = this.getTableColumns();
+    let memory = {};
+    // 入力が省略されていたら上の行
+    let count = 5;
+    for (const page of Object.keys(grouping_datas)) {
+      const data_list = grouping_datas[page];
+      for (let i = 0; i < data_list.length; i++) {
+        if (!("index" in data_list[i])) continue;
+        // いずれ、ここで分岐する
+        if (data_list[i]["shape"] === "箱形/π形") {
+          count = 5;
+        } else if (data_list[i]["shape"] === "鋼管") {
+          count = 5;
+        }
+        const steelKeys = [
+          "steel_b",
+          "steel_h",
+          "steel_w",
+          "lib_b",
+          "lib_h",
+          "lib_w",
+          "lib_n",
+        ];
+        let flag: boolean = true;
+        Loops: for (let n = 0; n < count; n++) {
+          const row = data_list[i + n];
+          for (const key of steelKeys) {
+            if (row[key] != undefined) {
+              flag = false;
+              break Loops;
+            }
+          }
+        }
+        // 該当のデータが無ければtrue, あればfalse
+        if (flag) {
+          // 上の行(memory)を代入
+          if (Object.keys(memory).length === 0) continue;
+          for (const nKey of Object.keys(memory)) {
+            const n = this.helper.toNumber(nKey);
+            const steelKeys = [
+              "steel_b",
+              "steel_h",
+              "steel_w",
+              "lib_b",
+              "lib_h",
+              "lib_w",
+              "lib_n",
+            ];
+            for (const key of steelKeys) {
+              data_list[i + n][key] = memory[n][key];
+            }
+          }
+        } else {
+          // memory（上の行）に保存
+          for (let n = 0; n < count; n++) {
+            memory[n] = data_list[i + n];
+          }
+        }
+      }
+    }
+    let result: any[];
+    for (const datas of grouping_datas) {
+      const g_id = datas[0]["g_id"];
+      if (g_id == index) {
+        result = datas;
+        break;
+      }
+    }
+    return result;
   }
 }

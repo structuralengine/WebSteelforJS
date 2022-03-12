@@ -23,6 +23,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 
 import { LanguagesService } from "../../providers/languages.service";
 import { ElectronService } from 'ngx-electron';
+import packageJson from '../../../../package.json';
 
 @Component({
   selector: "app-menu",
@@ -31,6 +32,7 @@ import { ElectronService } from 'ngx-electron';
 })
 export class MenuComponent implements OnInit {
   public fileName: string;
+  public version: string;
   public pickup_file_name: string;
 
   constructor(
@@ -48,6 +50,7 @@ export class MenuComponent implements OnInit {
   ) {
     this.fileName = "";
     this.pickup_file_name = "";
+    this.version = packageJson.version;
   }
 
   ngOnInit() {
@@ -67,6 +70,25 @@ export class MenuComponent implements OnInit {
       this.save.clear();
       this.app.memberChange(false); // 左側のボタンを無効にする。
     }, 10);
+  }
+
+  // Electron でファイルを開く
+  open_electron(){
+
+    const response = this.electronService.ipcRenderer.sendSync('open');
+
+    if(response.status!==true){
+      alert('ファイルを開くことに失敗しました, status:'+ response.status);
+      return;
+    }
+    const modalRef = this.modalService.open(WaitDialogComponent);
+    this.fileName = response.path;
+
+    this.router.navigate(["/blank-page"]);
+    this.app.deactiveButtons();
+
+    this.save.readInputData(response.text);
+    this.open_done(modalRef);
   }
 
   // ファイルを開く

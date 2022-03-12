@@ -29,10 +29,11 @@ export class InputMembersService  {
       g_id: '',
       g_name: '',
       shape: '',
-      B: null,
-      H: null,
-      Bt: null,
-      t: null,
+      eff_len: null,
+      // B: null,
+      // H: null,
+      // Bt: null,
+      // t: null,
       n: null
     };
   }

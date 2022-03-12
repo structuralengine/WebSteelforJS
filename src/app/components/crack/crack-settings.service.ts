@@ -28,15 +28,10 @@ export class InputCrackSettingsService {
       m_no: null,
       g_name: null,
       p_name: null,
-      con_u: null,
-      con_l: null,
-      con_s: null,
-      vis_u: false,
-      vis_l: false,
-      ecsd_u: null,
-      ecsd_l: null,
-      kr: null,
-      k4: null,
+      section: null,
+      buckle_u: true,
+      buckle_s: true,
+      buckle_l: true,
     };
   }
 
@@ -101,7 +96,7 @@ export class InputCrackSettingsService {
     ).temp;
 
     // データ(result)を書き換える
-    for (let ip = result.index; ip >= 0; ip--) { 
+    /* for (let ip = result.index; ip >= 0; ip--) { 
 
       const data = this.crack_list.find((value) => value.index === ip);
 
@@ -119,7 +114,7 @@ export class InputCrackSettingsService {
         break;
       }
 
-    }
+    } */
     return result;
   }
 
@@ -132,15 +127,10 @@ export class InputCrackSettingsService {
       b.m_no =      column.m_no;
       b.g_name =    column.g_name;
       b.p_name = column.p_name;
-      b.con_u =     column.con_u;
-      b.con_l =     column.con_l;
-      b.con_s =     column.con_s;
-      b.vis_u =     column.vis_u;
-      b.vis_l =     column.vis_l;
-      b.ecsd_u =      column.ecsd_u;
-      b.ecsd_l =      column.ecsd_l;
-      b.kr =        column.kr;
-      b.k4 =        column.k4;
+      b.section = column.section;
+      b.buckle_u = column.buckle_u;
+      b.buckle_s = column.buckle_s;
+      b.buckle_l = column.buckle_l;
       this.crack_list.push(b);
     }
   }
@@ -154,32 +144,6 @@ export class InputCrackSettingsService {
   }
 
   public setSaveData(crack: any) {
-    ////////// 情報追加による調整コード //////////
-    for (const value of crack) {
-      if (value.ecsd_u === undefined && value.ecsd_l === undefined) {
-        if (value.ecsd !== null) {
-          value['ecsd_u'] = value.ecsd;
-          value['ecsd_l'] = value.ecsd;
-        } else {
-          value['ecsd_u'] = null;
-          value['ecsd_l'] = null;
-        }
-        delete value['ecsd'];
-      }
-      if (value.k4 == undefined) {
-        let flag: boolean = true;
-        for (const key of ['con_l', 'con_s', 'con_u', 'ecsd_u', 'ecsd_l', 'kr']) {
-          if (value[key] === null || value[key] === undefined) {
-            flag = false;
-            break;
-          }
-        }
-        if (flag) {
-          value['k4'] = 0.85;
-        }
-      }
-    }
-    //////////          //////////
     this.crack_list = crack;
   }
 
