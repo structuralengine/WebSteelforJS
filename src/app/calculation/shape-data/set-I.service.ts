@@ -145,13 +145,20 @@ export class SetIService {
       }
     }
     const dim = {
+      // 上側フランジの断面積Afgu, 上側フランジの有効断面積Afnu, 
       Afgu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
       Afnu: vertexlist["steel_b1"] * vertexlist["steel_h1"], 
+      // 下側フランジの断面積Afgl, 下側フランジの有効断面積Afnl, 
       Afgl: vertexlist["steel_b3"] * vertexlist["steel_h3"], 
       Afnl: vertexlist["steel_b3"] * vertexlist["steel_h3"], 
+      // ウェブの断面積Aw, 
       Aw: vertexlist["steel_b2"] * vertexlist["steel_h2"], 
-      yc: 0 - centroid.y,
-      yt: vertexlist["steel_h1"] + vertexlist["steel_h2"] + vertexlist["steel_h3"] + centroid.y,
+      // 中立軸から上側フランジ外側までの距離yuo, 上側フランジ内側までの距離yui, 
+      yuo: 0 - centroid.y,
+      yui: 0 - centroid.y - vertexlist["steel_h1"],
+      // 中立軸から下側フランジ外側までの距離yuo, 下側フランジ内側までの距離yui,
+      ylo: vertexlist["steel_h1"] + vertexlist["steel_h2"] + vertexlist["steel_h3"] + centroid.y,
+      yli: vertexlist["steel_h1"] + vertexlist["steel_h2"] + centroid.y,
     }
 
     steel["A"] = param.A;

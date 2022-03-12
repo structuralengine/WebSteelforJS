@@ -349,15 +349,24 @@ export class CalcSafetyTorsionalMomentService {
     centroid = this.param.getCentroid(vertices);
     param = this.param.getSectionParam(vertices, centroid);
 
-    const yu = centroid.y;
-    const Zzu = param['Ix'] / yu;
-    const yuw = compress['steel_h'] + centroid.y;
-    const Zzuw = param['Ix'] / yuw;
-    const ylw = tension['steel_h'] + shear1['steel_h'] + centroid.y;
-    const Zzlw = param['Ix'] / ylw;
-    const yl = tension['steel_h'] + shear1['steel_h'] + compress['steel_h'] + centroid.y;
-    const Zzl = param['Ix'] / yl;
-    const param_sec = {A, yu, Zzu, yuw, Zzuw, ylw, Zzlw, yl, Zzl};
+    // 中立軸からの距離と断面係数の整理
+    const yc = (force.side.includes('下側')) 
+             ? centroid.y 
+             : tension['steel_h'] + shear1['steel_h'] + compress['steel_h'] + centroid.y;
+    const Zzc = param['Ix'] / yc;
+    const ycw = (force.side.includes('下側')) 
+              ? compress['steel_h'] + centroid.y
+              : tension['steel_h'] + shear1['steel_h'] + centroid.y;
+    const Zzcw = param['Ix'] / ycw;
+    const ytw = (force.side.includes('下側')) 
+              ? tension['steel_h'] + shear1['steel_h'] + centroid.y
+              : compress['steel_h'] + centroid.y;
+    const Zztw = param['Ix'] / ytw;
+    const yt = (force.side.includes('下側')) 
+             ? tension['steel_h'] + shear1['steel_h'] + compress['steel_h'] + centroid.y
+             : centroid.y;
+    const Zzt = param['Ix'] / yt;
+    const param_sec = {A, yu: yc, Zzu: Zzc, yuw: ycw, Zzuw: Zzcw, ylw: ytw, Zzlw: Zztw, yl: yt, Zzl: Zzt};
 
 
     // 5.4.1 板要素の耐荷性の照査
@@ -365,8 +374,8 @@ export class CalcSafetyTorsionalMomentService {
     const sigma_N = (Nd > 0) ? 0: Nd * 1000 / A;
     const sigma_My1 = 0;
     const sigma_My2 = 0;
-    const sigma_Mz1 = Md * 1000 * 1000 / Zzu;
-    const sigma_Mz2 = Md * 1000 * 1000 / Zzl;
+    const sigma_Mz1 = Md * 1000 * 1000 / Zzc;
+    const sigma_Mz2 = Md * 1000 * 1000 / Zzt;
     const sigma_list = {sigma_N, sigma_My1, sigma_My2, sigma_Mz1, sigma_Mz2};
     // const sigmasigma1 = sigma_N + sigma_My1 + sigma_Mz1;
     // const sigmasigma2 = sigma_N + sigma_My2 + sigma_Mz1;
@@ -425,43 +434,45 @@ export class CalcSafetyTorsionalMomentService {
     result['Nuod2'] = Noud2;
 
 
-    // 設計曲げ圧縮耐力（z軸(x軸)まわり）
-    // const tf: number = (tension.steel_h + compress.steel_h) / 2; 
+    // 設計曲げ耐力（z軸(x軸)まわり）
     const alpha: number = tf / shear1.steel_b;
-    // const alpha: number = compress.steel_h / shear1.steel_b;
     const b: number = (tension.steel_b + compress.steel_b) / 2;
     const beta: number = shear1.steel_h / b;
-    // const beta: number = shear1.steel_h / compress.steel_b;
-    // 有効座屈長を考慮しないときはどうする
     const bl = b / Lz;
-    let F: number;  // Fの値は形状で分岐する
-    if (sectionM.shapeName === 'I') {
-      F = ( 12 + (2 * beta / alpha) ) ** 0.5;
-    } else if (sectionM.shapeName === 'Box') {
-      const betao: number = (14 + 12 * alpha) / (5 + 21 * alpha);
-      if (beta < betao) {
-        F = 0;
-      } else if (betao <= beta && beta < 1) {
-        F = (1.05*(beta-betao)/(1-betao))*(3*alpha+1) ** 0.5 * bl ** 0.5;
-      } else if (1 <= beta && beta < 2) {
-        F = 0.74*((3*alpha+beta)*(beta+1)) ** 0.5 * bl ** 0.5
-      } else {
-        F = 1.28 * (3*alpha+beta) ** 0.5 * bl * 0.5
-      }
-    } else {
-      // 要分岐追加 -> 一旦I型の式を入れておく
-      F = ( 12 + (2 * beta / alpha) ) ** 0.5;
-    }
-    // 等価細長比 lambda_e
-    const lambda_e: number = 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * (F * (1 / bl));
-    result['lambda_e'] = lambda_e;
     let rho_bg_culc: number;
-    if (lambda_e <= 0.1) {
+    if (Lz <= 0 || Lz == undefined) {
+      // 有効座屈長を考慮しないとき
       rho_bg_culc = 1.0;
-    } else if (0.1 < lambda_e && lambda_e <= 2 ** 0.5) {
-      rho_bg_culc = 1.0 - 0.53*(lambda_e - 0.1);
     } else {
-      rho_bg_culc = 1.7 / (2.8 * lambda_e ** 2)
+      // 有効座屈量を考慮する
+      let F: number;  // Fの値は形状で分岐する
+      if (sectionM.shapeName === 'I') {
+        F = ( 12 + (2 * beta / alpha) ) ** 0.5;
+      } else if (sectionM.shapeName === 'Box') {
+        const betao: number = (14 + 12 * alpha) / (5 + 21 * alpha);
+        if (beta < betao) {
+          F = 0;
+        } else if (betao <= beta && beta < 1) {
+          F = (1.05*(beta-betao)/(1-betao))*(3*alpha+1) ** 0.5 * (b / Lz) ** 0.5;
+        } else if (1 <= beta && beta < 2) {
+          F = 0.74*((3*alpha+beta)*(beta+1)) ** 0.5 * (b / Lz) ** 0.5
+        } else {
+          F = 1.28 * (3*alpha+beta) ** 0.5 * (b / Lz) * 0.5
+        }
+      } else {
+        // 要分岐追加 -> 一旦I型の式を入れておく
+        F = ( 12 + (2 * beta / alpha) ) ** 0.5;
+      }
+      // 等価細長比 lambda_e
+      const lambda_e: number = 1 / Math.PI * (compress.fsy.fsyk / E)**0.5 * (F * (Lz / b));
+      result['lambda_e'] = lambda_e;
+      if (lambda_e <= 0.1) {
+        rho_bg_culc = 1.0;
+      } else if (0.1 < lambda_e && lambda_e <= 2 ** 0.5) {
+        rho_bg_culc = 1.0 - 0.53*(lambda_e - 0.1);
+      } else {
+        rho_bg_culc = 1.7 / (2.8 * lambda_e ** 2);
+      }
     }
     // rho_bl_culcは4(または8)ケースの最小の値を採用する
     let rho_bl_culc: number = 1.0;
@@ -515,37 +526,42 @@ export class CalcSafetyTorsionalMomentService {
         }
       }
     }
+    // 設計曲げ圧縮耐力（z軸(x軸)まわり）
+    // 中立軸から圧縮側フランジ外側までの距離yco, 圧縮側フランジ内側までの距離yci
+    const yco: number = (force.side.includes('下側')) ? dim['yuo'] : dim['ylo'];
+    const yci: number = (force.side.includes('下側')) ? dim['yui'] : dim['yli'];
     const fsyk_compress = compress['fsy']['fsyk'];
     const fsyd_compress: number = fsyk_compress / rs;
     result['fsyk_compress'] = fsyk_compress;
-    const Afg_compress = Lz_b * compress['steel_h'];
-    const Afn_compress = Lz_b * compress['steel_h'];
-    // 有効座屈長を考慮してるのか、してないのか分からん！！！
-    const Mucod = Math.min(rho_bg_culc, rho_bl_culc)
-                * ( param['Ix'] / dim['yc'] )
+    const Afg_compress = Lz_b * compress['steel_h'];  // フランジの断面積
+    const Afn_compress = Lz_b * compress['steel_h'];  // フランジの有効断面積
+    const Mucd = Math.min(rho_bg_culc, rho_bl_culc)
+                * ( param['Ix'] / yco )
+                * fsyd_compress
+                * ( Afn_compress / Afg_compress )
+                / rb_C / 1000 / 1000; 
+    result['Mucd'] = Mucd;
+    const Mucod = 1.0
+                * ( param['Ix'] / yco )
                 * fsyd_compress
                 * ( Afn_compress / Afg_compress )
                 / rb_C / 1000 / 1000; 
     result['Mucod'] = Mucod;
-    result['Mucd'] = Mucod;
-
-    // (1) 圧縮側
-    const rho_bg: number = 1.0;
-    result['rho_bg_culc'] = rho_bg;
-    const rho_bl: number = 1.0;
-    result['rho_bl_culc'] = rho_bl;
+    result['rho_bg_culc'] = rho_bg_culc;
+    result['rho_bl_culc'] = rho_bl_culc;
 
     // const fsyk_compress = compress['fsy']['fsyk'];
     // const fsyd_compress: number = fsyk_compress / rs;
     // result['fsyk_compress'] = fsyk_compress;
     ////////// AfnとAfgが区別できていない //////////
-    const Mucd1 = rho_bg
-                * ( param['Ix'] / dim['yc'] )
+    // 圧縮外側Mucd1と圧縮内側Mucd2
+    const Mucd1 = Math.min(rho_bg_culc, rho_bl_culc)
+                * ( param['Ix'] / yco )
                 * fsyd_compress
                 * ( Afn_compress / Afg_compress )
                 / rb_C / 1000 / 1000;
-    const Mucd2 = rho_bl
-                * ( param['Ix'] / dim['yc'] )
+    const Mucd2 = Math.min(rho_bg_culc, rho_bl_culc)
+                * ( param['Ix'] / yci )
                 * fsyd_compress
                 * ( Afn_compress / Afg_compress )
                 / rb_C / 1000 / 1000;
@@ -554,38 +570,42 @@ export class CalcSafetyTorsionalMomentService {
 
     // 設計曲げ引張耐力（z軸(x軸)まわり）
     // (2) 引張側
+    // 中立軸から圧縮側フランジ外側までの距離yco, 圧縮側フランジ内側までの距離yci
+    const yto: number = (force.side.includes('下側')) ? dim['ylo'] : dim['yco'];
+    const yti: number = (force.side.includes('下側')) ? dim['yli'] : dim['yci'];
     const fsyk_tension = tension['fsy']['fsyk'];
     const fsyd_tension: number = fsyk_tension / rs;
     result['fsyk_tension'] = fsyk_tension;
     const Afg_tension = Lz_b * tension['steel_h'];
     const Afn_tension = Lz_b * tension['steel_h'];
-    const Mutd1: number = ( param['Ix'] / dim['yt'] )
+    // 引張外側Mutd1と引張内側Mutd2
+    const Mutd1: number = ( param['Ix'] / yto )
                         * fsyd_tension 
                         * ( Afn_tension / Afg_tension )
                         / rb_T / 1000 / 1000;
-    const Mutd2: number = ( param['Ix'] / ( dim['yt'] - tension['steel_h'] ) )
+    const Mutd2: number = ( param['Ix'] / yti )
                         * fsyd_tension
                         * ( Afn_tension / Afg_tension )
                         / rb_T / 1000 / 1000;
-    const Mutod: number = ( param['Ix'] / dim['yt'] )
+    /* const Mutod: number = ( param['Ix'] / dim['yt'] )
                         * fsyd_tension 
                         * ( Afn_tension / Afg_tension )
-                        / rb_T / 1000 / 1000;
+                        / rb_T / 1000 / 1000; */
     result['Mutxd'] = Mutd1;
     result['Mutyd'] = 0;
-    result['Mutod'] = Mutod;
+    // result['Mutod'] = Mutod;
 
     // 設計曲げ圧縮耐力（腹板／z軸廻り）
 
     const fsyk_shear: number = shear1['fsy']['fsyk'];
     const fsyd_shear: number = fsyk_shear / rs;
     result['fsyk_shear'] = fsyk_shear;
-    const Mucwd: number = ( param['Ix'] / Math.abs(yuw/* ylw */) )
+    const Mucwd: number = ( param['Ix'] / Math.abs(ycw) )
                         * fsyd_shear / rb_C / 1000 / 1000;
     result['Mucwd'] = Mucwd;
     
     // 設計曲げ引張耐力（腹板／z軸廻り）
-    const Mutwd: number = ( param['Ix'] / Math.abs(yuw/* ylw */) )
+    const Mutwd: number = ( param['Ix'] / Math.abs(ytw) )
                         * fsyd_shear / rb_T / 1000 / 1000;
     result['Mutwd'] = Mutwd;
 
@@ -699,68 +719,43 @@ export class CalcSafetyTorsionalMomentService {
       const b2Lz = (shear1.steel_w / 2) / Lz;// 本来は中立軸で分離(/2ではない)
       const tf: number = tension.steel_h / 2 + compress.steel_h / 2
       const b1Ly = ((shear1.steel_h + tf) / 2 ) / Ly;
-      // let lambda1: number;
-      // let lambda2: number;
-      // let lambda3: number;
       // 部材区間によってフランジの有効幅が変化するため分岐
       if (sectionNo === 1 || sectionNo === 5) {
         // 式(6.2.3)を使用する
-        if (b1Lz <= 0.05) {
-          lambda1 = tension.steel_w;
-        } else {
-          lambda1 = ( 1.1 - 2 * b1Lz ) * tension.steel_w;
-        }
-        if (b2Lz <= 0.05) {
-          lambda2 = tension.steel_w;
-        } else {
-          lambda2 = ( 1.1 - 2 * b2Lz ) * shear1.steel_w / 2;
-        }
-        if (b1Ly <= 0.05) {
-          lambda11 = tension.steel_w;
-        } else {
-          lambda11 = ( 1.1 - 2 * b1Ly ) * ((shear1.steel_h + tf) / 2 );
-        }
+        lambda1 = this.Equation_6_2_3(compress.steel_w, Lz);
+        lambda2 = this.Equation_6_2_3((shear1.steel_w / 2), Lz);
+        lambda3 = this.Equation_6_2_3((shear1.steel_w / 2), Lz);
+        lambda4 = this.Equation_6_2_3(compress.steel_w, Lz);
+        lambda5 = this.Equation_6_2_3(tension.steel_w, Lz);
+        lambda6 = this.Equation_6_2_3((shear1.steel_w / 2), Lz);
+        lambda7 = this.Equation_6_2_3((shear1.steel_w / 2), Lz);
+        lambda8 = this.Equation_6_2_3(tension.steel_w, Lz);
+
+        lambda11 = this.Equation_6_2_3((shear1.steel_h + tf) / 2, Ly);
       } else {
         // 式(6.2.4)を使用する
-        if (b1Lz <= 0.02) {
-          lambda1 = tension.steel_w;
-        } else {
-          lambda1 = (1.06 - 3.2 * b1Lz + 4.5 * b1Lz ** 2) * tension.steel_w;
-        }
-        if (b2Lz <= 0.02) {
-          lambda2 = tension.steel_w;
-        } else {
-          lambda2 = (1.06 - 3.2 * b2Lz + 4.5 * b2Lz ** 2) * shear1.steel_w / 2;
-        }
-        if (b1Ly <= 0.02) {
-          lambda11 = tension.steel_w;
-        } else {
-          lambda11 = (1.06 - 3.2 * b1Ly + 4.5 * b1Ly ** 2) * ((shear1.steel_h + tf) / 2 );
-        }
-      }
-      lambda1 = Math.round(lambda1);
-      if (lambda1 >= 0.15*Ly) {
-        lambda1 = 0.15*Ly;
-      }
-      lambda2 = Math.round(lambda2);
-      if (lambda2 >= 0.15*Ly) {
-        lambda2 = 0.15*Ly;
-      }
-      lambda11 = Math.round(lambda11);
-      if (lambda11 >= 0.15*Ly) {
-        lambda11 = 0.15*Ly;
+        lambda1 = this.Equation_6_2_4(compress.steel_w, Lz);
+        lambda2 = this.Equation_6_2_4((shear1.steel_w / 2), Lz);
+        lambda3 = this.Equation_6_2_4((shear1.steel_w / 2), Lz);
+        lambda4 = this.Equation_6_2_4(compress.steel_w, Lz);
+        lambda5 = this.Equation_6_2_4(tension.steel_w, Lz);
+        lambda6 = this.Equation_6_2_4((shear1.steel_w / 2), Lz);
+        lambda7 = this.Equation_6_2_4((shear1.steel_w / 2), Lz);
+        lambda8 = this.Equation_6_2_4(tension.steel_w, Lz);
+
+        lambda11 = this.Equation_6_2_4((shear1.steel_h + tf) / 2, Ly);
       }
       const Lz_b = 2 * lambda1 + 2 * lambda2;
       const Ly_b = 2 * lambda11 - tf; 
       // const lambda_list: number[] = [lambda1, lambda2, lambda3];
 
       // 一旦配置
-      lambda3 = lambda2;
-      lambda4 = lambda1;
-      lambda5 = lambda1;
-      lambda6 = lambda2;
-      lambda7 = lambda2;
-      lambda8 = lambda1;
+      // lambda3 = lambda2;
+      // lambda4 = lambda1;
+      // lambda5 = lambda1;
+      // lambda6 = lambda2;
+      // lambda7 = lambda2;
+      // lambda8 = lambda1;
       // 一旦配置ここまで
     }
 
@@ -780,6 +775,34 @@ export class CalcSafetyTorsionalMomentService {
     lambda_list.y['lambda4'] = lambda11;
 
     return lambda_list
+  }
+
+  private Equation_6_2_3(b: number, l: number): number {
+    let lambda: number;
+    const bl = b / l;
+    if (bl <= 0.05) {
+      lambda = b;
+    } else {
+      lambda = (1.1 - 2.0 * (b / l)) * b;
+    }
+    if (lambda >= 0.15 * l) {
+      lambda = 0.15 * l;
+    }
+    return lambda;
+  }
+
+  private Equation_6_2_4(b: number, l: number): number {
+    let lambda: number;
+    const bl = b / l;
+    if (bl <= 0.02) {
+      lambda = b;
+    } else {
+      lambda = (1.06 - 3.2 * bl + 4.5 * bl ** 2) * b;
+    }
+    if (lambda >= 0.15 * l) {
+      lambda = 0.15 * l;
+    }
+    return lambda;
   }
 
   // 板要素の耐荷性の照査

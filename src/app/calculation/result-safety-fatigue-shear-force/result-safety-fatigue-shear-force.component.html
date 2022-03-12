@@ -3,6 +3,7 @@
 </div>
 
 <div *ngIf="safetyFatigueShearForcepages?.length > 0" id="{{page_index}}">
+  <!-- 
   <div class="sheet">
     <div class="sheet-title">
       <p class="noword sheet-title indent10">(2)せん断力に対する照査【ＲＣ標準 7.3.3】</p>
@@ -144,7 +145,7 @@
       <p class="noword sheet-title indent30">総等価繰返し回数ΣＮを用いて、設計引張疲労強度f<sub>rd</sub>を求める。</p>
       <p class="noword sheet-title indent30">また、算定方法は、曲げモーメントに対する照査と同様である。</p>
     </div>
-  </div>
+  </div> -->
 
   <div *ngFor="let pages of safetyFatigueShearForcepages; index as i" class="sheet-table">
     <div class="cell_title1">{{pages.caption}} (その{{i+1}})</div>
