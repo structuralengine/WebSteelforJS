@@ -9,7 +9,8 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      nativeWindowOpen: true
     }
   });
   mainWindow.maximize();
@@ -23,6 +24,43 @@ app.whenReady().then(() => {
 });
 
 // Angular -> Electron
+// ファイルを開く
+ipcMain.on('open', async (event: Electron.IpcMainEvent) => {
+  // ファイルを選択
+  const paths = dialog.showOpenDialogSync(mainWindow, {
+    buttonLabel: 'open',  // 確認ボタンのラベル
+    filters: [
+      { name: 'wsj', extensions: ['wsj'] },
+    ],
+    properties:[
+      'openFile',         // ファイルの選択を許可
+      'createDirectory',  // ディレクトリの作成を許可 (macOS)
+    ]
+  });
+
+  // キャンセルで閉じた場合
+  if( paths === undefined ){
+    event.returnValue = {status: undefined};
+    return;
+  }
+
+  // ファイルの内容を返却
+  try {
+    const path = paths[0];
+    const buff = fs.readFileSync(path);
+
+    // ファイルを読み込む
+    event.returnValue = {
+      status: true,
+      path: path,
+      text: buff.toString()
+    };
+  }
+  catch(error) {
+    event.returnValue = {status:false, message:error.message};
+  }
+});
+
 
 // 上書き保存
 ipcMain.on('overWrite', async (event: Electron.IpcMainEvent, path: string, data: string) => {
@@ -38,7 +76,7 @@ ipcMain.on('overWrite', async (event: Electron.IpcMainEvent, path: string, data:
 ipcMain.on('saveFile', async (event: Electron.IpcMainEvent, filename: string, data: string) => {
   // 場所とファイル名を選択
   const path = dialog.showSaveDialogSync(mainWindow, {
-    buttonLabel: '保存',  // ボタンのラベル
+    buttonLabel: 'save',  // ボタンのラベル
     filters: [
       { name: 'wsj', extensions: ['wsj'] },
     ],
