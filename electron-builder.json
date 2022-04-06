@@ -1,5 +1,5 @@
 {
-  "productName": "断面照査プログラム",
+  "productName": "web-steel-for-js",
   "directories": {
     "output": "release/"
   },
@@ -46,5 +46,12 @@
     "target": [
       "AppImage"
     ]
-  }
+  },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "structuralengine",
+      "repo": "WebSteelforJS"
+    }
+  ]
 }
