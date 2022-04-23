@@ -1,6 +1,6 @@
 {
   "name": "web-steel-for-js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
@@ -50,6 +50,7 @@
     "@types/three": "^0.130.0",
     "angular-cli-ghpages": "^1.0.0",
     "bootstrap": "^4.5.0",
+    "electron-is-dev": "^2.0.0",
     "electron-nsis": "0.0.1-alpha",
     "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^4.6.5",
